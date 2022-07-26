@@ -47,7 +47,7 @@
 					<div class="dropzone mt-3">
 						<div v-if="!store.font">Drop .ttf file here or click here!</div>
 						<div v-else>{{store.font.fileName}} ({{store.font.fileSize}})</div>
-						<input type="file" accept="font/ttf" onchange="openFile(this)" class="mb-3">
+						<input type="file" accept="font/ttf" onchange="openFile(this)">
 					</div>
 				</div>
 				<div v-if="store.font">

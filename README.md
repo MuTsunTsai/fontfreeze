@@ -29,9 +29,9 @@ You can also select features you want to activate (or deactivate) from the featu
 - Most coding fonts have their coding ligatures defined in the `calt` feature.
   If you want to completely disable ligatures,
   deactivating `calt` will usually do the trick.
+- Leaving a feature blank means keeping its default behavior
+  (which may or may not be activated depending on the environment).
 
-leaving a feature blank means keeping its default behavior
-(which may or may not be activated depending on the environment).
 Finally, click `Generate font!` to generate your font.
 It's that simple!
 

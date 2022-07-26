@@ -81,7 +81,9 @@ def updateNames(font: ttLib.TTFont, options):
 
 
 def instantiateFont(font: ttLib.TTFont, options, variations):
-    instantiateVariableFont(font, variations, inplace=True, overlap=True)
+    if('fvar' in font):
+        instantiateVariableFont(font, variations, inplace=True, overlap=True)
+
     updateNames(font, options)
     subfamily = options.get("subfamily")
     font["head"].macStyle = MACSTYLE[subfamily]

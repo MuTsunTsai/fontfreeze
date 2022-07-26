@@ -129,7 +129,7 @@ function startAnime() {
 }
 
 function suggestedFileName() {
-	return store.font.fileName.replace(/\.ttf$/i, "_freeze.ttf");
+	return store.font.fileName.replace(/\.[ot]tf$/i, "_freeze.ttf");
 }
 
 function getBlob() {
@@ -150,13 +150,13 @@ async function openFile(input) {
 	const file = input.files[0];
 	if(!file) return;
 	input.value = ""; // clear field
-	setPreviewFont(file);
 	const buffer = await readFile(file);
 	const array = new Uint8Array(buffer);
 	pyodide.FS.writeFile('input.ttf', array);
 	try {
 		const info = pyodide.runPython("loadFont()")
 			.toJs({ dict_converter: Object.fromEntries });
+		setPreviewFont(file);
 		console.log(JSON.parse(JSON.stringify(info)));
 		info.fileName = file.name;
 		info.fileSize = getFileSize(file);
