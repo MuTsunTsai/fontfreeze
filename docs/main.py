@@ -81,7 +81,7 @@ def updateNames(font: ttLib.TTFont, options):
 
 
 def instantiateFont(font: ttLib.TTFont, options, variations):
-    if('fvar' in font):
+    if "fvar" in font:
         instantiateVariableFont(font, variations, inplace=True, overlap=True)
 
     updateNames(font, options)
@@ -94,38 +94,63 @@ def instantiateFont(font: ttLib.TTFont, options, variations):
 
 
 def removeFeature(font: ttLib.TTFont, features: list):
-    if "GSUB" not in font:
+    if len(features) == 0 or "GSUB" not in font:
         return
-    list = font["GSUB"].table.FeatureList
-    records = list.FeatureRecord
-    records = [record for record in records if record.FeatureTag not in features]
-    list.FeatureRecord = records
-    list.FeatureCount = len(records)
+    records = font["GSUB"].table.FeatureList.FeatureRecord
+    # We cannot just remove the record, as this will mess up the scripts
+    for record in records:
+        if record.FeatureTag in features:
+            clearFeatureRecord(record)
+
+
+def clearFeatureRecord(featureRecord):
+    featureRecord.Feature.LookupListIndex.clear()
+    featureRecord.Feature.LookupCount = 0
+    featureRecord.FeatureTag = "DELT"  # Special value
 
 
 def moveFeatureLookups(fromFeature, toFeature):
     toFeature.LookupListIndex.extend(fromFeature.LookupListIndex)
     toFeature.LookupCount += fromFeature.LookupCount
-    fromFeature.LookupListIndex.clear()
-    fromFeature.LookupCount = 0
+
+
+def moveFeatureInLangSys(langSys, featureRecords, features: list, target: str):
+    targetRecord = None
+    # try to find existing target feature
+    for index in langSys.FeatureIndex:
+        featureRecord = featureRecords[index]
+        if featureRecord.FeatureTag == target:
+            targetRecord = featureRecord
+    for index in langSys.FeatureIndex:
+        featureRecord = featureRecords[index]
+        if featureRecord.FeatureTag in features:
+            if targetRecord == None:
+                # if there's no existing one, use the first matching feature as target
+                targetRecord = featureRecord
+                featureRecord.FeatureTag = target
+            else:
+                moveFeatureLookups(featureRecord.Feature, targetRecord.Feature)
+                clearFeatureRecord(featureRecord)
+    if targetRecord != None:
+        targetRecord.Feature.LookupListIndex.sort()
+
+
+def moveFeatureInScript(script, featureRecords, features: list, target: str):
+    if script.DefaultLangSys != None:
+        moveFeatureInLangSys(script.DefaultLangSys, featureRecords, features, target)
+    for langSysRecord in script.LangSysRecord:
+        moveFeatureInLangSys(langSysRecord.LangSys, featureRecords, features, target)
 
 
 def moveFeature(font: ttLib.TTFont, features: list, target: str):
-    if "GSUB" not in font:
+    if len(features) == 0 or "GSUB" not in font:
         return
-    records = font["GSUB"].table.FeatureList.FeatureRecord
-    targetRecord = next((x for x in records if x.FeatureTag == target), None)
 
-    for record in records:
-        if record.FeatureTag in features:
-            if targetRecord == None:
-                targetRecord = record
-            else:
-                moveFeatureLookups(record.Feature, targetRecord.Feature)
-            record.FeatureTag = target
-    if targetRecord != None:
-        targetRecord.Feature.LookupListIndex.sort()
-    records.sort(key=lambda r: r.FeatureTag)
+    table = font["GSUB"].table
+    featureRecords = table.FeatureList.FeatureRecord
+    scriptRecords = table.ScriptList.ScriptRecord
+    for scriptRecord in scriptRecords:
+        moveFeatureInScript(scriptRecord.Script, featureRecords, features, target)
 
 
 def loadFont():
@@ -182,8 +207,11 @@ def loadFont():
 
 
 def processFont(args):
-    args = args.to_py()
-    font = ttLib.TTFont(file="input.ttf", recalcBBoxes=False)
+    main(args.to_py(), "input.ttf")
+
+
+def main(args, filename):
+    font = ttLib.TTFont(file=filename, recalcBBoxes=False)
     instantiateFont(font, args.get("options"), args.get("variations"))
     removeFeature(font, args.get("disables"))
     moveFeature(font, args.get("features"), args.get("options").get("target"))

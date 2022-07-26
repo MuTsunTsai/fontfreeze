@@ -75,7 +75,7 @@ const hiddenFeatures = [
 	'dist', 'dtls', 'fin2', 'fin3', 'fina', 'flac', 'half', 'haln', 'init', 'isol',
 	'ljmo', 'locl', 'ltra', 'ltrm', 'mark', 'med2', 'medi', 'mkmk', 'nukt', 'pref',
 	'pres', 'pstf', 'psts', 'rclt', 'rkrf', 'rlig', 'rphf', 'rtla', 'rtlm', 'rvrn',
-	'ssty', 'stch', 'tjmo', 'vjmo'
+	'ssty', 'stch', 'tjmo', 'vjmo', 'DELT' // last one is special value
 ];
 
 const axisNames = {
@@ -110,7 +110,7 @@ async function generate() {
 		} catch(e) {
 			store.running = false;
 			console.log(e);
-			return; // user cancel
+			return;
 		}
 	} else {
 		await startAnime();
@@ -133,15 +133,20 @@ function suggestedFileName() {
 }
 
 function getBlob() {
-	const args = {
-		options: store.options,
-		variations: store.variations,
-		features: store.font.gsub.filter(g => store.features[g] === true),
-		disables: store.font.gsub.filter(g => store.features[g] === undefined),
-	};
-	pyodide.globals.get("processFont")(args);
-	const content = pyodide.FS.readFile('output.ttf');
-	return new Blob([content], { type: "font/ttf" });
+	try {
+		const args = {
+			options: store.options,
+			variations: store.variations,
+			features: store.font.gsub.filter(g => store.features[g] === true),
+			disables: store.font.gsub.filter(g => store.features[g] === undefined),
+		};
+		pyodide.globals.get("processFont")(args);
+		const content = pyodide.FS.readFile('output.ttf');
+		return new Blob([content], { type: "font/ttf" });
+	} catch(e) {
+		alert("An error occur: " + e.message);
+		throw e;
+	}
 }
 
 async function openFile(input) {

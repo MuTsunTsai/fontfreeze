@@ -44,8 +44,8 @@ to run Python code directly in your browser through WebAssembly,
 so it's purely front-end and nothing is stored in the back-end.
 The UI part is built with [petite-vue](https://github.com/vuejs/petite-vue) and [Bootstrap](https://getbootstrap.com/).
 
-The way FontFreeze deactivates a feature is by simply removing it,
-and it activates a feature by moving everything in it into `calt`,
+The way FontFreeze deactivates a feature is by removing all lookups inside it,
+and it activates a feature by moving all lookups in it into `calt`,
 which is usually activated by default in most environments.
 If this doesn't work for a particular environment,
 you may also try changing the "Target feature for activation" setting to `rvrn`
