@@ -1,0 +1,17 @@
+{
+	"name": "fontfreeze",
+	"version": "1.0.0",
+	"description": "Freeze variations and features in font.",
+	"scripts": {
+		"serve": "npx serve docs"
+	},
+	"keywords": [
+		"font"
+	],
+	"author": "Mu-Tsun Tsai<don.m.t.tsai@gmail.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MuTsunTsai/fontfreeze.git"
+	}
+}

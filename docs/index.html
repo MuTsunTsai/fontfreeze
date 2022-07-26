@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>FontFreeze</title>
+	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no">
+	<meta name="description" content="Freeze variations and features in font.">
+	<base target="_blank">
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-4GYC00FPRR"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'G-4GYC00FPRR');
+	</script>
+
+	<!-- SEO -->
+	<meta property="og:url" content="https://mutsuntsai.github.io/fontfreeze/">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="FontFreeze">
+	<meta property="og:image" content="https://mutsuntsai.github.io/fontfreeze/preview.png">
+	<meta property="og:image:width" content="764">
+	<meta property="og:image:height" content="511">
+	<meta property="og:description" content="Freeze variations and features in font.">
+
+	<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+	<script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
+	<script src="main.js"></script>
+</head>
+
+<body>
+	<div class="container py-5 px-sm-2 px-md-3 px-lg-5">
+		<div class="card bg-light">
+			<div class="card-body" v-scope v-cloak>
+				<div class="text-center my-3">
+					<img src="logo.png" style="max-width:100%;">
+					<div class="my-3">
+						<a class="btn btn-sm btn-secondary me-3" href="https://github.com/mutsuntsai/fontfreeze">GitHub repo</a>
+						©2022 <a href="https://github.com/mutsuntsai">Mu-Tsun Tsai</a>
+					</div>
+					<div class="dropzone mt-3">
+						<div v-if="!store.font">Drop .ttf file here or click here!</div>
+						<div v-else>{{store.font.fileName}} ({{store.font.fileSize}})</div>
+						<input type="file" accept="font/ttf" onchange="openFile(this)" class="mb-3">
+					</div>
+				</div>
+				<div v-if="store.font">
+					<h5>Font info</h5>
+					<div>
+						Font family:&emsp;<span class="pre text-primary">{{store.font.family}}</span>&emsp;{{store.font.version}}
+					</div>
+					<div v-if="store.font.description">
+						Description:&emsp;{{store.font.description}}
+					</div>
+					<div v-if="store.font.designer">
+						Designer:&emsp;<a :href="store.font.designerURL"
+						   v-if="store.font.designerURL">{{store.font.designer}}</a><span v-else>{{store.font.designer}}</span>
+					</div>
+					<div v-if="store.font.manufacturer">
+						Manufacturer:&emsp;<a :href="store.font.vendorURL"
+						   v-if="store.font.vendorURL">{{store.font.manufacturer}}</a><span
+							  v-else>{{store.font.manufacturer}}</span>
+					</div>
+					<div v-if="store.font.copyright">
+						Copyright:&emsp;{{store.font.copyright}}
+					</div>
+
+					<div v-if="store.font.fvar">
+						<h5>Variations</h5>
+						<div class="d-flex mb-3">
+							<label class="col-form-label pe-3">Predefined instances:</label>
+							<div class="flex-grow-1">
+								<select @change="setInstance(store.font.fvar.instances[$el.value])" class="form-control">
+									<option hidden></option>
+									<option v-for="(i, j) in store.font.fvar.instances" :key="i.name+j" :value="j">
+										{{i.name}}</button>
+								</select>
+							</div>
+						</div>
+						<div v-for="a in store.font.fvar.axes" class="mb-1" :key="a">
+							<input type="range" class="form-range me-4" style="width:10rem;" v-model="store.variations[a.tag]"
+								   :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
+							<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
+								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
+							<label>{{getAxisName(a)}}</label>
+						</div>
+					</div>
+
+					<div v-if="store.font.gsub&&store.font.gsub.length">
+						<h5>Features</h5>
+						<div class="d-flex flex-wrap">
+							<div v-for="f in store.font.gsub" style="flex-basis: 5.5rem;" :key="f">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" :id="'chk'+f"
+										   :indeterminate.prop="store.features[f]===undefined" v-model="store.features[f]"
+										   @change="checkboxChange(f)">
+									<label class="form-check-label" :for="'chk'+f">{{f}}</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row align-items-baseline">
+						<div class="col-4">
+							<h5>Preview</h5>
+						</div>
+						<div class="col-8 text-end">
+							<span class="me-3">{{store.previewSize}}pt</span>
+							<input type="range" class="form-range" style="width:10rem;" v-model="store.previewSize" min="9"
+								   max="48" @change="recalcTextAreaHeight">
+						</div>
+					</div>
+					<div :style="getTextAreaStyle()">
+						<textarea class="pre form-control" v-model="store.sample" @change="recalcTextAreaHeight"></textarea>
+					</div>
+
+					<h5>Output options</h5>
+					<div class="row">
+						<div class="col-12 col-md-6 mt-2">
+							<label>Font family</label>
+							<input class="form-control" v-model="store.options.family">
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<label>Font subfamily</label>
+							<input class="form-control" v-model="store.options.subfamily">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 col-md-6 mt-2">
+							<label>Target feature for activation</label>
+							<input class="form-control" v-model="store.options.target">
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<div class="form-check mt-4">
+								<input type="checkbox" class="form-check-input" id="chkContour"
+									   v-model="store.options.fixContour">
+								<label class="form-check-label" for="chkContour">Fix contour overlap issues on macOS.</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-5 row">
+						<div class="col">
+							<button class="btn btn-lg" type="button" onclick="generate()" :disabled="store.running"
+									:class="store.message?'btn-success':'btn-primary'">
+								{{store.message||"Generate font!"}}
+								<span class="loading ms-2" v-if="store.running"></span>
+							</button>
+						</div>
+						<div class="col text-end" v-if="store.url">
+							<a class="btn btn-lg btn-success" :href="store.url" :download="store.download">Download font</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
