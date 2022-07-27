@@ -44,12 +44,11 @@
 						Freeze variations and features in font.
 					</div>
 					<div class="my-3">
-						v.1.0.3
-						<a class="mx-3" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
-								 src="https://img.shields.io/github/stars/MuTsunTsai/fontfreeze?style=social"></a>
-						<span class="d-inline-block">
-							©2022 <a href="https://github.com/mutsuntsai">Mu-Tsun Tsai</a>
-						</span>
+						<img class="mx-2" src="https://img.shields.io/badge/version-1.0.4-green">
+						<a class="mx-2" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
+								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a>
+						<a class="mx-2" href="https://github.com/mutsuntsai"><img
+								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
 					</div>
 					<div class="dropzone mt-3">
 						<div v-if="!store.font">Drop .ttf file here or click here!</div>
@@ -84,14 +83,14 @@
 						<div class="d-flex mb-3">
 							<label class="col-form-label pe-3">Predefined instances:</label>
 							<div class="flex-grow-1">
-								<select @change="setInstance(store.font.fvar.instances[$el.value])" class="form-control">
+								<select @change="setInstance(instances[$el.value])" class="form-control">
 									<option hidden></option>
-									<option v-for="(i, j) in store.font.fvar.instances" :key="i.name+j" :value="j">
+									<option v-for="(i, j) in instances" :key="i.name+j" :value="j">
 										{{i.name}}</button>
 								</select>
 							</div>
 						</div>
-						<div v-for="a in store.font.fvar.axes" class="mb-1" :key="a">
+						<div v-for="a in axes" class="mb-1" :key="a">
 							<input type="range" class="form-range me-4" style="width:10rem;" v-model="store.variations[a.tag]"
 								   :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
 							<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"

@@ -50,6 +50,16 @@ addEventListener('DOMContentLoaded', () => createApp({
 			font-size: ${store.previewSize}pt;`
 		;
 	},
+	// The next two getter are for dealing with a bug in petite-vue 0.4.1
+	// that v-for expression is calculated one more time as the upper v-if condition becoming false
+	get instances() {
+		if(!store.font || !store.font.fvar) return [];
+		return store.font.fvar.instances;
+	},
+	get axes() {
+		if(!store.font || !store.font.fvar) return [];
+		return store.font.fvar.axes;
+	},
 	getAxisName(axis) {
 		return axis.name ? axis.name :
 			axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;

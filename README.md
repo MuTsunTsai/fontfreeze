@@ -4,7 +4,7 @@
   <a href="http://mutsuntsai.github.io/fontfreeze"><img width="400" src="https://github.com/MuTsunTsai/fontfreeze/raw/main/docs/logo.png"></a>
 </p>
 
-![GitHub Repo stars](https://img.shields.io/github/stars/MuTsunTsai/fontfreeze?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow)
 
 > Freeze variations and features in font.
 
