@@ -40,9 +40,16 @@
 			<div class="card-body" v-scope v-cloak>
 				<div class="text-center my-3">
 					<img src="logo.png" style="max-width:100%;">
+					<div class="mt-1">
+						Freeze variations and features in font.
+					</div>
 					<div class="my-3">
-						<a class="btn btn-sm btn-secondary me-3" href="https://github.com/mutsuntsai/fontfreeze">GitHub repo</a>
-						©2022 <a href="https://github.com/mutsuntsai">Mu-Tsun Tsai</a>
+						v.1.0.3
+						<a class="mx-3" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
+								 src="https://img.shields.io/github/stars/MuTsunTsai/fontfreeze?style=social"></a>
+						<span class="d-inline-block">
+							©2022 <a href="https://github.com/mutsuntsai">Mu-Tsun Tsai</a>
+						</span>
 					</div>
 					<div class="dropzone mt-3">
 						<div v-if="!store.font">Drop .ttf file here or click here!</div>
@@ -53,7 +60,8 @@
 				<div v-if="store.font">
 					<h5>Font info</h5>
 					<div>
-						Font family:&emsp;<span class="pre text-primary">{{store.font.family}}</span>&emsp;{{store.font.version}}
+						Font family:&emsp;<span class="text-primary"
+							  :style="`font-family: preview${store.previewIndex};`">{{store.font.family}}</span>&emsp;{{store.font.version}}
 					</div>
 					<div v-if="store.font.description">
 						Description:&emsp;{{store.font.description}}
@@ -112,13 +120,11 @@
 						</div>
 						<div class="col-8 text-end">
 							<span class="me-3">{{store.previewSize}}pt</span>
-							<input type="range" class="form-range" style="width:10rem;" v-model="store.previewSize" min="9"
-								   max="48" @change="recalcTextAreaHeight">
+							<input type="range" class="form-range" style="width:10rem;" min="8" max="48"
+								   v-model="store.previewSize">
 						</div>
 					</div>
-					<div :style="getTextAreaStyle()">
-						<textarea class="pre form-control" v-model="store.sample" @change="recalcTextAreaHeight"></textarea>
-					</div>
+					<div class="pre form-control p-3" :style="previewStyle" contenteditable="true" v-text="store.sample"></div>
 
 					<h5>Output options</h5>
 					<div class="row">

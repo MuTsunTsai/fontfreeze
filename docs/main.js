@@ -26,12 +26,14 @@ const store = reactive({
 	previewSize: 12,
 	running: false,
 	message: null,
+	previewIndex: 0,
 });
 fetchText("sample.md").then(t => store.sample = t)
 
 addEventListener('DOMContentLoaded', () => createApp({
 	store,
-	getTextAreaStyle() {
+	get previewStyle() {
+		if(!store.font) return null;
 		const feat = store.font.gsub
 			.filter(g => store.features[g] !== false)
 			.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
@@ -40,7 +42,13 @@ addEventListener('DOMContentLoaded', () => createApp({
 			store.font.fvar.axes
 				.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
 				.join(',');
-		return `font-feature-settings: ${feat}; font-variation-settings: ${vari}; font-size: ${store.previewSize}pt;`;
+		return `
+			white-space: pre-line;
+			font-family: preview${store.previewIndex};
+			font-feature-settings: ${feat};
+			font-variation-settings: ${vari};
+			font-size: ${store.previewSize}pt;`
+		;
 	},
 	getAxisName(axis) {
 		return axis.name ? axis.name :
@@ -66,7 +74,6 @@ addEventListener('DOMContentLoaded', () => createApp({
 		if(lastValues[f] === undefined) store.features[f] = false;
 		lastValues[f] = store.features[f];
 	},
-	recalcTextAreaHeight,
 }).mount());
 
 // Features that should not be exposed to the users
@@ -115,7 +122,8 @@ async function generate() {
 	} else {
 		await startAnime();
 		store.download = suggestedFileName();
-		store.url = await toDataUrl(getBlob());
+		if(store.url) URL.revokeObjectURL(store.url);
+		store.url = URL.createObjectURL(getBlob());
 	}
 	store.running = false;
 }
@@ -185,22 +193,12 @@ async function openFile(input) {
 	}
 }
 
-async function setPreviewFont(file) {
-	const url = await toDataUrl(file);
-	let rule = style.sheet.cssRules[0];
-	if(!rule) {
-		style.sheet.insertRule(`@font-face { font-family: preview; src: url('${url}')}`);
-	} else {
-		rule.style.src = `url('${url}')`;
-	}
-	nextTick(() => nextTick(recalcTextAreaHeight));
-}
+let fontURL;
 
-function recalcTextAreaHeight() {
-	const text = document.getElementsByTagName("textarea")[0];
-	if(!text) return setTimeout(recalcTextAreaHeight, 10);
-	text.style.height = "auto";
-	text.style.height = (text.scrollHeight + 10) + "px";
+function setPreviewFont(file) {
+	if(fontURL) URL.revokeObjectURL(fontURL);
+	fontURL = URL.createObjectURL(file);
+	style.sheet.insertRule(`@font-face { font-family: preview${++store.previewIndex}; src: url('${fontURL}')}`);
 }
 
 function getFileSize(file) {
@@ -214,19 +212,14 @@ function fetchText(url) {
 	return fetch(url).then(r => r.text());
 }
 
-function wrapReader(action) {
+function readFile(file) {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
 		reader.onload = e => resolve(e.target.result);
-		reader.onerror = e => reject(e);
-		action(reader);
+		reader.onerror = e => {
+			alert('Fail to open file: ' + e.message);
+			reject(e);
+		};
+		reader.readAsArrayBuffer(file);
 	});
-}
-
-function readFile(file) {
-	return wrapReader(reader => reader.readAsArrayBuffer(file));
-}
-
-function toDataUrl(blob) {
-	return wrapReader(reader => reader.readAsDataURL(blob));
 }
