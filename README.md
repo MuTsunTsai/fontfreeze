@@ -39,6 +39,15 @@ You can also select features you want to activate (or deactivate) from the featu
 Finally, click `Generate font!` to generate your font.
 It's that simple!
 
+Tips:
+
+- Whenever possible, use a non-variable version of the font as starting point,
+  as it will likely give better hinting than the variable one.
+- The preview text is editable.
+  You can put any sample source code in it to preview the result.
+- If you have multiple screens with different DPIs,
+  preview on each of them to make sure the result is perfect.
+
 ## How it works
 
 FontFreeze uses [fonttools](https://github.com/fonttools/fonttools),
