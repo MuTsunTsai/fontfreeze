@@ -40,7 +40,7 @@ def makeSelection(bits, style):
         bits |= 0b1000000
     else:
         bits &= ~0b1000000
-    if style == "Bold" or style == "BoldItalic":
+    if style == "Bold" or style == "Bold Italic":
         bits |= 0b100000
     else:
         bits &= ~0b100000
@@ -86,8 +86,11 @@ def instantiateFont(font: ttLib.TTFont, options, variations):
 
     updateNames(font, options)
     subfamily = options.get("subfamily")
-    font["head"].macStyle = MACSTYLE[subfamily]
-    font["OS/2"].fsSelection = makeSelection(font["OS/2"].fsSelection, subfamily)
+    try:
+        font["head"].macStyle = MACSTYLE[subfamily]
+        font["OS/2"].fsSelection = makeSelection(font["OS/2"].fsSelection, subfamily)
+    except:
+        pass
     dropVariationTables(font)
     if options.get("fixContour") == True:
         setOverlapFlags(font)

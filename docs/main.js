@@ -47,8 +47,7 @@ addEventListener('DOMContentLoaded', () => createApp({
 			font-family: preview${store.previewIndex};
 			font-feature-settings: ${feat};
 			font-variation-settings: ${vari};
-			font-size: ${store.previewSize}pt;`
-		;
+			font-size: ${store.previewSize}pt;`;
 	},
 	// The next two getter are for dealing with a bug in petite-vue 0.4.1
 	// that v-for expression is calculated one more time as the upper v-if condition becoming false
@@ -106,16 +105,14 @@ const axisNames = {
 async function generate() {
 	if(store.message) return; // button not ready
 	gtag('event', 'save_ttf');
-	if('showSaveFilePicker' in window) {
-		store.message = null;
-		try {
+	try {
+		if('showSaveFilePicker' in window) {
+			store.message = null;
 			const handle = await showSaveFilePicker({
 				suggestedName: suggestedFileName(),
 				types: [{
 					description: "TTF font",
-					accept: {
-						"font/ttf": ".ttf",
-					}
+					accept: { "font/ttf": ".ttf" },
 				}],
 			});
 			await startAnime();
@@ -124,16 +121,15 @@ async function generate() {
 			await writable.close();
 			store.message = "Generating complete!";
 			setTimeout(() => store.message = null, 3000);
-		} catch(e) {
-			store.running = false;
-			console.log(e);
-			return;
+		} else {
+			await startAnime();
+			store.download = suggestedFileName();
+			const blob = getBlob();
+			if(store.url) URL.revokeObjectURL(store.url);
+			store.url = URL.createObjectURL(blob);
 		}
-	} else {
-		await startAnime();
-		store.download = suggestedFileName();
-		if(store.url) URL.revokeObjectURL(store.url);
-		store.url = URL.createObjectURL(getBlob());
+	} catch(e) {
+		console.log(e);
 	}
 	store.running = false;
 }
@@ -159,12 +155,12 @@ function getBlob() {
 			disables: store.font.gsub.filter(g => store.features[g] === undefined),
 		};
 		pyodide.globals.get("processFont")(args);
-		const content = pyodide.FS.readFile('output.ttf');
-		return new Blob([content], { type: "font/ttf" });
 	} catch(e) {
 		alert("An error occur: " + e.message);
 		throw e;
 	}
+	const content = pyodide.FS.readFile('output.ttf');
+	return new Blob([content], { type: "font/ttf" });
 }
 
 async function openFile(input) {
@@ -208,7 +204,10 @@ let fontURL;
 function setPreviewFont(file) {
 	if(fontURL) URL.revokeObjectURL(fontURL);
 	fontURL = URL.createObjectURL(file);
-	style.sheet.insertRule(`@font-face { font-family: preview${++store.previewIndex}; src: url('${fontURL}')}`);
+	style.sheet.insertRule(`@font-face {
+		font-family: preview${++store.previewIndex};
+		src: url('${fontURL}')
+	}`);
 }
 
 function getFileSize(file) {

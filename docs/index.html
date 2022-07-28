@@ -48,7 +48,7 @@
 						Freeze variations and features in font.
 					</div>
 					<div class="my-3">
-						<img class="mx-2" src="https://img.shields.io/badge/version-1.0.5-green">
+						<img class="mx-2" src="https://img.shields.io/badge/version-1.0.6-green">
 						<a class="mx-2" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
 								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a>
 						<a class="mx-2" href="https://github.com/mutsuntsai"><img
@@ -137,7 +137,12 @@
 						</div>
 						<div class="col-12 col-md-6 mt-2">
 							<label>Font subfamily</label>
-							<input class="form-control" v-model="store.options.subfamily">
+							<select class="form-control" v-model="store.options.subfamily">
+								<option value="Regular">Regular</option>
+								<option value="Bold">Bold</option>
+								<option value="Italic">Italic</option>
+								<option value="Bold Italic">Bold Italic</option>
+							</select>
 						</div>
 					</div>
 					<div class="row">

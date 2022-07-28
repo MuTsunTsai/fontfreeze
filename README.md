@@ -1,7 +1,7 @@
 # FontFreeze
 
 <p align="center">
-  <a href="http://mutsuntsai.github.io/fontfreeze"><img width="400" src="https://github.com/MuTsunTsai/fontfreeze/raw/main/docs/logo.png"></a>
+  <a href="http://mutsuntsai.github.io/fontfreeze"><img width="800" src="https://github.com/MuTsunTsai/fontfreeze/raw/main/docs/logo.png"></a>
 </p>
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow)
