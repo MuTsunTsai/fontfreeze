@@ -71,5 +71,7 @@ Other projects that inspired FontFreeze include:
   (the original site no longer works,
   but [here](https://coding-fonts.netlify.app/) is a clone of it),
   for inspiring the default preview text.
+- [Microsoft Typography](https://docs.microsoft.com/en-us/typography),
+  for maintaining a detailed documentation on the OpenType specs.
 
 The "FontFreeze" banner is generated using [Text Generator](https://www.textfx.co/).
