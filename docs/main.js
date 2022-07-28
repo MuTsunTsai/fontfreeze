@@ -49,6 +49,11 @@ addEventListener('DOMContentLoaded', () => createApp({
 			font-variation-settings: ${vari};
 			font-size: ${store.previewSize}pt;`;
 	},
+	get more() {
+		const f = store.font;
+		if(!f) return false;
+		return f.description || f.designer || f.manufacturer || f.copyright || f.trademark;
+	},
 	// The next two getter are for dealing with a bug in petite-vue 0.4.1
 	// that v-for expression is calculated one more time as the upper v-if condition becoming false
 	get instances() {
@@ -83,6 +88,9 @@ addEventListener('DOMContentLoaded', () => createApp({
 		if(lastValues[f] === undefined) store.features[f] = false;
 		lastValues[f] = store.features[f];
 	},
+	info() {
+		bootstrap.Modal.getOrCreateInstance("#info").show();
+	}
 }).mount());
 
 // Features that should not be exposed to the users

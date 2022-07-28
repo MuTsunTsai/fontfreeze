@@ -2,10 +2,19 @@
 	body {
 		background: #181818;
 		color: #eee;
+		overflow-y: scroll;
 	}
 
 	:root {
 		--bs-light-rgb: 70, 70, 70;
+	}
+
+	.modal {
+		--bs-modal-bg: #444;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #aaa6 !important;
 	}
 
 	a.btn {
@@ -26,6 +35,21 @@
 	}
 }
 
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #0000;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #aaa;
+	background-clip: padding-box;
+	border: 7px solid #0000;
+	border-radius: 10px;
+}
+
 [v-cloak] {
 	display: none;
 }
@@ -36,6 +60,11 @@ body {
 
 a[href] {
 	color: var(--bs-info) !important;
+}
+
+td {
+	vertical-align: top;
+	padding: 0.25rem 0.5rem;
 }
 
 .form-check-input[type=checkbox]:indeterminate {

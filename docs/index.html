@@ -30,6 +30,7 @@
 	<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.2.0/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="style.css">
 	<script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+	<script src="https://unpkg.com/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
 	<script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
 	<script src="main.js"></script>
 </head>
@@ -48,7 +49,7 @@
 						Freeze variations and features in font.
 					</div>
 					<div class="my-3">
-						<img class="mx-2" src="https://img.shields.io/badge/version-1.0.6-green">
+						<img class="mx-2" alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
 						<a class="mx-2" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
 								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a>
 						<a class="mx-2" href="https://github.com/mutsuntsai"><img
@@ -61,25 +62,58 @@
 					</div>
 				</div>
 				<div v-if="store.font">
-					<h5>Font info</h5>
-					<div>
-						Font family:&emsp;<span class="text-primary"
-							  :style="`font-family: preview${store.previewIndex};`">{{store.font.family}}</span>&emsp;{{store.font.version}}
+					<div class="mt-4 text-center">
+						<span :style="`vertical-align:-0.25rem; font-family: preview${store.previewIndex};`"
+							  class="text-primary h3 me-4">{{store.font.family}}</span>
+						<div class="d-inline-block">
+							<span class="me-3">{{store.font.version}}</span>
+							<button class="btn btn-secondary btn-sm" type="button" @click="info" v-if="more">More info</button>
+						</div>
 					</div>
-					<div v-if="store.font.description">
-						Description:&emsp;{{store.font.description}}
-					</div>
-					<div v-if="store.font.designer">
-						Designer:&emsp;<a :href="store.font.designerURL"
-						   v-if="store.font.designerURL">{{store.font.designer}}</a><span v-else>{{store.font.designer}}</span>
-					</div>
-					<div v-if="store.font.manufacturer">
-						Manufacturer:&emsp;<a :href="store.font.vendorURL"
-						   v-if="store.font.vendorURL">{{store.font.manufacturer}}</a><span
-							  v-else>{{store.font.manufacturer}}</span>
-					</div>
-					<div v-if="store.font.copyright">
-						Copyright:&emsp;{{store.font.copyright}}
+					<div class="modal fade" id="info">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+							<div class="modal-content">
+								<div class="modal-body" style="max-height:calc(100vh - 150px); overflow-y:auto;">
+									<table class="w-100">
+										<tr v-if="store.font.description">
+											<td>Description</td>
+											<td>{{store.font.description}}</td>
+										</tr>
+										<tr v-if="store.font.designer">
+											<td>Designer</td>
+											<td>
+												<a :href="store.font.designerURL"
+												   v-if="store.font.designerURL">{{store.font.designer}}</a>
+												<span v-else>{{store.font.designer}}</span>
+											</td>
+										</tr>
+										<tr v-if="store.font.manufacturer">
+											<td>Manufacturer</td>
+											<td>
+												<a :href="store.font.vendorURL"
+												   v-if="store.font.vendorURL">{{store.font.manufacturer}}</a>
+												<span v-else>{{store.font.manufacturer}}</span>
+											</td>
+										</tr>
+										<tr v-if="store.font.copyright">
+											<td>Copyright</td>
+											<td>{{store.font.copyright}}</td>
+										</tr>
+										<tr v-if="store.font.trademark">
+											<td>Trademark</td>
+											<td>{{store.font.trademark}}</td>
+										</tr>
+										<tr v-if="store.font.license">
+											<td>license</td>
+											<td :class="{'small':store.font.license.length>200}">{{store.font.license}}</td>
+										</tr>
+									</table>
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-primary" type="button" data-bs-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div v-if="store.font.fvar">
