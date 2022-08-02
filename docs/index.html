@@ -49,7 +49,8 @@
 						Freeze variations and features in font.
 					</div>
 					<div class="my-3">
-						<img class="mx-2" alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
+						<img class="mx-2" alt="GitHub package.json version"
+							 src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
 						<a class="mx-2" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
 								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a>
 						<a class="mx-2" href="https://github.com/mutsuntsai"><img
@@ -151,6 +152,13 @@
 						</div>
 					</div>
 
+					<div class="row">
+						<div class="col-12 mt-3" v-effect="setUnicodeRange()">
+							<label>Remove glyphs</label>
+							<input class="form-control" v-model="store.removeGlyphs" placeholder="Enter characters to remove. Useful when you want those characters to fallback to other fonts.">
+						</div>
+					</div>
+
 					<div class="row align-items-baseline">
 						<div class="col-4">
 							<h5>Preview</h5>
@@ -167,7 +175,7 @@
 					<div class="row">
 						<div class="col-12 col-md-6 mt-2">
 							<label>Font family</label>
-							<input class="form-control" v-model="store.options.family">
+							<input class="form-control" v-model="store.options.family" placeholder="Better be different from the original family name">
 						</div>
 						<div class="col-12 col-md-6 mt-2">
 							<label>Font subfamily</label>
@@ -178,14 +186,19 @@
 								<option value="Bold Italic">Bold Italic</option>
 							</select>
 						</div>
-					</div>
-					<div class="row">
 						<div class="col-12 col-md-6 mt-2">
 							<label>Target feature for activation</label>
-							<input class="form-control" v-model="store.options.target">
+							<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
 						</div>
-						<div class="col-12 col-md-6 mt-2">
-							<div class="form-check mt-4">
+						<!-- <div class="col-12 col-md-6 mt-2">
+							<label>Output format</label>
+							<select class="form-control" v-model="store.options.format">
+								<option value="ttf">TTF</option>
+								<option value="woff2">WOFF2</option>
+							</select>
+						</div> -->
+						<div class="col-12 mt-2">
+							<div class="form-check mt-3">
 								<input type="checkbox" class="form-check-input" id="chkContour"
 									   v-model="store.options.fixContour">
 								<label class="form-check-label" for="chkContour">Fix contour overlap issues on macOS.</label>

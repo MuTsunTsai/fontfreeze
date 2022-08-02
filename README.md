@@ -36,6 +36,9 @@ You can also select features you want to activate (or deactivate) from the featu
 - Leaving a feature blank means keeping its default behavior
   (which may or may not be activated depending on the environment).
 
+You can also remove some of the glyphs by entering those characters in the `Remove glyphs`.
+This is useful when you want those characters to fallback to other fonts.
+
 Finally, click `Generate font!` to generate your font.
 It's that simple!
 
@@ -82,5 +85,8 @@ Other projects that inspired FontFreeze include:
   for inspiring the default preview text.
 - [Microsoft Typography](https://docs.microsoft.com/en-us/typography),
   for maintaining a detailed documentation on the OpenType specs.
+- [Font Squirrel Webfont Generator](https://www.fontsquirrel.com/tools/webfont-generator),
+  for **NOT** working on any of the fonts I wanted to pass to it,
+  and forcing me to create my own tool.
 
 The "FontFreeze" banner is generated using [Text Generator](https://www.textfx.co/).

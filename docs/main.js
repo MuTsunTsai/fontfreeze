@@ -23,6 +23,7 @@ let lastValues;
 const store = reactive({
 	font: null,
 	sample: "",
+	removeGlyphs: "",
 	previewSize: 12,
 	running: false,
 	message: null,
@@ -90,6 +91,9 @@ addEventListener('DOMContentLoaded', () => createApp({
 	},
 	info() {
 		bootstrap.Modal.getOrCreateInstance("#info").show();
+	},
+	setUnicodeRange() {
+		style.sheet.cssRules[0].style.unicodeRange = getUnicodes();
 	}
 }).mount());
 
@@ -110,22 +114,31 @@ const axisNames = {
 	"wght": "Weight",
 };
 
+const formats = {
+	"ttf": {
+		description: "TTF font",
+		accept: { "font/ttf": ".ttf" },
+	},
+	"woff2": {
+		description: "WOFF2 font",
+		accept: { "font/woff2": ".woff2" },
+	}
+}
+
 async function generate() {
 	if(store.message) return; // button not ready
-	gtag('event', 'save_ttf');
+	gtag('event', 'save_' + store.options.format);
 	try {
 		if('showSaveFilePicker' in window) {
 			store.message = null;
 			const handle = await showSaveFilePicker({
 				suggestedName: suggestedFileName(),
-				types: [{
-					description: "TTF font",
-					accept: { "font/ttf": ".ttf" },
-				}],
+				types: [formats[store.options.format]],
 			});
 			await startAnime();
+			const blob = getBlob();
 			const writable = await handle.createWritable();
-			await writable.write(getBlob());
+			await writable.write(blob);
 			await writable.close();
 			store.message = "Generating complete!";
 			setTimeout(() => store.message = null, 3000);
@@ -151,13 +164,14 @@ function startAnime() {
 }
 
 function suggestedFileName() {
-	return store.font.fileName.replace(/\.[ot]tf$/i, "_freeze.ttf");
+	return store.font.fileName.replace(/\.[ot]tf$/i, "_freeze." + store.options.format);
 }
 
 function getBlob() {
 	try {
 		const args = {
 			options: store.options,
+			unicodes: getUnicodes(),
 			variations: store.variations,
 			features: store.font.gsub.filter(g => store.features[g] === true),
 			disables: store.font.gsub.filter(g => store.features[g] === undefined),
@@ -191,11 +205,13 @@ async function openFile(input) {
 		store.features = {};
 		lastValues = {};
 		store.variations = {};
+		store.removeGlyphs = "";
 		store.options = {
 			family: info.family + " Freeze",
 			subfamily: "Regular",
 			fixContour: false,
 			target: "calt",
+			format: "ttf",
 		};
 		for(let g of info.gsub) store.features[g] = lastValues[g] = false;
 		if(info.fvar) {
@@ -209,20 +225,46 @@ async function openFile(input) {
 
 let fontURL;
 
+function getRemoveCharCodes() {
+	const removes = [];
+	for(let i = 0; i < store.removeGlyphs.length; i++) {
+		removes.push(store.removeGlyphs.charCodeAt(i));
+	}
+	removes.sort();
+	return removes;
+}
+
+function getUnicodes() {
+	const removes = getRemoveCharCodes(), ranges = [[0, 0x10FFFF]];
+	if(removes.length == 0) return "";
+	for(let code of removes) {
+		const range = ranges.find(r => r[0] <= code && code <= r[1]);
+		if(!range) continue;
+		const end = range[1];
+		range[1] = code - 1;
+		ranges.push([code + 1, end]);
+	}
+	return ranges
+		.filter(r => r[0] <= r[1])
+		.map(r => `U+${r[0].toString(16)}-${r[1].toString(16)}`)
+		.join(',');
+}
+
 function setPreviewFont(file) {
 	if(fontURL) URL.revokeObjectURL(fontURL);
 	fontURL = URL.createObjectURL(file);
+	if(style.sheet.cssRules.length > 0) style.sheet.deleteRule(0);
 	style.sheet.insertRule(`@font-face {
 		font-family: preview${++store.previewIndex};
-		src: url('${fontURL}')
+		src: url('${fontURL}');
 	}`);
 }
 
 function getFileSize(file) {
 	let size = file.size;
 	if(size < 1024) return size + "B"; else size /= 1024;
-	if(size < 1024) return size.toFixed(1) + "KB"; else size /= 1024;
-	return size.toFixed(1) + "MB";
+	if(size < 1024) return size.toFixed(1) + "KiB"; else size /= 1024;
+	return size.toFixed(1) + "MiB";
 }
 
 function fetchText(url) {

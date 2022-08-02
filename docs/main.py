@@ -1,4 +1,5 @@
-import fontTools.ttLib as ttLib
+from fontTools.ttLib import TTFont
+from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
 
 PLAT_MAC = 1
@@ -59,7 +60,7 @@ def getPostscriptName(familyName, subfamilyName):
     return f"{familyName}-{subfamilyName}"
 
 
-def updateNames(font: ttLib.TTFont, options):
+def updateNames(font: TTFont, options):
     nameTable = font["name"]
     nameTable.names = []
     family = options.get("family")
@@ -80,7 +81,7 @@ def updateNames(font: ttLib.TTFont, options):
     nameTable.setName(postscriptName, 6, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
 
 
-def instantiateFont(font: ttLib.TTFont, options, variations):
+def instantiateFont(font: TTFont, options, variations):
     if "fvar" in font:
         instantiateVariableFont(font, variations, inplace=True, overlap=True)
 
@@ -96,7 +97,7 @@ def instantiateFont(font: ttLib.TTFont, options, variations):
         setOverlapFlags(font)
 
 
-def removeFeature(font: ttLib.TTFont, features: list):
+def removeFeature(font: TTFont, features: list):
     if len(features) == 0 or "GSUB" not in font:
         return
     records = font["GSUB"].table.FeatureList.FeatureRecord
@@ -145,7 +146,7 @@ def moveFeatureInScript(script, featureRecords, features: list, target: str):
         moveFeatureInLangSys(langSysRecord.LangSys, featureRecords, features, target)
 
 
-def moveFeature(font: ttLib.TTFont, features: list, target: str):
+def moveFeature(font: TTFont, features: list, target: str):
     if len(features) == 0 or "GSUB" not in font:
         return
 
@@ -156,9 +157,17 @@ def moveFeature(font: ttLib.TTFont, features: list, target: str):
         moveFeatureInScript(scriptRecord.Script, featureRecords, features, target)
 
 
+def subset(font: TTFont, unicodes: str):
+    if unicodes == "":
+        return
+    sub = Subsetter(SSOptions(layout_features=["*"])) # keep all features
+    sub.populate(unicodes=parse_unicodes(unicodes))
+    sub.subset(font)
+
+
 def loadFont():
     global inputFont
-    inputFont = ttLib.TTFont(file="input.ttf", recalcBBoxes=False)
+    inputFont = TTFont(file="input.ttf", recalcBBoxes=False)
 
     features = (
         inputFont["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in inputFont else []
@@ -214,8 +223,9 @@ def processFont(args):
 
 
 def main(args, filename):
-    font = ttLib.TTFont(file=filename, recalcBBoxes=False)
+    font = TTFont(file=filename, recalcBBoxes=False)
     instantiateFont(font, args.get("options"), args.get("variations"))
     removeFeature(font, args.get("disables"))
     moveFeature(font, args.get("features"), args.get("options").get("target"))
+    subset(font, args.get("unicodes"))
     font.save("output.ttf")
