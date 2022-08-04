@@ -42,7 +42,7 @@
 			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</a>
 		</div>
 		<div class="card bg-light">
-			<div class="card-body" v-scope v-cloak>
+			<div class="card-body" v-scope="{drag:false}" v-cloak>
 				<div class="text-center my-3">
 					<img src="logo.png" style="max-width:100%;">
 					<div class="mt-1">
@@ -56,10 +56,11 @@
 						<a class="mx-2" href="https://github.com/mutsuntsai"><img
 								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
 					</div>
-					<div class="dropzone mt-3">
+					<div class="dropzone mt-3" :class="{drag:drag}" @dragover="drag=true" @dragleave="drag=false"
+						 @drop="drag=false">
 						<div v-if="!store.font">Drop .ttf file here or click here!</div>
 						<div v-else>{{store.font.fileName}} ({{store.font.fileSize}})</div>
-						<input type="file" accept="font/ttf" onchange="openFile(this)">
+						<input type="file" accept="font/ttf" onchange="openFile(this)" title="Open font file">
 					</div>
 				</div>
 				<div v-if="store.font">
@@ -74,7 +75,7 @@
 					<div class="modal fade" id="info">
 						<div class="modal-dialog modal-dialog-centered modal-lg">
 							<div class="modal-content">
-								<div class="modal-body" style="max-height:calc(100vh - 150px); overflow-y:auto;">
+								<div class="modal-body">
 									<table class="w-100">
 										<tr v-if="store.font.description">
 											<td>Description</td>
@@ -155,7 +156,8 @@
 					<div class="row">
 						<div class="col-12 mt-3" v-effect="setUnicodeRange()">
 							<label>Remove glyphs</label>
-							<input class="form-control" v-model="store.removeGlyphs" placeholder="Enter characters to remove. Useful when you want those characters to fallback to other fonts.">
+							<input class="form-control" v-model="store.removeGlyphs"
+								   placeholder="Enter characters to remove. Useful when you want those characters to fallback to other fonts.">
 						</div>
 					</div>
 
@@ -169,13 +171,15 @@
 								   v-model="store.previewSize">
 						</div>
 					</div>
-					<div class="pre form-control p-3" :style="previewStyle" contenteditable="true" v-text="store.sample"></div>
+					<div class="pre form-control p-3" :style="previewStyle" contenteditable="true" v-text="store.sample">
+					</div>
 
 					<h5>Output options</h5>
 					<div class="row">
 						<div class="col-12 col-md-6 mt-2">
 							<label>Font family</label>
-							<input class="form-control" v-model="store.options.family" placeholder="Better be different from the original family name">
+							<input class="form-control" v-model="store.options.family"
+								   placeholder="Better be different from the original family name">
 						</div>
 						<div class="col-12 col-md-6 mt-2">
 							<label>Font subfamily</label>

@@ -1,46 +1,9 @@
-@media (prefers-color-scheme: dark) {
-	body {
-		background: #181818;
-		color: #eee;
-		overflow-y: scroll;
-	}
-
-	:root {
-		--bs-light-rgb: 70, 70, 70;
-	}
-
-	.modal {
-		--bs-modal-bg: #444;
-	}
-
-	::-webkit-scrollbar-thumb {
-		background-color: #aaa6 !important;
-	}
-
-	a.btn {
-		color: inherit !important;
-	}
-
-	.form-control,
-	.form-control:focus,
-	.form-check-input,
-	.form-range::-webkit-slider-runnable-track {
-		background-color: var(--bs-gray-800);
-		border-color: var(--bs-gray-600);
-		color: white;
-	}
-
-	.dropzone {
-		border-color: #eee;
-	}
-}
-
 ::-webkit-scrollbar {
-    width: 20px;
+	width: 20px;
 }
 
 ::-webkit-scrollbar-track {
-    background-color: #0000;
+	background-color: #0000;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -77,6 +40,11 @@ h5 {
 	margin-top: 2rem;
 }
 
+.modal-body {
+	max-height: calc(100vh - 150px);
+	overflow-y: auto;
+}
+
 .form-range {
 	height: unset;
 }
@@ -89,6 +57,10 @@ h5 {
 	justify-content: center;
 	align-items: center;
 	width: min(100%, 30rem);
+}
+
+.dropzone.drag {
+	border-color: black;
 }
 
 .dropzone input {
@@ -131,5 +103,43 @@ h5 {
 
 	to {
 		transform: rotate(1turn);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	body {
+		background: #181818;
+		color: #eee;
+		overflow-y: scroll;
+	}
+
+	:root {
+		--bs-light-rgb: 70, 70, 70;
+		--bs-border-color: #666;
+	}
+
+	.modal {
+		--bs-modal-bg: #444;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #aaa6 !important;
+	}
+
+	a.btn {
+		color: inherit !important;
+	}
+
+	.form-control,
+	.form-control:focus,
+	.form-check-input,
+	.form-range::-webkit-slider-runnable-track {
+		background-color: var(--bs-gray-800);
+		border-color: var(--bs-gray-600);
+		color: white;
+	}
+
+	.dropzone.drag {
+		border-color: #ccc;
 	}
 }
