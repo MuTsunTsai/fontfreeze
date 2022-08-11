@@ -29,7 +29,6 @@
 
 	<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.2.0/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="style.css">
-	<script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
 	<script src="https://unpkg.com/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
 	<script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
 	<script src="main.js"></script>
@@ -58,9 +57,15 @@
 					</div>
 					<div class="dropzone mt-3" :class="{drag:drag}" @dragover="drag=true" @dragleave="drag=false"
 						 @drop="drag=false">
-						<div v-if="!store.font">Drop .ttf file here or click here!</div>
+						<div v-if="store.loading">Loading {{store.loading}}. Please wait...</div>
+						<div v-else-if="!store.font">Drop a font file here or click here to upload!</div>
 						<div v-else>{{store.font.fileName}} ({{store.font.fileSize}})</div>
-						<input type="file" accept="font/ttf" onchange="openFile(this)" title="Open font file">
+						<input type="file" onchange="openFile(this)" title="Open font file"
+							   :disabled="store.loading">
+					</div>
+					<div v-if="store.localFontSupport" class="mt-2">
+						Or <button type="button" :disabled="store.loading" class="btn btn-secondary btn-sm"
+								onclick="local()">select a local font</button> !
 					</div>
 				</div>
 				<div v-if="store.font">
@@ -69,7 +74,8 @@
 							  class="text-primary h3 me-4">{{store.font.family}}</span>
 						<div class="d-inline-block">
 							<span class="me-3">{{store.font.version}}</span>
-							<button class="btn btn-secondary btn-sm" type="button" @click="info" v-if="more">More info</button>
+							<button class="btn btn-secondary btn-sm" type="button" @click="info" v-if="more">More
+								info</button>
 						</div>
 					</div>
 					<div class="modal fade" id="info">
@@ -191,16 +197,16 @@
 							</select>
 						</div>
 						<div class="col-12 col-md-6 mt-2">
-							<label>Target feature for activation</label>
-							<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
-						</div>
-						<!-- <div class="col-12 col-md-6 mt-2">
 							<label>Output format</label>
 							<select class="form-control" v-model="store.options.format">
 								<option value="ttf">TTF</option>
 								<option value="woff2">WOFF2</option>
 							</select>
-						</div> -->
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<label>Target feature for activation</label>
+							<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
+						</div>
 						<div class="col-12 mt-2">
 							<div class="form-check mt-3">
 								<input type="checkbox" class="form-check-input" id="chkContour"
@@ -220,6 +226,31 @@
 						</div>
 						<div class="col text-end" v-if="store.url">
 							<a class="btn btn-lg btn-success" :href="store.url" :download="store.download">Download font</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="local" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4>Select local font</h4>
+							</div>
+							<div class="modal-body">
+								<select class="form-control" v-model.number="store.localFont">
+									<option hidden></option>
+									<option v-for="(f,i) in store.localFonts" :key="i" :value="i">{{f.fullName}}</option>
+								</select>
+								<div class="mt-3">
+									Note: This is an experimental feature and it may not work for all fonts.
+									<a href="https://github.com/WICG/local-font-access/issues/96">Related issue.</a>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+								<button class="btn btn-primary" type="button" data-bs-dismiss="modal" onclick="loadLocal()"
+										:disabled="store.localFont===null">OK</button>
+							</div>
 						</div>
 					</div>
 				</div>

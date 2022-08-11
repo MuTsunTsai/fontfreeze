@@ -50,6 +50,7 @@ Tips:
   You can put any sample source code in it to preview the result.
 - If you have multiple screens with different DPIs,
   preview on each of them to make sure the result is perfect.
+- You can now also export to WOFF2 format and use the font on web!
 
 ## How it works
 

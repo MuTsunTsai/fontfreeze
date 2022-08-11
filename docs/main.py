@@ -1,3 +1,4 @@
+import os
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
@@ -14,8 +15,6 @@ MACSTYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
 
 OVERLAP_SIMPLE = 0x40
 OVERLAP_COMPOUND = 0x0400
-
-inputFont = None
 
 
 def dropVariationTables(font):
@@ -160,14 +159,13 @@ def moveFeature(font: TTFont, features: list, target: str):
 def subset(font: TTFont, unicodes: str):
     if unicodes == "":
         return
-    sub = Subsetter(SSOptions(layout_features=["*"])) # keep all features
+    sub = Subsetter(SSOptions(layout_features=["*"]))  # keep all features
     sub.populate(unicodes=parse_unicodes(unicodes))
     sub.subset(font)
 
 
 def loadFont():
-    global inputFont
-    inputFont = TTFont(file="input.ttf", recalcBBoxes=False)
+    inputFont = loadTtfFont("temp")
 
     features = (
         inputFont["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in inputFont else []
@@ -200,6 +198,11 @@ def loadFont():
             ),
         }
 
+    # change temp to input, preventing input being overwritten by invalid file
+    if os.path.exists("input"):
+        os.remove("input")
+    os.rename("temp", "input")
+
     return {
         "family": inputFont["name"].getBestFamilyName(),
         "copyright": inputFont["name"].getDebugName(0),
@@ -218,14 +221,26 @@ def loadFont():
     }
 
 
+def loadTtfFont(filename):
+    return TTFont(
+        file=filename,
+        recalcBBoxes=False,
+        fontNumber=0,  # in case it's a font collection
+    )
+
+
 def processFont(args):
-    main(args.to_py(), "input.ttf")
+    main(args.to_py(), "input", "output")
 
 
-def main(args, filename):
-    font = TTFont(file=filename, recalcBBoxes=False)
+def main(args, filename, output):
+    font = loadTtfFont(filename)
     instantiateFont(font, args.get("options"), args.get("variations"))
     removeFeature(font, args.get("disables"))
     moveFeature(font, args.get("features"), args.get("options").get("target"))
     subset(font, args.get("unicodes"))
-    font.save("output.ttf")
+
+    if args.get("options").get("format") == "woff2":
+        font.flavor = "woff2"
+
+    font.save(output)

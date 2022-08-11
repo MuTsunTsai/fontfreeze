@@ -1,26 +1,33 @@
 const { reactive, createApp, nextTick } = PetiteVue;
 
-let pyodide;
+const worker = new Worker("worker.js");
+const initialized = new Promise(resolve => {
+	worker.addEventListener('message', e => {
+		if(e.data == "initialized") resolve();
+	}, { once: true });
+});
 
-async function init() {
-	const [py, script] = await Promise.all([
-		loadPyodide().then(async p => {
-			await p.loadPackage('fonttools');
-			return p;
-		}),
-		fetchText("main.py"),
-	]);
-	pyodide = py;
-	pyodide.runPython(script);
+function callWorker(command, data) {
+	return new Promise((resolve, reject) => {
+		const channel = new MessageChannel();
+		worker.postMessage([command, data], [channel.port2]);
+		channel.port1.onmessage = e => {
+			const { success, data } = e.data;
+			if(success) resolve(data);
+			else reject(new Error(data));
+		};
+	});
 }
-
-const initialized = init();
 
 const style = document.createElement("style");
 document.head.appendChild(style);
 
 let lastValues;
 const store = reactive({
+	localFontSupport: 'queryLocalFonts' in window,
+	localFonts: [],
+	localFont: null,
+	loading: null,
 	font: null,
 	sample: "",
 	removeGlyphs: "",
@@ -29,7 +36,10 @@ const store = reactive({
 	message: null,
 	previewIndex: 0,
 });
-fetchText("sample.md").then(t => store.sample = t)
+
+fetch("sample.md")
+	.then(r => r.text())
+	.then(t => store.sample = t);
 
 addEventListener('DOMContentLoaded', () => createApp({
 	store,
@@ -136,7 +146,10 @@ async function generate() {
 				types: [formats[store.options.format]],
 			});
 			await startAnime();
-			const blob = getBlob();
+			const url = await getOutputURL();
+			const response = await fetch(url);
+			const content = await response.arrayBuffer();
+			const blob = new Blob([content], { type: "font/" + store.options.format });
 			const writable = await handle.createWritable();
 			await writable.write(blob);
 			await writable.close();
@@ -144,10 +157,8 @@ async function generate() {
 			setTimeout(() => store.message = null, 3000);
 		} else {
 			await startAnime();
+			store.url = await getOutputURL();
 			store.download = suggestedFileName();
-			const blob = getBlob();
-			if(store.url) URL.revokeObjectURL(store.url);
-			store.url = URL.createObjectURL(blob);
 		}
 	} catch(e) {
 		console.log(e);
@@ -164,10 +175,15 @@ function startAnime() {
 }
 
 function suggestedFileName() {
-	return store.font.fileName.replace(/\.[ot]tf$/i, "_freeze." + store.options.format);
+	const name = store.font.fileName.replace(/\.[a-z0-9]+$/i, "");
+	return name + "_freeze." + store.options.format;
 }
 
-function getBlob() {
+function clone(obj) {
+	return JSON.parse(JSON.stringify(obj));
+}
+
+async function getOutputURL() {
 	try {
 		const args = {
 			options: store.options,
@@ -176,54 +192,67 @@ function getBlob() {
 			features: store.font.gsub.filter(g => store.features[g] === true),
 			disables: store.font.gsub.filter(g => store.features[g] === undefined),
 		};
-		pyodide.globals.get("processFont")(args);
+		return await callWorker('save', clone(args));
 	} catch(e) {
 		alert("An error occur: " + e.message);
 		throw e;
 	}
-	const content = pyodide.FS.readFile('output.ttf');
-	return new Blob([content], { type: "font/ttf" });
 }
 
 async function openFile(input) {
 	gtag('event', 'open_ttf');
-	await initialized;
 	const file = input.files[0];
 	if(!file) return;
 	input.value = ""; // clear field
-	const buffer = await readFile(file);
-	const array = new Uint8Array(buffer);
-	pyodide.FS.writeFile('input.ttf', array);
 	try {
-		const info = pyodide.runPython("loadFont()")
-			.toJs({ dict_converter: Object.fromEntries });
-		setPreviewFont(file);
-		console.log(JSON.parse(JSON.stringify(info)));
-		info.fileName = file.name;
-		info.fileSize = getFileSize(file);
-		info.gsub = info.gsub.filter(g => !hiddenFeatures.includes(g));
-		store.features = {};
-		lastValues = {};
-		store.variations = {};
-		store.removeGlyphs = "";
-		store.options = {
-			family: info.family + " Freeze",
-			subfamily: "Regular",
-			fixContour: false,
-			target: "calt",
-			format: "ttf",
-		};
-		for(let g of info.gsub) store.features[g] = lastValues[g] = false;
-		if(info.fvar) {
-			for(let a of info.fvar.axes) store.variations[a.tag] = a.default;
-		}
-		store.font = info;
+		await openBlob(file, file.name);
 	} catch(e) {
+		console.log(e);
 		alert(`"${file.name}" is not a valid font file.`);
 	}
 }
 
-let fontURL;
+async function openBlob(blob, name) {
+
+
+	store.loading = "packages";
+	await initialized;
+	store.loading = "font";
+
+	const tempURL = URL.createObjectURL(blob);
+	let info;
+	try {
+		info = await callWorker('open', tempURL);
+	} catch(e) {
+		URL.revokeObjectURL(tempURL);
+		throw e;
+	} finally {
+		store.loading = null;
+	}
+
+	console.log(clone(info));
+	setPreviewFont(tempURL);
+
+	info.fileName = name;
+	info.fileSize = getFileSize(blob);
+	info.gsub = info.gsub.filter(g => !hiddenFeatures.includes(g));
+	store.features = {};
+	lastValues = {};
+	store.variations = {};
+	store.removeGlyphs = "";
+	store.options = {
+		family: info.family + " Freeze",
+		subfamily: "Regular",
+		fixContour: false,
+		target: "calt",
+		format: "ttf",
+	};
+	for(let g of info.gsub) store.features[g] = lastValues[g] = false;
+	if(info.fvar) {
+		for(let a of info.fvar.axes) store.variations[a.tag] = a.default;
+	}
+	store.font = info;
+}
 
 function getRemoveCharCodes() {
 	const removes = [];
@@ -250,9 +279,11 @@ function getUnicodes() {
 		.join(',');
 }
 
-function setPreviewFont(file) {
+let fontURL;
+
+function setPreviewFont(url) {
 	if(fontURL) URL.revokeObjectURL(fontURL);
-	fontURL = URL.createObjectURL(file);
+	fontURL = url;
 	if(style.sheet.cssRules.length > 0) style.sheet.deleteRule(0);
 	style.sheet.insertRule(`@font-face {
 		font-family: preview${++store.previewIndex};
@@ -260,15 +291,11 @@ function setPreviewFont(file) {
 	}`);
 }
 
-function getFileSize(file) {
-	let size = file.size;
+function getFileSize(blob) {
+	let size = blob.size;
 	if(size < 1024) return size + "B"; else size /= 1024;
 	if(size < 1024) return size.toFixed(1) + "KiB"; else size /= 1024;
 	return size.toFixed(1) + "MiB";
-}
-
-function fetchText(url) {
-	return fetch(url).then(r => r.text());
 }
 
 function readFile(file) {
@@ -281,4 +308,25 @@ function readFile(file) {
 		};
 		reader.readAsArrayBuffer(file);
 	});
+}
+
+async function local() {
+	await navigator.permissions.query({
+		name: "local-fonts",
+		description: ""
+	});
+	const fonts = await window.queryLocalFonts();
+	if(fonts.length == 0) return; // permission denied
+	store.localFonts = fonts;
+	bootstrap.Modal.getOrCreateInstance("#local").show();
+}
+
+async function loadLocal() {
+	const font = store.localFonts[store.localFont];
+	try {
+		const blob = await font.blob();
+		await openBlob(blob, font.fullName);
+	} catch(e) {
+		alert("An error occur: " + e.message);
+	}
 }
