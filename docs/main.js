@@ -26,7 +26,8 @@ let lastValues;
 const store = reactive({
 	localFontSupport: 'queryLocalFonts' in window,
 	localFonts: [],
-	localFont: null,
+	localFont: "",
+	unavailableFonts: [],
 	loading: null,
 	font: null,
 	sample: "",
@@ -323,8 +324,18 @@ async function local() {
 
 async function loadLocal() {
 	const font = store.localFonts[store.localFont];
+	let blob;
 	try {
-		const blob = await font.blob();
+		blob = await font.blob();
+	} catch(e) {
+		alert("An error occur: " + e.message);
+		store.unavailableFonts.push(font.postscriptName);
+		return;
+	} finally {
+		store.localFont = "";
+	}
+	bootstrap.Modal.getOrCreateInstance("#local").hide();
+	try {
 		await openBlob(blob, font.fullName);
 	} catch(e) {
 		alert("An error occur: " + e.message);
