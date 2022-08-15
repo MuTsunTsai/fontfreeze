@@ -1,5 +1,14 @@
 {
 	"cSpell.words": [
-		"Pyodide"
+		"fonttools",
+		"fvar",
+		"gsub",
+		"Pyodide",
+		"unicodes",
+		"vfit",
+		"Webfont"
+	],
+	"cSpell.ignoreRegExpList": [
+		"/([\"'`])[a-z]{4}\\1/gi"
 	]
 }
