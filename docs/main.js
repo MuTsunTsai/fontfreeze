@@ -50,7 +50,7 @@ addEventListener('DOMContentLoaded', () => createApp({
 			.filter(g => store.features[g] !== false)
 			.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
 			.join(',');
-		const vari = !store.font.fvar ? "normal" :
+		const variation = !store.font.fvar ? "normal" :
 			store.font.fvar.axes
 				.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
 				.join(',');
@@ -58,7 +58,7 @@ addEventListener('DOMContentLoaded', () => createApp({
 			white-space: pre-line;
 			font-family: preview${store.previewIndex};
 			font-feature-settings: ${feat};
-			font-variation-settings: ${vari};
+			font-variation-settings: ${variation};
 			font-size: ${store.previewSize}pt;`;
 	},
 	get more() {

@@ -85,21 +85,25 @@
 									<table class="w-100">
 										<tr v-if="store.font.description">
 											<td>Description</td>
-											<td :class="{'small':store.font.description.length>200}">{{store.font.description}}</td>
+											<td :class="{'small':store.font.description.length>200}">
+												{{store.font.description}}
+											</td>
 										</tr>
 										<tr v-if="store.font.designer">
 											<td>Designer</td>
 											<td>
-												<a :href="store.font.designerURL"
-												   v-if="store.font.designerURL">{{store.font.designer}}</a>
+												<a :href="store.font.designerURL" v-if="store.font.designerURL">
+													{{store.font.designer}}
+												</a>
 												<span v-else>{{store.font.designer}}</span>
 											</td>
 										</tr>
 										<tr v-if="store.font.manufacturer">
 											<td>Manufacturer</td>
 											<td>
-												<a :href="store.font.vendorURL"
-												   v-if="store.font.vendorURL">{{store.font.manufacturer}}</a>
+												<a :href="store.font.vendorURL" v-if="store.font.vendorURL">
+													{{store.font.manufacturer}}
+												</a>
 												<span v-else>{{store.font.manufacturer}}</span>
 											</td>
 										</tr>
@@ -113,7 +117,9 @@
 										</tr>
 										<tr v-if="store.font.license">
 											<td>license</td>
-											<td :class="{'small':store.font.license.length>200}">{{store.font.license}}</td>
+											<td :class="{'small':store.font.license.length>200}">
+												{{store.font.license}}
+											</td>
 										</tr>
 									</table>
 								</div>
@@ -129,16 +135,16 @@
 						<div class="d-flex mb-3">
 							<label class="col-form-label pe-3">Predefined instances:</label>
 							<div class="flex-grow-1">
-								<select @change="setInstance(instances[$el.value])" class="form-control">
-									<option hidden></option>
+								<select @change="setInstance(instances[$el.value])" class="form-select" required>
+									<option value="" hidden>Select a predefined instance</option>
 									<option v-for="(i, j) in instances" :key="i.name+j" :value="j">
 										{{i.name}}</button>
 								</select>
 							</div>
 						</div>
 						<div v-for="a in axes" class="mb-1" :key="a">
-							<input type="range" class="form-range me-4" style="width:10rem;" v-model.number="store.variations[a.tag]"
-								   :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
+							<input type="range" class="form-range me-4" style="width:10rem;" @input="clear"
+								   v-model.number="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)">
 							<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
 								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
 							<label>{{getAxisName(a)}}</label>
