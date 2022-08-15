@@ -137,7 +137,7 @@
 							</div>
 						</div>
 						<div v-for="a in axes" class="mb-1" :key="a">
-							<input type="range" class="form-range me-4" style="width:10rem;" v-model="store.variations[a.tag]"
+							<input type="range" class="form-range me-4" style="width:10rem;" v-model.number="store.variations[a.tag]"
 								   :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
 							<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
 								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
