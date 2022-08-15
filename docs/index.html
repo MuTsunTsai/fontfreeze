@@ -237,9 +237,9 @@
 								<h4>Select local font</h4>
 							</div>
 							<div class="modal-body">
-								<select class="form-select" v-model.number="store.localFont" required>
+								<select class="form-select" v-model.number="store.localFont" required :style="optionStyle()">
 									<option value="" hidden>Select local font</option>
-									<option v-for="(f,i) in store.localFonts" :key="i" :value="i"
+									<option v-for="(f,i) in store.localFonts" :key="i" :value="i" :style="optionStyle(f)"
 											:disabled="store.unavailableFonts.includes(f.postscriptName)">{{f.fullName}}</option>
 								</select>
 								<div class="mt-3">

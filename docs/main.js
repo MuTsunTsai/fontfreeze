@@ -105,6 +105,13 @@ addEventListener('DOMContentLoaded', () => createApp({
 	},
 	setUnicodeRange() {
 		style.sheet.cssRules[0].style.unicodeRange = getUnicodes();
+	},
+	optionStyle(f) {
+		if(!f) {
+			if(!store.localFont) return "";
+			f = store.localFonts[store.localFont];
+		}
+		return `font-family:'${f.fullName}', '${f.postscriptName}', '${f.family}'`;
 	}
 }).mount());
 
