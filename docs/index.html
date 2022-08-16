@@ -213,7 +213,14 @@
 							<label>Target feature for activation</label>
 							<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
 						</div>
-						<div class="col-12 mt-2">
+						<div class="col-12 col-md-6 mt-2">
+							<div class="form-check mt-3">
+								<input type="checkbox" class="form-check-input" id="chkSub"
+									   v-model="store.options.singleSub">
+								<label class="form-check-label" for="chkSub">Apply substitute by single-glyph features.</label>
+							</div>
+						</div>
+						<div class="col-12 col-md-6 mt-2">
 							<div class="form-check mt-3">
 								<input type="checkbox" class="form-check-input" id="chkContour"
 									   v-model="store.options.fixContour">

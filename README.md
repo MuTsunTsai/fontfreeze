@@ -70,6 +70,10 @@ you may also try changing the "Target feature for activation" setting to `rvrn`
 note that in this case,
 you might also need to activate `calt` as well for some other features to function).
 
+Since version 1.3, in addition to the said approach,
+there is also an option to apply actual glyph substitution for single-glyph features
+(which is on by default) for maximal compatibility across different environments.
+
 ## Acknowledgment
 
 FontFreeze is especially inspired by the project
@@ -78,7 +82,7 @@ and I used many parts of the source code from it.
 Other projects that inspired FontFreeze include:
 
 - [OpenType Feature Freezer](https://github.com/twardoch/fonttools-opentype-feature-freezer),
-  for inspiring the name (I used a very different approach to freeze the features though).
+  for inspiring the name (I used additional approach to freeze the features though).
 - [FontDrop!](https://fontdrop.info/), for inspiring the user interface.
 - [Coding Fonts](https://github.com/CSS-Tricks/coding-fonts)
   (the original site no longer works,

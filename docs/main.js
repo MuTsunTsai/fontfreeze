@@ -252,6 +252,7 @@ async function openBlob(blob, name) {
 		family: info.family + " Freeze",
 		subfamily: "Regular",
 		fixContour: false,
+		singleSub: true,
 		target: "calt",
 		format: "ttf",
 	};

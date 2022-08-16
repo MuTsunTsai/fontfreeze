@@ -117,43 +117,76 @@ def moveFeatureLookups(fromFeature, toFeature):
     toFeature.LookupCount += fromFeature.LookupCount
 
 
-def moveFeatureInLangSys(langSys, featureRecords, features: list, target: str):
-    targetRecord = None
-    # try to find existing target feature
-    for index in langSys.FeatureIndex:
-        featureRecord = featureRecords[index]
-        if featureRecord.FeatureTag == target:
-            targetRecord = featureRecord
-    for index in langSys.FeatureIndex:
-        featureRecord = featureRecords[index]
-        if featureRecord.FeatureTag in features:
-            if targetRecord == None:
-                # if there's no existing one, use the first matching feature as target
+class Activator:
+    def __init__(self, font: TTFont, args: dict) -> None:
+        self.font = font
+        self.features = args.get("features")
+        self.target = args.get("options").get("target")
+        self.singleSub = args.get("options").get("singleSub")
+
+    def activate(self):
+        if len(self.features) == 0 or "GSUB" not in self.font:
+            return
+
+        self.cmapTables = self.font["cmap"].tables
+        self.unicodeGlyphs = {
+            name for table in self.cmapTables for name in table.cmap.values()
+        }
+
+        table = self.font["GSUB"].table
+        self.featureRecords = table.FeatureList.FeatureRecord
+        self.lookup = table.LookupList.Lookup
+
+        scriptRecords = table.ScriptList.ScriptRecord
+        for scriptRecord in scriptRecords:
+            self.activateInScript(scriptRecord.Script)
+
+    def activateInScript(self, script):
+        if script.DefaultLangSys != None:
+            self.activateInLangSys(script.DefaultLangSys)
+        for langSysRecord in script.LangSysRecord:
+            self.activateInLangSys(langSysRecord.LangSys)
+
+    def activateInLangSys(self, langSys):
+        targetRecord = None
+
+        # try to find existing target feature
+        for index in langSys.FeatureIndex:
+            featureRecord = self.featureRecords[index]
+            if featureRecord.FeatureTag == self.target:
                 targetRecord = featureRecord
-                featureRecord.FeatureTag = target
-            else:
-                moveFeatureLookups(featureRecord.Feature, targetRecord.Feature)
-                clearFeatureRecord(featureRecord)
-    if targetRecord != None:
-        targetRecord.Feature.LookupListIndex.sort()
 
+        for index in langSys.FeatureIndex:
+            featureRecord = self.featureRecords[index]
+            if featureRecord.FeatureTag in self.features:
+                if self.singleSub:
+                    self.findSingleSubstitution(featureRecord)
 
-def moveFeatureInScript(script, featureRecords, features: list, target: str):
-    if script.DefaultLangSys != None:
-        moveFeatureInLangSys(script.DefaultLangSys, featureRecords, features, target)
-    for langSysRecord in script.LangSysRecord:
-        moveFeatureInLangSys(langSysRecord.LangSys, featureRecords, features, target)
+                if targetRecord == None:
+                    # if there's no existing one, use the first matching feature as target
+                    targetRecord = featureRecord
+                    featureRecord.FeatureTag = self.target
+                else:
+                    moveFeatureLookups(featureRecord.Feature, targetRecord.Feature)
+                    clearFeatureRecord(featureRecord)
 
+        if targetRecord != None:
+            targetRecord.Feature.LookupListIndex.sort()
 
-def moveFeature(font: TTFont, features: list, target: str):
-    if len(features) == 0 or "GSUB" not in font:
-        return
+    def findSingleSubstitution(self, featureRecord):
+        for lookupIndex in featureRecord.Feature.LookupListIndex:
+            lookup = self.lookup[lookupIndex]
+            if lookup.LookupType == 1:  # Single substitution
+                for sub in lookup.SubTable:
+                    for input, output in sub.mapping.items():
+                        if input in self.unicodeGlyphs:
+                            self.singleSubstitution(input, output)
 
-    table = font["GSUB"].table
-    featureRecords = table.FeatureList.FeatureRecord
-    scriptRecords = table.ScriptList.ScriptRecord
-    for scriptRecord in scriptRecords:
-        moveFeatureInScript(scriptRecord.Script, featureRecords, features, target)
+    def singleSubstitution(self, input, output):
+        for table in self.cmapTables:
+            for index in table.cmap:
+                if table.cmap[index] == input:
+                    table.cmap[index] = output
 
 
 def subset(font: TTFont, unicodes: str):
@@ -221,7 +254,7 @@ def loadFont():
     }
 
 
-def loadTtfFont(filename):
+def loadTtfFont(filename: str):
     return TTFont(
         file=filename,
         recalcBBoxes=False,
@@ -233,11 +266,11 @@ def processFont(args):
     main(args.to_py(), "input", "output")
 
 
-def main(args, filename, output):
+def main(args: dict, filename: str, output: str):
     font = loadTtfFont(filename)
     instantiateFont(font, args.get("options"), args.get("variations"))
     removeFeature(font, args.get("disables"))
-    moveFeature(font, args.get("features"), args.get("options").get("target"))
+    Activator(font, args).activate()
     subset(font, args.get("unicodes"))
 
     if args.get("options").get("format") == "woff2":
