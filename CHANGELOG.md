@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Make substitution by single-glyph features for maximal compatibility (#2).
+- Make substitution by single-glyph features for maximal compatibility ([#2](https://github.com/MuTsunTsai/fontfreeze/issues/2)).
 
 ## [1.2.0] - 2022-08-11
 
@@ -17,7 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Upgrade Pyodide to version 0.21.0, which now includes `brotli` package (contributed by myself for this project).
+- Upgrade Pyodide to version 0.21.0, which now includes `brotli` package (contributed by [myself](https://github.com/pyodide/pyodide/pull/2925) for this project).
 - Use web worker for Pyodide.
 
 ## [1.1.0] - 2022-08-02

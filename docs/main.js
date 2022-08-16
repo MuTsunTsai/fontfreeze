@@ -193,6 +193,10 @@ function clone(obj) {
 
 async function getOutputURL() {
 	try {
+		for(let tag in store.variations) {
+			// Fix bugs of petite-vue with <input type="range"> 
+			store.variations[tag] = Number(store.variations[tag]);
+		}
 		const args = {
 			options: store.options,
 			unicodes: getUnicodes(),
