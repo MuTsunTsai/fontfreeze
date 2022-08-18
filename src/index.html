@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="UTF-8">
+	<title>FontFreeze</title>
+	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no">
+	<meta name="description" content="Freeze variations and features in font.">
+	<base target="_blank">
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-4GYC00FPRR"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'G-4GYC00FPRR');
+	</script>
+
+	<!-- SEO -->
+	<meta property="og:url" content="https://mutsuntsai.github.io/fontfreeze/">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="FontFreeze">
+	<meta property="og:image" content="https://mutsuntsai.github.io/fontfreeze/preview.png">
+	<meta property="og:image:width" content="764">
+	<meta property="og:image:height" content="511">
+	<meta property="og:description" content="Freeze variations and features in font.">
+
+	<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://unpkg.com/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
+	<script src="main.js"></script>
+</head>
+
+<body>
+	<div class="container py-3 px-sm-2 px-md-3 px-lg-5">
+		<div class="mb-3 text-end">
+			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</a>&emsp;
+			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</a>
+		</div>
+		<div class="card bg-light">
+			<div class="card-body" v-scope="{drag:false}" v-cloak>
+				<div class="text-center my-3">
+					<picture>
+						<source srcset="logo.webp" type="image/webp">
+						<source srcset="logo.png" type="image/png">
+						<img src="logo.png" width="800" height="130" style="max-width:100%; height:auto;">
+					</picture>
+					<div class="mt-1">
+						Freeze variations and features in font.
+					</div>
+					<div class="my-3">
+						<img class="mx-2" alt="GitHub package.json version"
+							 src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
+						<a class="mx-2" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
+								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a>
+						<a class="mx-2" href="https://github.com/mutsuntsai"><img
+								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
+					</div>
+					<div class="dropzone mt-3" :class="{drag:drag}" @dragover="drag=true" @dragleave="drag=false"
+						 @drop="drag=false">
+						<div v-if="store.loading">Loading {{store.loading}}. Please wait...</div>
+						<div v-else-if="!store.font">Drop a font file here or click here to upload!</div>
+						<div v-else>{{store.font.fileName}} ({{store.font.fileSize}})</div>
+						<input type="file" onchange="openFile(this)" title="Open font file" :disabled="store.loading">
+					</div>
+					<div v-if="store.localFontSupport" class="mt-2">
+						<button type="button" :disabled="store.loading" class="btn btn-secondary btn-sm" @click="local">
+							Or select a local font !
+						</button>
+					</div>
+				</div>
+				<div v-if="store.font">
+					<div class="mt-4 text-center">
+						<span :style="`vertical-align:-0.25rem; font-family: preview${store.previewIndex};`"
+							  class="text-primary h3 me-4">{{store.font.family}}</span>
+						<div class="d-inline-block">
+							<span class="me-3">{{store.font.version}}</span>
+							<button class="btn btn-secondary btn-sm" type="button" @click="info" v-if="more">More
+								info</button>
+						</div>
+					</div>
+					<div class="modal fade" id="info">
+						<div class="modal-dialog modal-dialog-centered modal-lg">
+							<div class="modal-content">
+								<div class="modal-body">
+									<table class="w-100">
+										<tr v-if="store.font.description">
+											<td>Description</td>
+											<td :class="{'small':store.font.description.length>200}">
+												{{store.font.description}}
+											</td>
+										</tr>
+										<tr v-if="store.font.designer">
+											<td>Designer</td>
+											<td>
+												<a :href="store.font.designerURL" v-if="store.font.designerURL">
+													{{store.font.designer}}
+												</a>
+												<span v-else>{{store.font.designer}}</span>
+											</td>
+										</tr>
+										<tr v-if="store.font.manufacturer">
+											<td>Manufacturer</td>
+											<td>
+												<a :href="store.font.vendorURL" v-if="store.font.vendorURL">
+													{{store.font.manufacturer}}
+												</a>
+												<span v-else>{{store.font.manufacturer}}</span>
+											</td>
+										</tr>
+										<tr v-if="store.font.copyright">
+											<td>Copyright</td>
+											<td>{{store.font.copyright}}</td>
+										</tr>
+										<tr v-if="store.font.trademark">
+											<td>Trademark</td>
+											<td>{{store.font.trademark}}</td>
+										</tr>
+										<tr v-if="store.font.license">
+											<td>license</td>
+											<td :class="{'small':store.font.license.length>200}">
+												{{store.font.license}}
+											</td>
+										</tr>
+									</table>
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-primary" type="button" data-bs-dismiss="modal">OK</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div v-if="store.font.fvar">
+						<h5>Variations</h5>
+						<div class="d-flex mb-3">
+							<label class="col-form-label pe-3">Predefined instances:</label>
+							<div class="flex-grow-1">
+								<select @change="setInstance(instances[$el.value])" class="form-select" required>
+									<option value="" hidden>Select a predefined instance</option>
+									<option v-for="(i, j) in instances" :key="i.name+j" :value="j">
+										{{i.name}}</button>
+								</select>
+							</div>
+						</div>
+						<div v-for="a in axes" class="mb-1" :key="a">
+							<input type="range" class="form-range me-4" style="width:10rem;" @input="clear"
+								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)">
+							<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
+								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
+							<label>{{getAxisName(a)}}</label>
+						</div>
+					</div>
+
+					<div v-if="store.font.gsub&&store.font.gsub.length">
+						<h5>Features</h5>
+						<div class="d-flex flex-wrap">
+							<div v-for="f in store.font.gsub" style="flex-basis: 5.5rem;" :key="f">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" :id="'chk'+f"
+										   :indeterminate.prop="store.features[f]===undefined" v-model="store.features[f]"
+										   @change="checkboxChange(f)">
+									<label class="form-check-label" :for="'chk'+f">{{f}}</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 mt-3" v-effect="setUnicodeRange()">
+							<label>Remove glyphs</label>
+							<input class="form-control" v-model="store.removeGlyphs"
+								   placeholder="Enter characters to remove. Useful when you want those characters to fallback to other fonts.">
+						</div>
+					</div>
+
+					<div class="row align-items-baseline">
+						<div class="col-4">
+							<h5>Preview</h5>
+						</div>
+						<div class="col-8 text-end">
+							<span class="me-3">{{store.previewSize}}pt</span>
+							<input type="range" class="form-range" style="width:10rem;" min="8" max="48"
+								   v-model="store.previewSize">
+						</div>
+					</div>
+					<div class="pre form-control p-3" :style="previewStyle" contenteditable="true" v-text="store.sample">
+					</div>
+
+					<h5>Output options</h5>
+					<div class="row">
+						<div class="col-12 col-md-6 mt-2">
+							<label>Font family</label>
+							<input class="form-control" v-model="store.options.family"
+								   placeholder="Better be different from the original family name">
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<label>Font subfamily</label>
+							<select class="form-select" v-model="store.options.subfamily">
+								<option value="Regular">Regular</option>
+								<option value="Bold">Bold</option>
+								<option value="Italic">Italic</option>
+								<option value="Bold Italic">Bold Italic</option>
+							</select>
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<label>Output format</label>
+							<select class="form-select" v-model="store.options.format">
+								<option value="ttf">TTF</option>
+								<option value="woff2">WOFF2</option>
+							</select>
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<label>Target feature for activation</label>
+							<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<div class="form-check mt-3">
+								<input type="checkbox" class="form-check-input" id="chkSub" v-model="store.options.singleSub">
+								<label class="form-check-label" for="chkSub">Apply substitution by single-glyph features.</label>
+							</div>
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<div class="form-check mt-3">
+								<input type="checkbox" class="form-check-input" id="chkContour"
+									   v-model="store.options.fixContour">
+								<label class="form-check-label" for="chkContour">Fix contour overlap issues on macOS.</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-5 row">
+						<div class="col">
+							<button class="btn btn-lg" type="button" onclick="generate()" :disabled="store.running"
+									:class="store.message?'btn-success':'btn-primary'">
+								{{store.message||"Generate font!"}}
+								<span class="loading ms-2" v-if="store.running"></span>
+							</button>
+						</div>
+						<div class="col text-end" v-if="store.url">
+							<a class="btn btn-lg btn-success" :href="store.url" :download="store.download">Download font</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="local" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4>Select local font</h4>
+							</div>
+							<div class="modal-body">
+								<select class="form-select" v-model.number="store.localFont" required :style="optionStyle()">
+									<option value="" hidden>Select local font</option>
+									<option v-for="(f,i) in store.localFonts" :key="i" :value="i" :style="optionStyle(f)"
+											:disabled="store.unavailableFonts.includes(f.postscriptName)">{{f.fullName}}</option>
+								</select>
+								<div class="mt-3">
+									Note: This is an experimental feature and it may not work for manually installed fonts.
+									If it doesn't work for a particular font, you can still upload the font file manually.
+									This bug has been
+									<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1347845">reported</a>
+									and I'll keep tracking its progress.
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+								<button class="btn btn-primary" type="button" @click="loadLocal"
+										:disabled="store.localFont===null">OK</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

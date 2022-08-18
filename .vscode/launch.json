@@ -8,8 +8,9 @@
 			"name": "Python: Test",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/test.py",
+			"program": "${workspaceFolder}/test/test.py",
 			"console": "integratedTerminal",
+			"cwd": "${workspaceFolder}/test/",
 			"justMyCode": true
 		}
 	]

@@ -1,9 +1,10 @@
 {
 	"name": "fontfreeze",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"description": "Freeze variations and features in font.",
 	"scripts": {
-		"serve": "npx serve docs"
+		"serve": "npx serve docs",
+		"build": "gulp"
 	},
 	"keywords": [
 		"font"
@@ -13,5 +14,13 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/MuTsunTsai/fontfreeze.git"
+	},
+	"devDependencies": {
+		"gulp": "^4.0.2",
+		"gulp-clean-css": "^4.3.0",
+		"gulp-exec": "^5.0.0",
+		"gulp-html-minifier-terser": "^7.0.0-beta.0",
+		"gulp-replace": "^1.1.3",
+		"gulp-terser": "^2.1.0"
 	}
 }
