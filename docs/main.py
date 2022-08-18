@@ -17,83 +17,106 @@ OVERLAP_SIMPLE = 0x40
 OVERLAP_COMPOUND = 0x0400
 
 
-def dropVariationTables(font):
-    for tag in "STAT cvar fvar gvar".split():
-        if tag in font.keys():
-            del font[tag]
+def getAxisName(font: TTFont, tag: str) -> str:
+    for a in font["fvar"].axes:
+        if a.axisTag == tag:
+            return font["name"].getDebugName(a.axisNameID)
+    return tag
 
 
-def setOverlapFlags(font):
-    glyf = font["glyf"]
-    for glyph_name in glyf.keys():
-        glyph = glyf[glyph_name]
+class Instantiate:
+    def __init__(self, font: TTFont, args):
+        variations = args.get("variations")
 
-        if glyph.isComposite():
-            glyph.components[0].flags |= OVERLAP_COMPOUND
-        elif glyph.numberOfContours > 0:
-            glyph.flags[0] |= OVERLAP_SIMPLE
+        options = args.get("options")
+        family = font["name"].getBestFamilyName()
+        version = font["name"].getDebugName(5)
 
+        description = f"Frozen from {family} {version}."
+        if "fvar" in font:
+            settings = ", ".join(
+                f"{getAxisName(font, k)}={v}" for k, v in variations.items()
+            )
+            description += f" Sets {settings}."
+            instantiateVariableFont(font, variations, inplace=True, overlap=True)
+        features = args.get("features")
+        if len(features) > 0:
+            features = ", ".join(features)
+            description += f" Activates {features}."
+        disables = args.get("disables")
+        if len(disables) > 0:
+            disables = ", ".join(disables)
+            description += f" Deactivates {disables}."
 
-def makeSelection(bits, style):
-    bits = bits ^ bits
-    if style == "Regular":
-        bits |= 0b1000000
-    else:
-        bits &= ~0b1000000
-    if style == "Bold" or style == "Bold Italic":
-        bits |= 0b100000
-    else:
-        bits &= ~0b100000
-    if style == "Italic":
-        bits |= 0b1
-    else:
-        bits &= ~0b1
-    if not bits:
-        bits = 0b1000000
-    return bits
+        self.nameTable = font["name"]
+        self.nameTable.names = []
+        family = options.get("family")
+        subfamily = options.get("subfamily")
+        fullName = f"{family} {subfamily}"
+        self.setName(family, 1)
+        self.setName(subfamily, 2)
+        self.setName(fullName, 3)
+        self.setName(fullName, 4)
+        self.setName("Version 1.000", 5)
+        self.setName(Instantiate.getPostscriptName(family, subfamily), 6)
+        self.setName("FontFreeze" + args.get("version"), 8)
+        self.setName(description, 10)
+        self.setName("https://mutsuntsai.github.io/fontfreeze", 11)
 
+        try:
+            font["head"].macStyle = MACSTYLE[subfamily]
+            font["OS/2"].fsSelection = Instantiate.makeSelection(
+                font["OS/2"].fsSelection, subfamily
+            )
+        except:
+            pass
+        Instantiate.dropVariationTables(font)
+        if options.get("fixContour") == True:
+            Instantiate.setOverlapFlags(font)
 
-def getPostscriptName(familyName, subfamilyName):
-    familyName = familyName.replace(" ", "")
-    subfamilyName = subfamilyName.replace(" ", "")
-    return f"{familyName}-{subfamilyName}"
+    def getPostscriptName(familyName, subfamilyName):
+        familyName = familyName.replace(" ", "")
+        subfamilyName = subfamilyName.replace(" ", "")
+        return f"{familyName}-{subfamilyName}"
 
+    def setName(self, content: str, index: int):
+        self.nameTable.setName(content, index, PLAT_MAC, ENC_ROMAN, 0)
+        self.nameTable.setName(
+            content, index, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH
+        )
 
-def updateNames(font: TTFont, options):
-    nameTable = font["name"]
-    nameTable.names = []
-    family = options.get("family")
-    subfamily = options.get("subfamily")
-    fullName = f"{family} {subfamily}"
-    postscriptName = getPostscriptName(family, subfamily)
-    nameTable.setName(family, 1, PLAT_MAC, ENC_ROMAN, 0)
-    nameTable.setName(family, 1, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
-    nameTable.setName(subfamily, 2, PLAT_MAC, ENC_ROMAN, 0)
-    nameTable.setName(subfamily, 2, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
-    nameTable.setName(fullName, 3, PLAT_MAC, ENC_ROMAN, 0)
-    nameTable.setName(fullName, 3, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
-    nameTable.setName(fullName, 4, PLAT_MAC, ENC_ROMAN, 0)
-    nameTable.setName(fullName, 4, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
-    nameTable.setName("Version 1.000", 5, PLAT_MAC, ENC_ROMAN, 0)
-    nameTable.setName("Version 1.000", 5, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
-    nameTable.setName(postscriptName, 6, PLAT_MAC, ENC_ROMAN, 0)
-    nameTable.setName(postscriptName, 6, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH)
+    def dropVariationTables(font):
+        for tag in "STAT cvar fvar gvar".split():
+            if tag in font.keys():
+                del font[tag]
 
+    def setOverlapFlags(font):
+        glyf = font["glyf"]
+        for glyph_name in glyf.keys():
+            glyph = glyf[glyph_name]
 
-def instantiateFont(font: TTFont, options, variations):
-    if "fvar" in font:
-        instantiateVariableFont(font, variations, inplace=True, overlap=True)
+            if glyph.isComposite():
+                glyph.components[0].flags |= OVERLAP_COMPOUND
+            elif glyph.numberOfContours > 0:
+                glyph.flags[0] |= OVERLAP_SIMPLE
 
-    updateNames(font, options)
-    subfamily = options.get("subfamily")
-    try:
-        font["head"].macStyle = MACSTYLE[subfamily]
-        font["OS/2"].fsSelection = makeSelection(font["OS/2"].fsSelection, subfamily)
-    except:
-        pass
-    dropVariationTables(font)
-    if options.get("fixContour") == True:
-        setOverlapFlags(font)
+    def makeSelection(bits, style):
+        bits = bits ^ bits
+        if style == "Regular":
+            bits |= 0b1000000
+        else:
+            bits &= ~0b1000000
+        if style == "Bold" or style == "Bold Italic":
+            bits |= 0b100000
+        else:
+            bits &= ~0b100000
+        if style == "Italic":
+            bits |= 0b1
+        else:
+            bits &= ~0b1
+        if not bits:
+            bits = 0b1000000
+        return bits
 
 
 def removeFeature(font: TTFont, features: list):
@@ -112,11 +135,6 @@ def clearFeatureRecord(featureRecord):
     featureRecord.FeatureTag = "DELT"  # Special value
 
 
-def moveFeatureLookups(fromFeature, toFeature):
-    toFeature.LookupListIndex.extend(fromFeature.LookupListIndex)
-    toFeature.LookupCount += fromFeature.LookupCount
-
-
 class Activator:
     def __init__(self, font: TTFont, args: dict) -> None:
         self.font = font
@@ -124,7 +142,6 @@ class Activator:
         self.target = args.get("options").get("target")
         self.singleSub = args.get("options").get("singleSub")
 
-    def activate(self):
         if len(self.features) == 0 or "GSUB" not in self.font:
             return
 
@@ -167,7 +184,9 @@ class Activator:
                     targetRecord = featureRecord
                     featureRecord.FeatureTag = self.target
                 else:
-                    moveFeatureLookups(featureRecord.Feature, targetRecord.Feature)
+                    Activator.moveFeatureLookups(
+                        featureRecord.Feature, targetRecord.Feature
+                    )
                     clearFeatureRecord(featureRecord)
 
         if targetRecord != None:
@@ -188,47 +207,52 @@ class Activator:
                 if table.cmap[index] == input:
                     table.cmap[index] = output
 
+    def moveFeatureLookups(fromFeature, toFeature):
+        toFeature.LookupListIndex.extend(fromFeature.LookupListIndex)
+        toFeature.LookupCount += fromFeature.LookupCount
+
 
 def subset(font: TTFont, unicodes: str):
     if unicodes == "":
         return
-    sub = Subsetter(SSOptions(layout_features=["*"]))  # keep all features
+    sub = Subsetter(
+        SSOptions(
+            layout_scripts=["*"],
+            layout_features=["*"],
+            name_IDs=["*"],
+            name_languages=["*"]
+        )
+    )
     sub.populate(unicodes=parse_unicodes(unicodes))
     sub.subset(font)
 
 
 def loadFont():
-    inputFont = loadTtfFont("temp")
+    font = loadTtfFont("temp")
 
-    features = (
-        inputFont["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in inputFont else []
-    )
-    features = list(map(lambda r: r.FeatureTag, features))
+    features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
+    features = [r.FeatureTag for r in features]
 
     fvar = None
-    if "fvar" in inputFont:
+    if "fvar" in font:
         fvar = {
-            "axes": list(
-                map(
-                    lambda a: {
-                        "tag": a.axisTag,
-                        "default": a.defaultValue,
-                        "min": a.minValue,
-                        "max": a.maxValue,
-                        "name": inputFont["name"].getDebugName(a.axisNameID),
-                    },
-                    inputFont["fvar"].axes,
-                )
-            ),
-            "instances": list(
-                map(
-                    lambda i: {
-                        "name": inputFont["name"].getDebugName(i.subfamilyNameID),
-                        "coordinates": i.coordinates,
-                    },
-                    inputFont["fvar"].instances,
-                )
-            ),
+            "axes": [
+                {
+                    "tag": a.axisTag,
+                    "default": a.defaultValue,
+                    "min": a.minValue,
+                    "max": a.maxValue,
+                    "name": font["name"].getDebugName(a.axisNameID),
+                }
+                for a in font["fvar"].axes
+            ],
+            "instances": [
+                {
+                    "name": font["name"].getDebugName(i.subfamilyNameID),
+                    "coordinates": i.coordinates,
+                }
+                for i in font["fvar"].instances
+            ],
         }
 
     # change temp to input, preventing input being overwritten by invalid file
@@ -237,18 +261,18 @@ def loadFont():
     os.rename("temp", "input")
 
     return {
-        "family": inputFont["name"].getBestFamilyName(),
-        "copyright": inputFont["name"].getDebugName(0),
-        "id": inputFont["name"].getDebugName(3),
-        "version": inputFont["name"].getDebugName(5),
-        "trademark": inputFont["name"].getDebugName(7),
-        "manufacturer": inputFont["name"].getDebugName(8),
-        "designer": inputFont["name"].getDebugName(9),
-        "description": inputFont["name"].getDebugName(10),
-        "vendorURL": inputFont["name"].getDebugName(11),
-        "designerURL": inputFont["name"].getDebugName(12),
-        "license": inputFont["name"].getDebugName(13),
-        "licenseURL": inputFont["name"].getDebugName(14),
+        "family": font["name"].getBestFamilyName(),
+        "copyright": font["name"].getDebugName(0),
+        "id": font["name"].getDebugName(3),
+        "version": font["name"].getDebugName(5),
+        "trademark": font["name"].getDebugName(7),
+        "manufacturer": font["name"].getDebugName(8),
+        "designer": font["name"].getDebugName(9),
+        "description": font["name"].getDebugName(10),
+        "vendorURL": font["name"].getDebugName(11),
+        "designerURL": font["name"].getDebugName(12),
+        "license": font["name"].getDebugName(13),
+        "licenseURL": font["name"].getDebugName(14),
         "fvar": fvar,
         "gsub": list(dict.fromkeys(features)),
     }
@@ -268,9 +292,9 @@ def processFont(args):
 
 def main(args: dict, filename: str, output: str):
     font = loadTtfFont(filename)
-    instantiateFont(font, args.get("options"), args.get("variations"))
+    Instantiate(font, args)
     removeFeature(font, args.get("disables"))
-    Activator(font, args).activate()
+    Activator(font, args)
     subset(font, args.get("unicodes"))
 
     if args.get("options").get("format") == "woff2":

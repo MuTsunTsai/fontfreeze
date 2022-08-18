@@ -1,21 +1,73 @@
 
+let bytesLoaded = 0;
+const fetchOriginal = fetch;
+
+if(typeof TransformStream != 'undefined') {
+	// This number should be updated whenever Pyodide updates
+	const totalBytes = 15275225;
+
+	let lastProgress = performance.now();
+
+	function loadProgress(delta) {
+		bytesLoaded += delta;
+		const now = performance.now();
+		if(now - lastProgress > 1000) {
+			postMessage({ progress: (100 * bytesLoaded / totalBytes).toFixed(1) });
+			lastProgress = now;
+		}
+	}
+
+	// Hack Pyodide.asm.js loader
+	const XMLHttpRequestBase = XMLHttpRequest;
+	XMLHttpRequest = class extends XMLHttpRequestBase {
+		set onprogress(v) {
+			let bytes = 0;
+			super.onprogress = function(event) {
+				loadProgress(event.loaded - bytes);
+				bytes = event.loaded;
+				v(event);
+			};
+		}
+	}
+
+	// Hack fetch
+	globalThis.fetch = async (url) => {
+		const response = await fetchOriginal(url);
+		const ts = new TransformStream({
+			transform(chunk, ctrl) {
+				loadProgress(chunk.byteLength);
+				ctrl.enqueue(chunk);
+			}
+		});
+		return new Response(response.body.pipeThrough(ts), response);
+	}
+}
+
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0/full/pyodide.js");
 
 let pyodide;
 
 async function initPyodide() {
-	pyodide = await loadPyodide();
+	pyodide = await loadPyodide({ fullStdLib: false });
 	await pyodide.loadPackage('brotli');
 	await pyodide.loadPackage('fonttools');
 }
 
 async function init() {
-	const [_, script] = await Promise.all([
-		initPyodide(),
-		fetch("main.py").then(r => r.text())
-	]);
-	pyodide.runPython(script);
-	postMessage("initialized");
+	try {
+		const [_, script] = await Promise.all([
+			initPyodide(),
+			fetchOriginal("main.py").then(r => r.text()) // exclude from totalBytes
+		]);
+		pyodide.runPython(script);
+
+		// Use this to update totalBytes
+		console.log("Total loaded bytes: " + bytesLoaded);
+
+		postMessage("initialized");
+	} catch(e) {
+		postMessage({ error: e.message });
+	}
 }
 
 init();

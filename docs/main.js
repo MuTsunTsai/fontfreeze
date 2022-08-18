@@ -1,10 +1,18 @@
 const { reactive, createApp, nextTick } = PetiteVue;
 
 const worker = new Worker("worker.js");
-const initialized = new Promise(resolve => {
-	worker.addEventListener('message', e => {
-		if(e.data == "initialized") resolve();
-	}, { once: true });
+const initialized = new Promise((resolve, reject) => {
+	const handler = e => {
+		if(e.data == "initialized") {
+			worker.removeEventListener('message', handler);
+			resolve();
+		} else if('error' in e.data) {
+			reject(new Error(e.data.error));
+		} else if('progress' in e.data && store.loading) {
+			store.loading = `packages (${e.data.progress}%)`;
+		}
+	};
+	worker.addEventListener('message', handler);
 });
 
 function callWorker(command, data) {
@@ -36,11 +44,17 @@ const store = reactive({
 	running: false,
 	message: null,
 	previewIndex: 0,
+	version: "",
 });
 
 fetch("sample.md")
 	.then(r => r.text())
 	.then(t => store.sample = t);
+
+// Use shields.io as API
+fetch("https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze.json")
+	.then(r => r.json())
+	.then(j => store.version = " " + j.value);
 
 addEventListener('DOMContentLoaded', () => createApp({
 	store,
@@ -199,6 +213,7 @@ async function getOutputURL() {
 		}
 		const args = {
 			options: store.options,
+			version: store.version,
 			unicodes: getUnicodes(),
 			variations: store.variations,
 			features: store.font.gsub.filter(g => store.features[g] === true),
@@ -225,8 +240,6 @@ async function openFile(input) {
 }
 
 async function openBlob(blob, name) {
-
-
 	store.loading = "packages";
 	await initialized;
 	store.loading = "font";
@@ -246,7 +259,7 @@ async function openBlob(blob, name) {
 	setPreviewFont(tempURL);
 
 	info.fileName = name;
-	info.fileSize = getFileSize(blob);
+	info.fileSize = getFileSize(blob.size);
 	info.gsub = info.gsub.filter(g => !hiddenFeatures.includes(g));
 	store.features = {};
 	lastValues = {};
@@ -304,8 +317,7 @@ function setPreviewFont(url) {
 	}`);
 }
 
-function getFileSize(blob) {
-	let size = blob.size;
+function getFileSize(size) {
 	if(size < 1024) return size + "B"; else size /= 1024;
 	if(size < 1024) return size.toFixed(1) + "KiB"; else size /= 1024;
 	return size.toFixed(1) + "MiB";

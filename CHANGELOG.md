@@ -2,6 +2,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2022-08-18
+
+### Added
+
+- Progress indicator for loading Python packages.
+- Add description in generated font.
+
 ## [1.3.0] - 2022-08-16
 
 ### Added
