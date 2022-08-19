@@ -16,22 +16,8 @@
 		worker.addEventListener('message', handler);
 	});
 
-	function callWorker(command, data) {
-		return new Promise((resolve, reject) => {
-			const channel = new MessageChannel();
-			worker.postMessage([command, data], [channel.port2]);
-			channel.port1.onmessage = e => {
-				const { success, data } = e.data;
-				if(success) resolve(data);
-				else reject(new Error(data));
-			};
-		});
-	}
-
 	const style = document.createElement("style");
-	document.head.appendChild(style);
-
-	let lastValues;
+	
 	const store = reactive({
 		localFontSupport: 'queryLocalFonts' in window,
 		localFonts: [],
@@ -47,6 +33,52 @@
 		previewIndex: 0,
 		version: "",
 	});
+
+	// Features that should not be exposed to the users
+	const hiddenFeatures = [
+		'abvm', 'abvs', 'akhn', 'blwf', 'blwm', 'blws', 'ccmp', 'cfar', 'cjct', 'curs',
+		'dist', 'dtls', 'fin2', 'fin3', 'fina', 'flac', 'half', 'haln', 'init', 'isol',
+		'ljmo', 'locl', 'ltra', 'ltrm', 'mark', 'med2', 'medi', 'mkmk', 'nukt', 'pref',
+		'pres', 'pstf', 'psts', 'rclt', 'rkrf', 'rlig', 'rphf', 'rtla', 'rtlm', 'rvrn',
+		'ssty', 'stch', 'tjmo', 'vjmo', 'DELT' // last one is special value
+	];
+
+	const axisNames = {
+		"ital": "Italic",
+		"opsz": "Optical size",
+		"slnt": "Slant",
+		"wdth": "Width",
+		"wght": "Weight",
+	};
+
+	const formats = {
+		"ttf": {
+			description: "TTF font",
+			accept: { "font/ttf": ".ttf" },
+		},
+		"woff2": {
+			description: "WOFF2 font",
+			accept: { "font/woff2": ".woff2" },
+		}
+	};
+
+	const modal = selector => bootstrap.Modal.getOrCreateInstance(selector);
+
+	let lastValues, fontURL;
+
+	function callWorker(command, data) {
+		return new Promise((resolve, reject) => {
+			const channel = new MessageChannel();
+			worker.postMessage([command, data], [channel.port2]);
+			channel.port1.onmessage = e => {
+				const { success, data } = e.data;
+				if(success) resolve(data);
+				else reject(new Error(data));
+			};
+		});
+	}
+
+	document.head.appendChild(style);
 
 	fetch("sample.txt")
 		.then(r => r.text())
@@ -69,12 +101,11 @@
 				store.font.fvar.axes
 					.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
 					.join(',');
-			return `
-				white-space: pre-line;
-				font-family: preview${store.previewIndex};
-				font-feature-settings: ${feat};
-				font-variation-settings: ${variation};
-				font-size: ${store.previewSize}pt;`;
+			return `white-space: pre-line;` +
+				`font-family: preview${store.previewIndex};` +
+				`font-feature-settings: ${feat};` +
+				`font-variation-settings: ${variation};` +
+				`font-size: ${store.previewSize}pt;`;
 		},
 		get more() {
 			const f = store.font;
@@ -116,7 +147,7 @@
 			lastValues[f] = store.features[f];
 		},
 		info() {
-			bootstrap.Modal.getOrCreateInstance("#info").show();
+			modal("#info").show();
 		},
 		setUnicodeRange() {
 			style.sheet.cssRules[0].style.unicodeRange = getUnicodes();
@@ -136,7 +167,7 @@
 			const fonts = await window.queryLocalFonts();
 			if(fonts.length == 0) return; // permission denied
 			store.localFonts = fonts;
-			bootstrap.Modal.getOrCreateInstance("#local").show();
+			modal("#local").show();
 		},
 		async loadLocal() {
 			const font = store.localFonts[store.localFont];
@@ -150,7 +181,7 @@
 			} finally {
 				store.localFont = "";
 			}
-			bootstrap.Modal.getOrCreateInstance("#local").hide();
+			modal("#local").hide();
 			try {
 				await openBlob(blob, font.fullName);
 			} catch(e) {
@@ -158,34 +189,6 @@
 			}
 		}
 	}).mount());
-
-	// Features that should not be exposed to the users
-	const hiddenFeatures = [
-		'abvm', 'abvs', 'akhn', 'blwf', 'blwm', 'blws', 'ccmp', 'cfar', 'cjct', 'curs',
-		'dist', 'dtls', 'fin2', 'fin3', 'fina', 'flac', 'half', 'haln', 'init', 'isol',
-		'ljmo', 'locl', 'ltra', 'ltrm', 'mark', 'med2', 'medi', 'mkmk', 'nukt', 'pref',
-		'pres', 'pstf', 'psts', 'rclt', 'rkrf', 'rlig', 'rphf', 'rtla', 'rtlm', 'rvrn',
-		'ssty', 'stch', 'tjmo', 'vjmo', 'DELT' // last one is special value
-	];
-
-	const axisNames = {
-		"ital": "Italic",
-		"opsz": "Optical size",
-		"slnt": "Slant",
-		"wdth": "Width",
-		"wght": "Weight",
-	};
-
-	const formats = {
-		"ttf": {
-			description: "TTF font",
-			accept: { "font/ttf": ".ttf" },
-		},
-		"woff2": {
-			description: "WOFF2 font",
-			accept: { "font/woff2": ".woff2" },
-		}
-	}
 
 	globalThis.generate = async function() {
 		if(store.message) return; // button not ready
@@ -220,7 +223,7 @@
 
 	function startAnime() {
 		const anime = new Promise(resolve => {
-			window.addEventListener('animationstart', resolve, { once: true });
+			addEventListener('animationstart', resolve, { once: true });
 		});
 		store.running = true;
 		return anime;
@@ -335,16 +338,16 @@
 			.join(',');
 	}
 
-	let fontURL;
-
 	function setPreviewFont(url) {
 		if(fontURL) URL.revokeObjectURL(fontURL);
 		fontURL = url;
 		if(style.sheet.cssRules.length > 0) style.sheet.deleteRule(0);
-		style.sheet.insertRule(`@font-face {
-			font-family: preview${++store.previewIndex};
-			src: url('${fontURL}');
-		}`);
+		style.sheet.insertRule(
+			`@font-face {` +
+			`font-family: preview${++store.previewIndex};` +
+			`src: url('${fontURL}');` +
+			`}`
+		);
 	}
 
 	function getFileSize(size) {

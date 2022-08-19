@@ -220,7 +220,7 @@ def subset(font: TTFont, unicodes: str):
             layout_scripts=["*"],
             layout_features=["*"],
             name_IDs=["*"],
-            name_languages=["*"]
+            name_languages=["*"],
         )
     )
     sub.populate(unicodes=parse_unicodes(unicodes))
@@ -233,9 +233,8 @@ def loadFont():
     features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
     features = [r.FeatureTag for r in features]
 
-    fvar = None
-    if "fvar" in font:
-        fvar = {
+    fvar = (
+        {
             "axes": [
                 {
                     "tag": a.axisTag,
@@ -254,6 +253,9 @@ def loadFont():
                 for i in font["fvar"].instances
             ],
         }
+        if "fvar" in font
+        else None
+    )
 
     # change temp to input, preventing input being overwritten by invalid file
     if os.path.exists("input"):

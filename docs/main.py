@@ -107,10 +107,9 @@ def subset(font,unicodes):
 	if B=='':return
 	C=Subsetter(SSOptions(layout_scripts=[A],layout_features=[A],name_IDs=[A],name_languages=[A]));C.populate(unicodes=parse_unicodes(B));C.subset(font)
 def loadFont():
-	D='temp';A=loadTtfFont(D);B=A[_C].table.FeatureList.FeatureRecord if _C in A else[];B=[A.FeatureTag for A in B];C=_D
-	if _B in A:C={'axes':[{'tag':B.axisTag,'default':B.defaultValue,'min':B.minValue,'max':B.maxValue,_A:A[_A].getDebugName(B.axisNameID)}for B in A[_B].axes],'instances':[{_A:A[_A].getDebugName(B.subfamilyNameID),'coordinates':B.coordinates}for B in A[_B].instances]}
+	C='temp';A=loadTtfFont(C);B=A[_C].table.FeatureList.FeatureRecord if _C in A else[];B=[A.FeatureTag for A in B];D={'axes':[{'tag':B.axisTag,'default':B.defaultValue,'min':B.minValue,'max':B.maxValue,_A:A[_A].getDebugName(B.axisNameID)}for B in A[_B].axes],'instances':[{_A:A[_A].getDebugName(B.subfamilyNameID),'coordinates':B.coordinates}for B in A[_B].instances]}if _B in A else _D
 	if os.path.exists(_F):os.remove(_F)
-	os.rename(D,_F);return{_L:A[_A].getBestFamilyName(),'copyright':A[_A].getDebugName(0),'id':A[_A].getDebugName(3),_M:A[_A].getDebugName(5),'trademark':A[_A].getDebugName(7),'manufacturer':A[_A].getDebugName(8),'designer':A[_A].getDebugName(9),'description':A[_A].getDebugName(10),'vendorURL':A[_A].getDebugName(11),'designerURL':A[_A].getDebugName(12),'license':A[_A].getDebugName(13),'licenseURL':A[_A].getDebugName(14),_B:C,'gsub':list(dict.fromkeys(B))}
+	os.rename(C,_F);return{_L:A[_A].getBestFamilyName(),'copyright':A[_A].getDebugName(0),'id':A[_A].getDebugName(3),_M:A[_A].getDebugName(5),'trademark':A[_A].getDebugName(7),'manufacturer':A[_A].getDebugName(8),'designer':A[_A].getDebugName(9),'description':A[_A].getDebugName(10),'vendorURL':A[_A].getDebugName(11),'designerURL':A[_A].getDebugName(12),'license':A[_A].getDebugName(13),'licenseURL':A[_A].getDebugName(14),_B:D,'gsub':list(dict.fromkeys(B))}
 def loadTtfFont(filename):return TTFont(file=filename,recalcBBoxes=False,fontNumber=0)
 def processFont(args):main(args.to_py(),_F,'output')
 def main(args,filename,output):
