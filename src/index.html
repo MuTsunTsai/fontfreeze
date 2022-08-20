@@ -41,8 +41,8 @@
 			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</a>
 		</div>
 		<div class="card bg-light">
-			<div class="card-body" v-scope="{drag:false}" v-cloak>
-				<div class="text-center my-3">
+			<div class="card-body" v-scope="{drag:false}">
+				<header class="text-center my-3">
 					<picture>
 						<source srcset="logo.webp" type="image/webp">
 						<img src="logo.png" width="800" height="130" style="max-width:100%; height:auto;">
@@ -50,6 +50,8 @@
 					<div class="mt-1">
 						Freeze variations and features in font.
 					</div>
+
+					<!-- shields.io -->
 					<div class="my-3">
 						<img class="mx-2" alt="GitHub package.json version"
 							 src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
@@ -58,20 +60,23 @@
 						<a class="mx-2" href="https://github.com/mutsuntsai"><img
 								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
 					</div>
+
 					<div class="dropzone mt-3" :class="{drag:drag}" @dragover="drag=true" @dragleave="drag=false"
 						 @drop="drag=false">
-						<div v-if="store.loading">Loading {{store.loading}}. Please wait...</div>
-						<div v-else-if="!store.font">Drop a font file here or click here to upload!</div>
-						<div v-else>{{store.font.fileName}} ({{store.font.fileSize}})</div>
+						<div v-if="store.loading" v-cloak>Loading {{store.loading}}. Please wait...</div>
+						<div v-else-if="store.font" v-cloak>{{store.font.fileName}} ({{store.font.fileSize}})</div>
+						<div v-else>Drop a font file here or click here to upload!</div>
 						<input type="file" onchange="openFile(this)" title="Open font file" :disabled="store.loading">
 					</div>
-					<div v-if="store.localFontSupport" class="mt-2">
+					<div v-if="store.localFontSupport" class="mt-2" v-cloak>
 						<button type="button" :disabled="store.loading" class="btn btn-secondary btn-sm" @click="local">
 							Or select a local font !
 						</button>
 					</div>
-				</div>
-				<div v-if="store.font">
+				</header>
+
+				<!-- Main -->
+				<main v-if="store.font" v-cloak>
 					<div class="mt-4 text-center">
 						<span :style="`vertical-align:-0.25rem; font-family: preview${store.previewIndex};`"
 							  class="text-primary h3 me-4">{{store.font.family}}</span>
@@ -243,7 +248,7 @@
 							<a class="btn btn-lg btn-success" :href="store.url" :download="store.download">Download font</a>
 						</div>
 					</div>
-				</div>
+				</main>
 
 				<div class="modal fade" id="local" data-bs-backdrop="static">
 					<div class="modal-dialog modal-dialog-centered">
@@ -274,6 +279,13 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="text-center mt-3">
+			<!-- Product Hunt -->
+			<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze"
+			   target="_blank">
+				<img class="product-hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+			</a>
 		</div>
 	</div>
 </body>

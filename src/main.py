@@ -17,7 +17,7 @@ OVERLAP_SIMPLE = 0x40
 OVERLAP_COMPOUND = 0x0400
 
 
-def getAxisName(font: TTFont, tag: str) -> str:
+def getAxisName(font: TTFont, tag: str, /) -> str:
     for a in font["fvar"].axes:
         if a.axisTag == tag:
             return font["name"].getDebugName(a.axisNameID)
@@ -25,7 +25,7 @@ def getAxisName(font: TTFont, tag: str) -> str:
 
 
 class Instantiate:
-    def __init__(self, font: TTFont, args):
+    def __init__(self, font: TTFont, args, /):
         variations = args.get("variations")
 
         options = args.get("options")
@@ -74,23 +74,23 @@ class Instantiate:
         if options.get("fixContour") == True:
             Instantiate.setOverlapFlags(font)
 
-    def getPostscriptName(familyName, subfamilyName):
+    def getPostscriptName(familyName, subfamilyName, /):
         familyName = familyName.replace(" ", "")
         subfamilyName = subfamilyName.replace(" ", "")
         return f"{familyName}-{subfamilyName}"
 
-    def setName(self, content: str, index: int):
+    def setName(self, content: str, index: int, /):
         self.nameTable.setName(content, index, PLAT_MAC, ENC_ROMAN, 0)
         self.nameTable.setName(
             content, index, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH
         )
 
-    def dropVariationTables(font):
+    def dropVariationTables(font, /):
         for tag in "STAT cvar fvar gvar".split():
             if tag in font.keys():
                 del font[tag]
 
-    def setOverlapFlags(font):
+    def setOverlapFlags(font, /):
         glyf = font["glyf"]
         for glyph_name in glyf.keys():
             glyph = glyf[glyph_name]
@@ -100,7 +100,7 @@ class Instantiate:
             elif glyph.numberOfContours > 0:
                 glyph.flags[0] |= OVERLAP_SIMPLE
 
-    def makeSelection(bits, style):
+    def makeSelection(bits, style, /):
         bits = bits ^ bits
         if style == "Regular":
             bits |= 0b1000000
@@ -119,7 +119,7 @@ class Instantiate:
         return bits
 
 
-def removeFeature(font: TTFont, features: list):
+def removeFeature(font: TTFont, features: list, /):
     if len(features) == 0 or "GSUB" not in font:
         return
     records = font["GSUB"].table.FeatureList.FeatureRecord
@@ -129,14 +129,14 @@ def removeFeature(font: TTFont, features: list):
             clearFeatureRecord(record)
 
 
-def clearFeatureRecord(featureRecord):
+def clearFeatureRecord(featureRecord, /):
     featureRecord.Feature.LookupListIndex.clear()
     featureRecord.Feature.LookupCount = 0
     featureRecord.FeatureTag = "DELT"  # Special value
 
 
 class Activator:
-    def __init__(self, font: TTFont, args: dict) -> None:
+    def __init__(self, font: TTFont, args: dict, /) -> None:
         self.font = font
         self.features = args.get("features")
         self.target = args.get("options").get("target")
@@ -158,13 +158,13 @@ class Activator:
         for scriptRecord in scriptRecords:
             self.activateInScript(scriptRecord.Script)
 
-    def activateInScript(self, script):
+    def activateInScript(self, script, /):
         if script.DefaultLangSys != None:
             self.activateInLangSys(script.DefaultLangSys)
         for langSysRecord in script.LangSysRecord:
             self.activateInLangSys(langSysRecord.LangSys)
 
-    def activateInLangSys(self, langSys):
+    def activateInLangSys(self, langSys, /):
         targetRecord = None
 
         # try to find existing target feature
@@ -192,27 +192,27 @@ class Activator:
         if targetRecord != None:
             targetRecord.Feature.LookupListIndex.sort()
 
-    def findSingleSubstitution(self, featureRecord):
+    def findSingleSubstitution(self, featureRecord, /):
         for lookupIndex in featureRecord.Feature.LookupListIndex:
             lookup = self.lookup[lookupIndex]
             if lookup.LookupType == 1:  # Single substitution
                 for sub in lookup.SubTable:
-                    for input, output in sub.mapping.items():
-                        if input in self.unicodeGlyphs:
-                            self.singleSubstitution(input, output)
+                    for key, value in sub.mapping.items():
+                        if key in self.unicodeGlyphs:
+                            self.singleSubstitution(key, value)
 
-    def singleSubstitution(self, input, output):
+    def singleSubstitution(self, key, value, /):
         for table in self.cmapTables:
             for index in table.cmap:
-                if table.cmap[index] == input:
-                    table.cmap[index] = output
+                if table.cmap[index] == key:
+                    table.cmap[index] = value
 
-    def moveFeatureLookups(fromFeature, toFeature):
+    def moveFeatureLookups(fromFeature, toFeature, /):
         toFeature.LookupListIndex.extend(fromFeature.LookupListIndex)
         toFeature.LookupCount += fromFeature.LookupCount
 
 
-def subset(font: TTFont, unicodes: str):
+def subset(font: TTFont, unicodes: str, /):
     if unicodes == "":
         return
     sub = Subsetter(
@@ -280,7 +280,7 @@ def loadFont():
     }
 
 
-def loadTtfFont(filename: str):
+def loadTtfFont(filename: str, /):
     return TTFont(
         file=filename,
         recalcBBoxes=False,
@@ -288,11 +288,11 @@ def loadTtfFont(filename: str):
     )
 
 
-def processFont(args):
+def processFont(args, /):
     main(args.to_py(), "input", "output")
 
 
-def main(args: dict, filename: str, output: str):
+def main(args: dict, filename: str, output: str, /):
     font = loadTtfFont(filename)
     Instantiate(font, args)
     removeFeature(font, args.get("disables"))

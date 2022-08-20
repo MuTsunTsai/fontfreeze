@@ -1,47 +1,49 @@
-_M='version'
-_L='family'
-_K='disables'
-_J='features'
-_I='Bold Italic'
-_H='Italic'
-_G='Regular'
-_F='input'
-_E='options'
-_D=None
-_C='GSUB'
-_B='fvar'
-_A='name'
+T='version'
+S='family'
+R='disables'
+Q='features'
+P='Bold Italic'
+O='Italic'
+N='Bold'
+M='Regular'
+G='input'
+J='options'
+I=len
+F=None
+C='GSUB'
+D='fvar'
+A='name'
 import os
-from fontTools.ttLib import TTFont
-from fontTools.subset import Subsetter,Options as SSOptions,parse_unicodes
-from fontTools.varLib.instancer import instantiateVariableFont
-PLAT_MAC=1
-PLAT_WINDOWS=3
-ENC_ROMAN=0
-ENC_UNICODE_11=1
-LANG_ENGLISH=1033
-MACSTYLE={_G:0,'Bold':1,_H:2,_I:3}
-OVERLAP_SIMPLE=64
-OVERLAP_COMPOUND=1024
-def getAxisName(font,tag):
-	for A in font[_B].axes:
-		if A.axisTag==tag:return font[_A].getDebugName(A.axisNameID)
-	return tag
-class Instantiate:
-	def __init__(A,font,args):
-		N='OS/2';K=True;J=', ';C=args;B=font;L=C.get('variations');I=C.get(_E);D=B[_A].getBestFamilyName();O=B[_A].getDebugName(5);F=f"Frozen from {D} {O}."
-		if _B in B:P=J.join((f"{getAxisName(B,A)}={C}"for(A,C)in L.items()));F+=f" Sets {P}.";instantiateVariableFont(B,L,inplace=K,overlap=K)
-		G=C.get(_J)
-		if len(G)>0:G=J.join(G);F+=f" Activates {G}."
-		H=C.get(_K)
-		if len(H)>0:H=J.join(H);F+=f" Deactivates {H}."
-		A.nameTable=B[_A];A.nameTable.names=[];D=I.get(_L);E=I.get('subfamily');M=f"{D} {E}";A.setName(D,1);A.setName(E,2);A.setName(M,3);A.setName(M,4);A.setName('Version 1.000',5);A.setName(Instantiate.getPostscriptName(D,E),6);A.setName('FontFreeze'+C.get(_M),8);A.setName(F,10);A.setName('https://mutsuntsai.github.io/fontfreeze',11)
-		try:B['head'].macStyle=MACSTYLE[E];B[N].fsSelection=Instantiate.makeSelection(B[N].fsSelection,E)
+from fontTools.ttLib import TTFont as B
+from fontTools.subset import Subsetter as U,Options as V,parse_unicodes as W
+from fontTools.varLib.instancer import instantiateVariableFont as X
+Y=1
+Z=3
+a=0
+b=1
+c=1033
+d={M:0,N:1,O:2,P:3}
+e=64
+f=1024
+def g(B,C):
+	for E in B[D].axes:
+		if E.axisTag==C:return B[A].getDebugName(E.axisNameID)
+	return C
+class E:
+	def __init__(B,C,F):
+		W='OS/2';P=True;O=', ';U=F.get('variations');N=F.get(J);G=C[A].getBestFamilyName();Y=C[A].getDebugName(5);K=f"Frozen from {G} {Y}."
+		if D in C:Z=O.join((f"{g(C,A)}={B}"for(A,B)in U.items()));K+=f" Sets {Z}.";X(C,U,inplace=P,overlap=P)
+		L=F.get(Q)
+		if I(L)>0:L=O.join(L);K+=f" Activates {L}."
+		M=F.get(R)
+		if I(M)>0:M=O.join(M);K+=f" Deactivates {M}."
+		B.nameTable=C[A];B.nameTable.names=[];G=N.get(S);H=N.get('subfamily');V=f"{G} {H}";B.setName(G,1);B.setName(H,2);B.setName(V,3);B.setName(V,4);B.setName('Version 1.000',5);B.setName(E.getPostscriptName(G,H),6);B.setName('FontFreeze'+F.get(T),8);B.setName(K,10);B.setName('https://mutsuntsai.github.io/fontfreeze',11)
+		try:C['head'].macStyle=d[H];C[W].fsSelection=E.makeSelection(C[W].fsSelection,H)
 		except:pass
-		Instantiate.dropVariationTables(B)
-		if I.get('fixContour')==K:Instantiate.setOverlapFlags(B)
-	def getPostscriptName(A,subfamilyName):B=subfamilyName;A=A.replace(' ','');B=B.replace(' ','');return f"{A}-{B}"
-	def setName(A,content,index):C=index;B=content;A.nameTable.setName(B,C,PLAT_MAC,ENC_ROMAN,0);A.nameTable.setName(B,C,PLAT_WINDOWS,ENC_UNICODE_11,LANG_ENGLISH)
+		E.dropVariationTables(C)
+		if N.get('fixContour')==P:E.setOverlapFlags(C)
+	def getPostscriptName(A,B):A=A.replace(' ','');B=B.replace(' ','');return f"{A}-{B}"
+	def setName(A,B,C):A.nameTable.setName(B,C,Y,a,0);A.nameTable.setName(B,C,Z,b,c)
 	def dropVariationTables(A):
 		for B in 'STAT cvar fvar gvar'.split():
 			if B in A.keys():del A[B]
@@ -49,37 +51,35 @@ class Instantiate:
 		B=C['glyf']
 		for D in B.keys():
 			A=B[D]
-			if A.isComposite():A.components[0].flags|=OVERLAP_COMPOUND
-			elif A.numberOfContours>0:A.flags[0]|=OVERLAP_SIMPLE
-	def makeSelection(A,style):
-		B=style;A=A^A
-		if B==_G:A|=64
+			if A.isComposite():A.components[0].flags|=f
+			elif A.numberOfContours>0:A.flags[0]|=e
+	def makeSelection(A,B):
+		A=A^A
+		if B==M:A|=64
 		else:A&=~ 64
-		if B=='Bold'or B==_I:A|=32
+		if B==N or B==P:A|=32
 		else:A&=~ 32
-		if B==_H:A|=1
+		if B==O:A|=1
 		else:A&=~ 1
 		if not A:A=64
 		return A
-def removeFeature(font,features):
-	A=features
-	if len(A)==0 or _C not in font:return
-	C=font[_C].table.FeatureList.FeatureRecord
-	for B in C:
-		if B.FeatureTag in A:clearFeatureRecord(B)
-def clearFeatureRecord(featureRecord):A=featureRecord;A.Feature.LookupListIndex.clear();A.Feature.LookupCount=0;A.FeatureTag='DELT'
-class Activator:
-	def __init__(A,font,args):
-		B=args;A.font=font;A.features=B.get(_J);A.target=B.get(_E).get('target');A.singleSub=B.get(_E).get('singleSub')
-		if len(A.features)==0 or _C not in A.font:return
-		A.cmapTables=A.font['cmap'].tables;A.unicodeGlyphs={C for B in A.cmapTables for C in B.cmap.values()};C=A.font[_C].table;A.featureRecords=C.FeatureList.FeatureRecord;A.lookup=C.LookupList.Lookup;D=C.ScriptList.ScriptRecord
-		for E in D:A.activateInScript(E.Script)
-	def activateInScript(B,script):
-		A=script
-		if A.DefaultLangSys!=_D:B.activateInLangSys(A.DefaultLangSys)
+def h(A,B):
+	if I(B)==0 or C not in A:return
+	E=A[C].table.FeatureList.FeatureRecord
+	for D in E:
+		if D.FeatureTag in B:H(D)
+def H(A):A.Feature.LookupListIndex.clear();A.Feature.LookupCount=0;A.FeatureTag='DELT'
+class K:
+	def __init__(A,E,B):
+		A.font=E;A.features=B.get(Q);A.target=B.get(J).get('target');A.singleSub=B.get(J).get('singleSub')
+		if I(A.features)==0 or C not in A.font:return
+		A.cmapTables=A.font['cmap'].tables;A.unicodeGlyphs={C for B in A.cmapTables for C in B.cmap.values()};D=A.font[C].table;A.featureRecords=D.FeatureList.FeatureRecord;A.lookup=D.LookupList.Lookup;F=D.ScriptList.ScriptRecord
+		for G in F:A.activateInScript(G.Script)
+	def activateInScript(B,A):
+		if A.DefaultLangSys!=F:B.activateInLangSys(A.DefaultLangSys)
 		for C in A.LangSysRecord:B.activateInLangSys(C.LangSys)
-	def activateInLangSys(B,langSys):
-		E=langSys;C=_D
+	def activateInLangSys(B,E):
+		C=F
 		for D in E.FeatureIndex:
 			A=B.featureRecords[D]
 			if A.FeatureTag==B.target:C=A
@@ -87,32 +87,32 @@ class Activator:
 			A=B.featureRecords[D]
 			if A.FeatureTag in B.features:
 				if B.singleSub:B.findSingleSubstitution(A)
-				if C==_D:C=A;A.FeatureTag=B.target
-				else:Activator.moveFeatureLookups(A.Feature,C.Feature);clearFeatureRecord(A)
-		if C!=_D:C.Feature.LookupListIndex.sort()
-	def findSingleSubstitution(A,featureRecord):
-		for C in featureRecord.Feature.LookupListIndex:
-			B=A.lookup[C]
+				if C==F:C=A;A.FeatureTag=B.target
+				else:K.moveFeatureLookups(A.Feature,C.Feature);H(A)
+		if C!=F:C.Feature.LookupListIndex.sort()
+	def findSingleSubstitution(A,D):
+		for E in D.Feature.LookupListIndex:
+			B=A.lookup[E]
 			if B.LookupType==1:
-				for D in B.SubTable:
-					for (input,E) in D.mapping.items():
-						if input in A.unicodeGlyphs:A.singleSubstitution(input,E)
-	def singleSubstitution(C,input,output):
+				for F in B.SubTable:
+					for (C,G) in F.mapping.items():
+						if C in A.unicodeGlyphs:A.singleSubstitution(C,G)
+	def singleSubstitution(C,D,E):
 		for A in C.cmapTables:
 			for B in A.cmap:
-				if A.cmap[B]==input:A.cmap[B]=output
-	def moveFeatureLookups(A,toFeature):B=toFeature;B.LookupListIndex.extend(A.LookupListIndex);B.LookupCount+=A.LookupCount
-def subset(font,unicodes):
-	B=unicodes;A='*'
+				if A.cmap[B]==D:A.cmap[B]=E
+	def moveFeatureLookups(A,B):B.LookupListIndex.extend(A.LookupListIndex);B.LookupCount+=A.LookupCount
+def i(D,B):
+	A='*'
 	if B=='':return
-	C=Subsetter(SSOptions(layout_scripts=[A],layout_features=[A],name_IDs=[A],name_languages=[A]));C.populate(unicodes=parse_unicodes(B));C.subset(font)
+	C=U(V(layout_scripts=[A],layout_features=[A],name_IDs=[A],name_languages=[A]));C.populate(unicodes=W(B));C.subset(D)
 def loadFont():
-	C='temp';A=loadTtfFont(C);B=A[_C].table.FeatureList.FeatureRecord if _C in A else[];B=[A.FeatureTag for A in B];D={'axes':[{'tag':B.axisTag,'default':B.defaultValue,'min':B.minValue,'max':B.maxValue,_A:A[_A].getDebugName(B.axisNameID)}for B in A[_B].axes],'instances':[{_A:A[_A].getDebugName(B.subfamilyNameID),'coordinates':B.coordinates}for B in A[_B].instances]}if _B in A else _D
-	if os.path.exists(_F):os.remove(_F)
-	os.rename(C,_F);return{_L:A[_A].getBestFamilyName(),'copyright':A[_A].getDebugName(0),'id':A[_A].getDebugName(3),_M:A[_A].getDebugName(5),'trademark':A[_A].getDebugName(7),'manufacturer':A[_A].getDebugName(8),'designer':A[_A].getDebugName(9),'description':A[_A].getDebugName(10),'vendorURL':A[_A].getDebugName(11),'designerURL':A[_A].getDebugName(12),'license':A[_A].getDebugName(13),'licenseURL':A[_A].getDebugName(14),_B:D,'gsub':list(dict.fromkeys(B))}
-def loadTtfFont(filename):return TTFont(file=filename,recalcBBoxes=False,fontNumber=0)
-def processFont(args):main(args.to_py(),_F,'output')
-def main(args,filename,output):
-	C='woff2';B=args;A=loadTtfFont(filename);Instantiate(A,B);removeFeature(A,B.get(_K));Activator(A,B);subset(A,B.get('unicodes'))
-	if B.get(_E).get('format')==C:A.flavor=C
-	A.save(output)
+	H='temp';B=L(H);E=B[C].table.FeatureList.FeatureRecord if C in B else[];E=[A.FeatureTag for A in E];I={'axes':[{'tag':C.axisTag,'default':C.defaultValue,'min':C.minValue,'max':C.maxValue,A:B[A].getDebugName(C.axisNameID)}for C in B[D].axes],'instances':[{A:B[A].getDebugName(C.subfamilyNameID),'coordinates':C.coordinates}for C in B[D].instances]}if D in B else F
+	if os.path.exists(G):os.remove(G)
+	os.rename(H,G);return{S:B[A].getBestFamilyName(),'copyright':B[A].getDebugName(0),'id':B[A].getDebugName(3),T:B[A].getDebugName(5),'trademark':B[A].getDebugName(7),'manufacturer':B[A].getDebugName(8),'designer':B[A].getDebugName(9),'description':B[A].getDebugName(10),'vendorURL':B[A].getDebugName(11),'designerURL':B[A].getDebugName(12),'license':B[A].getDebugName(13),'licenseURL':B[A].getDebugName(14),D:I,'gsub':list(dict.fromkeys(E))}
+def L(A):return B(file=A,recalcBBoxes=False,fontNumber=0)
+def processFont(A):main(A.to_py(),G,'output')
+def main(B,D,F):
+	C='woff2';A=L(D);E(A,B);h(A,B.get(R));K(A,B);i(A,B.get('unicodes'))
+	if B.get(J).get('format')==C:A.flavor=C
+	A.save(F)
