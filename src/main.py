@@ -279,15 +279,26 @@ def loadFont(filename: str, /):
     # For such a font we override the input file with a fixed cmap.
     # There are still some legacy CJK fonts that fail even with this approach,
     # but at least this works for many samples I have.
-    if font["cmap"].getBestCmap() == None and convertBig5Cmap(font):
+    if font.getBestCmap() == None and convertBig5Cmap(font):
         print("Legacy CJK font detected.")
-        font.save("input")
+
+        # It is known that 金梅 series fonts, for example, have problems in their mort tables.
+        # Here we perform a check to see if mort table data make sense.
+        # If not, just delete the table.
+        if "mort" in font:
+            try:
+                font["mort"].ensureDecompiled()
+            except:
+                print("Drop corrupted mort table.")
+                del font["mort"]
+
+        font.save("input", reorderTables=None)
         info["preview"] = True
 
     return info
 
 
-def convertBig5Cmap(font, /) -> bool:
+def convertBig5Cmap(font: TTFont, /) -> bool:
     cmap = font["cmap"]
     for table in cmap.tables:
         if table.platformID == 3 and table.platEncID == 4:  # Big5
