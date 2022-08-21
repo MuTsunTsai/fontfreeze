@@ -2,19 +2,10 @@ import os
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
+from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 
-PLAT_MAC = 1
-PLAT_WINDOWS = 3
-
-ENC_ROMAN = 0
-ENC_UNICODE_11 = 1
-
-LANG_ENGLISH = 1033
 
 MACSTYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
-
-OVERLAP_SIMPLE = 0x40
-OVERLAP_COMPOUND = 0x0400
 
 
 def getAxisName(font: TTFont, tag: str, /) -> str:
@@ -80,9 +71,14 @@ class Instantiate:
         return f"{familyName}-{subfamilyName}"
 
     def setName(self, content: str, index: int, /):
-        self.nameTable.setName(content, index, PLAT_MAC, ENC_ROMAN, 0)
+        # Setting MAC platform seems to cause trouble in some fonts,
+        # so we don't do that anymore.
         self.nameTable.setName(
-            content, index, PLAT_WINDOWS, ENC_UNICODE_11, LANG_ENGLISH
+            content,
+            index,
+            3,  # PLAT_WINDOWS,
+            1,  # ENC_UNICODE_11
+            1033,  # LANG_ENGLISH
         )
 
     def dropVariationTables(font, /):
@@ -96,9 +92,9 @@ class Instantiate:
             glyph = glyf[glyph_name]
 
             if glyph.isComposite():
-                glyph.components[0].flags |= OVERLAP_COMPOUND
+                glyph.components[0].flags |= 0x0400  # OVERLAP_COMPOUND
             elif glyph.numberOfContours > 0:
-                glyph.flags[0] |= OVERLAP_SIMPLE
+                glyph.flags[0] |= 0x40  # OVERLAP_SIMPLE
 
     def makeSelection(bits, style, /):
         bits = bits ^ bits
@@ -227,8 +223,8 @@ def subset(font: TTFont, unicodes: str, /):
     sub.subset(font)
 
 
-def loadFont():
-    font = loadTtfFont("temp")
+def loadFont(filename: str, /):
+    font = loadTtfFont(filename)
 
     features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
     features = [r.FeatureTag for r in features]
@@ -260,9 +256,9 @@ def loadFont():
     # change temp to input, preventing input being overwritten by invalid file
     if os.path.exists("input"):
         os.remove("input")
-    os.rename("temp", "input")
+    os.rename(filename, "input")
 
-    return {
+    info = {
         "family": font["name"].getBestFamilyName(),
         "copyright": font["name"].getDebugName(0),
         "id": font["name"].getDebugName(3),
@@ -279,13 +275,70 @@ def loadFont():
         "gsub": list(dict.fromkeys(features)),
     }
 
+    # Legacy CJK fonts will likely fail the OpenType Sanitizer (see https://github.com/khaledhosny/ots)
+    # For such a font we override the input file with a fixed cmap.
+    # There are still some legacy CJK fonts that fail even with this approach,
+    # but at least this works for many samples I have.
+    if font["cmap"].getBestCmap() == None and convertBig5Cmap(font):
+        print("Legacy CJK font detected.")
+        font.save("input")
+        info["preview"] = True
+
+    return info
+
+
+def convertBig5Cmap(font, /) -> bool:
+    cmap = font["cmap"]
+    for table in cmap.tables:
+        if table.platformID == 3 and table.platEncID == 4:  # Big5
+            newtable = CmapSubtable.newSubtable(4)
+            newtable.platformID = 3  # Windows
+            newtable.platEncID = 1  # Unicode
+            newtable.language = 0
+            newtable.cmap = {}
+            for key in table.cmap:
+                try:
+                    newKey = (
+                        ord(key.to_bytes(2, byteorder="big").decode("big5"))
+                        if key > 255
+                        else key
+                    )
+                    newtable.cmap[newKey] = table.cmap[key]
+                except:
+                    pass
+            cmap.tables = [newtable]
+            return True
+    return False
+
+
+# Legacy CJK fonts in Big5 encoding in particular might use mixed encoding. For more info, see
+# https://docs.microsoft.com/en-us/typography/opentype/spec/name#windows-encoding-ids
+def fixEncoding(name, /):
+    temp = name.string.decode("utf_16_be")
+    temp = bytes(temp, encoding="raw_unicode_escape")
+    try:
+        temp.decode("big5")
+        name.string = temp
+    except:
+        pass  # We've tried our best
+
 
 def loadTtfFont(filename: str, /):
-    return TTFont(
+    font = TTFont(
         file=filename,
         recalcBBoxes=False,
         fontNumber=0,  # in case it's a font collection
     )
+
+    # Fix legacy CJK font name encoding
+    for name in font["name"].names:
+        if name.platformID == 3 and name.platEncID == 4:  # Big5
+            try:
+                name.toStr()
+            except:
+                fixEncoding(name)
+
+    return font
 
 
 def processFont(args, /):

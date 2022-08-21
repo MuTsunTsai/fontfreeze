@@ -17,7 +17,7 @@
 	});
 
 	const style = document.createElement("style");
-	
+
 	const store = reactive({
 		localFontSupport: 'queryLocalFonts' in window,
 		localFonts: [],
@@ -277,7 +277,7 @@
 		await initialized;
 		store.loading = "font";
 
-		const tempURL = URL.createObjectURL(blob);
+		let tempURL = URL.createObjectURL(blob);
 		let info;
 		try {
 			info = await callWorker('open', tempURL);
@@ -289,6 +289,10 @@
 		}
 
 		console.log(clone(info));
+		if(info.preview) {
+			URL.revokeObjectURL(tempURL);
+			tempURL = info.preview;
+		}
 		setPreviewFont(tempURL);
 
 		info.fileName = name;

@@ -97,8 +97,13 @@
 		const buffer = await response.arrayBuffer();
 		const array = new Uint8Array(buffer);
 		pyodide.FS.writeFile('temp', array);
-		const info = pyodide.runPython("loadFont()")
+		const info = pyodide.runPython("loadFont('temp')")
 			.toJs({ dict_converter: Object.fromEntries });
+		if(info.preview) {
+			const content = pyodide.FS.readFile('input');
+			const blob = new Blob([content], { type: "font/ttf" });
+			info.preview = URL.createObjectURL(blob);
+		}
 		return info;
 	}
 
