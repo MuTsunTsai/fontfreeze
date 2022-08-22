@@ -1,12 +1,20 @@
 # FontFreeze
 
 <p align="center">
-  <a href="http://mutsuntsai.github.io/fontfreeze"><img width="800" src="https://github.com/MuTsunTsai/fontfreeze/raw/main/docs/logo.png"></a>
+<a href="http://mutsuntsai.github.io/fontfreeze"><img width="800" src="https://github.com/MuTsunTsai/fontfreeze/raw/main/docs/logo.png"></a>
 </p>
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green)
-![GitHub Repo stars](https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow)
-![Copyright](https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue)
+<p align="center">
+<img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
+<img alt="GitHub Repo stars"
+src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow">
+<a href="https://github.com/mutsuntsai"><img
+src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
+</p>
+
+<p align="center">
+<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=356516&theme=neutral" alt="FontFreeze - Freeze&#0032;variations&#0032;and&#0032;features&#0032;in&#0032;font | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+</p>
 
 > Freeze variations and features in font.
 
@@ -18,6 +26,11 @@ IDEs such as Visual Studio only support choosing font family and font size,
 without any options to select variants or toggle features.
 FontFreeze is a tool that allows you to create a customized instance of a given font,
 so that you may use exactly the font you want in those environments.
+
+- Instantly preview results in your browser.
+- Exports to TTF or WOFF2 formats.
+- Supports freezing ligature features.
+- Supports most legacy CJK fonts.
 
 ## How to use it
 
@@ -50,7 +63,6 @@ Tips:
   You can put any sample source code in it to preview the result.
 - If you have multiple screens with different DPIs,
   preview on each of them to make sure the result is perfect.
-- You can now also export to WOFF2 format and use the font on web!
 
 ## How it works
 
