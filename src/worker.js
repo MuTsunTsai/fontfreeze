@@ -5,7 +5,7 @@
 
 	if(typeof TransformStream != 'undefined') {
 		// This number should be updated whenever Pyodide updates
-		const totalBytes = 15275225;
+		const totalBytes = 15275472;
 
 		let lastProgress = performance.now();
 
@@ -44,7 +44,7 @@
 		}
 	}
 
-	importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.0/full/pyodide.js");
+	importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.1/full/pyodide.js");
 
 	let pyodide;
 

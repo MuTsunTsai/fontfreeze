@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 - Progress indicator for loading Python packages.
 - Add description in generated font.
 
+### Fixed
+
+- 1.4.5: Update to Pyodide 0.21.1, which fixed issue in Safari v14.
+
 ## [1.3.0] - 2022-08-16
 
 ### Added
