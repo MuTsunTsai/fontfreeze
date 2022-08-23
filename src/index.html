@@ -35,13 +35,18 @@
 </head>
 
 <body>
+	<div class="dropzone">
+		<div class="display-1">
+			<span>Drop font file</span>
+		</div>
+	</div>
 	<div class="container py-3 px-sm-2 px-md-3 px-lg-5">
 		<div class="mb-3 text-end">
 			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</a>&emsp;
 			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</a>
 		</div>
 		<div class="card bg-light">
-			<div class="card-body" v-scope="{drag:false}">
+			<div class="card-body">
 				<header class="text-center my-3">
 					<picture>
 						<source srcset="logo.webp" type="image/webp">
@@ -61,17 +66,23 @@
 								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
 					</div>
 
-					<div class="dropzone mt-3" :class="{drag:drag}" @dragover="drag=true" @dragleave="drag=false"
-						 @drop="drag=false">
+					<div class="mt-3">
+						<label type="button" class="btn btn-success" for="upload" :class="{disabled:store.loading}">
+							<div class="display-4">📂</div>
+							<div>Open font file</div>
+						</label>
+						<input type="file" id="upload" onchange="openFile(this)" title="Open font file" :disable="store.loading">
+						<span v-if="store.localFontSupport" v-cloak>
+							<button type="button" :disabled="store.loading" class="btn btn-secondary ms-3" @click="local">
+								<div class="display-4 text-warning">𝕬</div>
+								<div>Select local font</div>
+							</button>
+						</span>
+					</div>
+					<div class="mt-3">
 						<div v-if="store.loading" v-cloak>Loading {{store.loading}}. Please wait...</div>
 						<div v-else-if="store.font" v-cloak>{{store.font.fileName}} ({{store.font.fileSize}})</div>
-						<div v-else>Drop a font file here or click here to upload!</div>
-						<input type="file" onchange="openFile(this)" title="Open font file" :disabled="store.loading">
-					</div>
-					<div v-if="store.localFontSupport" class="mt-2" v-cloak>
-						<button type="button" :disabled="store.loading" class="btn btn-secondary btn-sm" @click="local">
-							Or select a local font !
-						</button>
+						<div v-else>Open a font or drop a font file anywhere!</div>
 					</div>
 				</header>
 

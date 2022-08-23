@@ -16,6 +16,9 @@
 		worker.addEventListener('message', handler);
 	});
 
+	// We use a stylesheet to handle preview font.
+	// We could also use Font Loading API to add the font directly without using a stylesheet,
+	// but it appears that the Unicode range cannot be modified afterwards with that approach.
 	const style = document.createElement("style");
 
 	const store = reactive({
@@ -62,6 +65,10 @@
 		}
 	};
 
+	const note =
+		"Please try re-exporting the font with editors such as FontForge and see if it fixes the issue. " +
+		"If it still doesn't, please submit an issue.";
+
 	const modal = selector => bootstrap.Modal.getOrCreateInstance(selector);
 
 	let lastValues, fontURL;
@@ -89,106 +96,127 @@
 		.then(r => r.json())
 		.then(j => store.version = " " + j.value);
 
-	addEventListener('DOMContentLoaded', () => createApp({
-		store: store,
-		get previewStyle() {
-			if(!store.font) return null;
-			const feat = store.font.gsub
-				.filter(g => store.features[g] !== false)
-				.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
-				.join(',');
-			const variation = !store.font.fvar ? "normal" :
-				store.font.fvar.axes
-					.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
+	addEventListener('DOMContentLoaded', () => {
+		// Setup dropzone
+		const dropzone = document.querySelector(".dropzone");
+		const toggle = (event, drag) => {
+			event.stopPropagation();
+			event.preventDefault();
+			dropzone.classList.toggle('drag', drag)
+		};
+		document.body.addEventListener('dragover', event => toggle(event, true));
+		dropzone.addEventListener('dragleave', event => toggle(event, false));
+		dropzone.addEventListener('drop', event => {
+			toggle(event, false);
+			const items = [...event.dataTransfer.items];
+			const item = items.find(i => i.kind == 'file');
+			if(item) tryOpenFile(item.getAsFile());
+		});
+
+		// Initialize Vue
+		createApp({
+			store: store,
+			get previewStyle() {
+				if(!store.font) return null;
+				const feat = store.font.gsub
+					.filter(g => store.features[g] !== false)
+					.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
 					.join(',');
-			return `white-space: pre-line;` +
-				`font-family: preview${store.previewIndex};` +
-				`font-feature-settings: ${feat};` +
-				`font-variation-settings: ${variation};` +
-				`font-size: ${store.previewSize}pt;`;
-		},
-		get more() {
-			const f = store.font;
-			if(!f) return false;
-			return f.description || f.designer || f.manufacturer || f.copyright || f.trademark;
-		},
-		// The next two getter are for dealing with a bug in petite-vue 0.4.1
-		// that v-for expression is calculated one more time as the upper v-if condition becoming false
-		get instances() {
-			if(!store.font || !store.font.fvar) return [];
-			return store.font.fvar.instances;
-		},
-		get axes() {
-			if(!store.font || !store.font.fvar) return [];
-			return store.font.fvar.axes;
-		},
-		getAxisName(axis) {
-			return axis.name ? axis.name :
-				axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
-		},
-		setInstance(instance) {
-			for(let t in instance.coordinates) {
-				store.variations[t] = instance.coordinates[t];
+				const variation = !store.font.fvar ? "normal" :
+					store.font.fvar.axes
+						.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
+						.join(',');
+				return `white-space: pre-line;` +
+					`font-family: preview${store.previewIndex};` +
+					`font-feature-settings: ${feat};` +
+					`font-variation-settings: ${variation};` +
+					`font-size: ${store.previewSize}pt;`;
+			},
+			get more() {
+				const f = store.font;
+				if(!f) return false;
+				return f.description || f.designer || f.manufacturer || f.copyright || f.trademark;
+			},
+			// The next two getter are for dealing with a bug in petite-vue 0.4.1
+			// that v-for expression is calculated one more time as the upper v-if condition becoming false
+			get instances() {
+				if(!store.font || !store.font.fvar) return [];
+				return store.font.fvar.instances;
+			},
+			get axes() {
+				if(!store.font || !store.font.fvar) return [];
+				return store.font.fvar.axes;
+			},
+			getAxisName(axis) {
+				return axis.name ? axis.name :
+					axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
+			},
+			setInstance(instance) {
+				for(let t in instance.coordinates) {
+					store.variations[t] = instance.coordinates[t];
+				}
+			},
+			getStep(axis) {
+				const range = axis.max - axis.min;
+				if(range > 20) return 1;
+				if(range > 1) return 0.1;
+				return 0.01;
+			},
+			clear() {
+				const selectElement = document.getElementsByTagName('select')[0];
+				if(selectElement) selectElement.value = "";
+			},
+			checkboxChange(f) {
+				if(lastValues[f] === true) store.features[f] = undefined;
+				if(lastValues[f] === undefined) store.features[f] = false;
+				lastValues[f] = store.features[f];
+			},
+			info() {
+				modal("#info").show();
+			},
+			setUnicodeRange() {
+				style.sheet.cssRules[0].style.unicodeRange = getUnicodes();
+			},
+			optionStyle(f) {
+				if(!f) {
+					if(!store.localFont) return "";
+					f = store.localFonts[store.localFont];
+				}
+				return `font-family:'${f.fullName}', '${f.postscriptName}', '${f.family}'`;
+			},
+			async local() {
+				gtag('event', 'show_local');
+				await navigator.permissions.query({
+					name: "local-fonts",
+					description: ""
+				});
+				const fonts = await window.queryLocalFonts();
+				if(fonts.length == 0) return; // permission denied
+				store.localFonts = fonts;
+				modal("#local").show();
+			},
+			async loadLocal() {
+				gtag('event', 'open_local');
+				const font = store.localFonts[store.localFont];
+				let blob;
+				try {
+					blob = await font.blob();
+				} catch(e) {
+					alert("An error occur: " + e.message);
+					store.unavailableFonts.push(font.postscriptName);
+					return;
+				} finally {
+					store.localFont = "";
+				}
+				modal("#local").hide();
+				try {
+					await openBlob(blob, font.fullName);
+				} catch(e) {
+					alert("An error occur: " + e.message);
+				}
 			}
-		},
-		getStep(axis) {
-			const range = axis.max - axis.min;
-			if(range > 20) return 1;
-			if(range > 1) return 0.1;
-			return 0.01;
-		},
-		clear() {
-			const selectElement = document.getElementsByTagName('select')[0];
-			if(selectElement) selectElement.value = "";
-		},
-		checkboxChange(f) {
-			if(lastValues[f] === true) store.features[f] = undefined;
-			if(lastValues[f] === undefined) store.features[f] = false;
-			lastValues[f] = store.features[f];
-		},
-		info() {
-			modal("#info").show();
-		},
-		setUnicodeRange() {
-			style.sheet.cssRules[0].style.unicodeRange = getUnicodes();
-		},
-		optionStyle(f) {
-			if(!f) {
-				if(!store.localFont) return "";
-				f = store.localFonts[store.localFont];
-			}
-			return `font-family:'${f.fullName}', '${f.postscriptName}', '${f.family}'`;
-		},
-		async local() {
-			await navigator.permissions.query({
-				name: "local-fonts",
-				description: ""
-			});
-			const fonts = await window.queryLocalFonts();
-			if(fonts.length == 0) return; // permission denied
-			store.localFonts = fonts;
-			modal("#local").show();
-		},
-		async loadLocal() {
-			const font = store.localFonts[store.localFont];
-			let blob;
-			try {
-				blob = await font.blob();
-			} catch(e) {
-				alert("An error occur: " + e.message);
-				store.unavailableFonts.push(font.postscriptName);
-				return;
-			} finally {
-				store.localFont = "";
-			}
-			modal("#local").hide();
-			try {
-				await openBlob(blob, font.fullName);
-			} catch(e) {
-				alert("An error occur: " + e.message);
-			}
-		}
-	}).mount());
+		}).mount();
+	});
 
 	globalThis.generate = async function() {
 		if(store.message) return; // button not ready
@@ -260,15 +288,19 @@
 	}
 
 	globalThis.openFile = async function(input) {
-		gtag('event', 'open_ttf');
 		const file = input.files[0];
 		if(!file) return;
 		input.value = ""; // clear field
+		tryOpenFile(file);
+	}
+
+	async function tryOpenFile(file) {
+		gtag('event', 'open_ttf');
 		try {
 			await openBlob(file, file.name);
 		} catch(e) {
 			console.log(e);
-			alert(`"${file.name}" is not a valid font file.`);
+			alert(`"${file.name}" is not a valid font file, or is corrupted. ` + note);
 		}
 	}
 
@@ -283,9 +315,8 @@
 			info = await callWorker('open', tempURL);
 		} catch(e) {
 			URL.revokeObjectURL(tempURL);
-			throw e;
-		} finally {
 			store.loading = null;
+			throw e;
 		}
 
 		console.log(clone(info));
@@ -293,7 +324,6 @@
 			URL.revokeObjectURL(tempURL);
 			tempURL = info.preview;
 		}
-		setPreviewFont(tempURL);
 
 		info.fileName = name;
 		info.fileSize = getFileSize(blob.size);
@@ -315,6 +345,30 @@
 			for(let a of info.fvar.axes) store.variations[a.tag] = a.default;
 		}
 		store.font = info;
+
+		// This needs to be done after we have turned on the font UI,
+		// so that the browser will actually try to load the font.
+		await tryPreview(tempURL);
+
+		store.loading = null;
+	}
+
+	async function tryPreview(url) {
+		if(await setPreviewFont(url)) return;
+
+		// If it's not done yet, try to fix legacy font issues.
+		if(!info.preview) {
+			try {
+				const url = await callWorker('legacy');
+				if(await setPreviewFont(url)) return;
+			} catch(e) {
+				console.log(e);
+			}
+		}
+
+		// If it's already done or the fix fails, show message.
+		gtag('event', 'preview_failed');
+		alert("Font preview won't work for this font. " + note);
 	}
 
 	function getRemoveCharCodes() {
@@ -346,12 +400,19 @@
 		if(fontURL) URL.revokeObjectURL(fontURL);
 		fontURL = url;
 		if(style.sheet.cssRules.length > 0) style.sheet.deleteRule(0);
-		style.sheet.insertRule(
-			`@font-face {` +
-			`font-family: preview${++store.previewIndex};` +
-			`src: url('${fontURL}');` +
-			`}`
-		);
+		return new Promise(resolve => {
+			// LoadingDone event always fires, regardless of font validity.
+			document.fonts.onloadingdone = event => {
+				// if the font is valid, fontfaces array will contain one element.
+				resolve(event.fontfaces.length > 0);
+			};
+			style.sheet.insertRule(
+				`@font-face {` +
+				`font-family: preview${++store.previewIndex};` +
+				`src: url('${fontURL}');` +
+				`}`
+			);
+		});
 	}
 
 	function getFileSize(size) {

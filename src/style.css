@@ -1,3 +1,8 @@
+html,
+body {
+	height: 100%;
+}
+
 ::-webkit-scrollbar {
 	width: 20px;
 }
@@ -13,7 +18,8 @@
 	border-radius: 10px;
 }
 
-[v-cloak] {
+[v-cloak],
+input[type=file] {
 	display: none;
 }
 
@@ -58,17 +64,33 @@ h5 {
 }
 
 .dropzone {
-	display: inline-flex;
-	position: relative;
-	border: 5px dashed #666;
-	height: 5rem;
+	display: none;
+	position: fixed;
+	background: #8883;
+	height: 100%;
+	width: 100%;
+	padding: 1rem;
+	z-index: 2000;
+}
+
+.dropzone * {
+	/* This is needed to prevent firing dragleave event on child elements. */
+	pointer-events: none;
+}
+
+.dropzone>* {
+	display: flex;
+	border: 5px dashed var(--bs-body-color);
+	height: 100%;
+	width: 100%;
 	justify-content: center;
 	align-items: center;
-	width: min(100%, 30rem);
+	font-weight: 900;
 }
 
 .dropzone.drag {
-	border-color: black;
+	display: block;
+	backdrop-filter: blur(5px);
 }
 
 .dropzone input {
@@ -162,5 +184,5 @@ h5 {
 
 	.product-hunt {
 		content: url('https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=356516&theme=dark');
-	}	
+	}
 }

@@ -2,6 +2,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2022-08-23
+
+### Added
+
+- New UI design, allowing file dropping anywhere on the page.
+- Capable of handling more legacy font files.
+- Improved error handling.
+
 ## [1.4.0] - 2022-08-18
 
 ### Added

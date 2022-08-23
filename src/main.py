@@ -275,24 +275,9 @@ def loadFont(filename: str, /):
         "gsub": list(dict.fromkeys(features)),
     }
 
-    # Legacy CJK fonts will likely fail the OpenType Sanitizer (see https://github.com/khaledhosny/ots)
-    # For such a font we override the input file with a fixed cmap.
-    # There are still some legacy CJK fonts that fail even with this approach,
-    # but at least this works for many samples I have.
     if font.getBestCmap() == None and convertBig5Cmap(font):
         print("Legacy CJK font detected.")
-
-        # It is known that 金梅 series fonts, for example, have problems in their mort tables.
-        # Here we perform a check to see if mort table data make sense.
-        # If not, just delete the table.
-        if "mort" in font:
-            try:
-                font["mort"].ensureDecompiled()
-            except:
-                print("Drop corrupted mort table.")
-                del font["mort"]
-
-        font.save("input", reorderTables=None)
+        fixLegacy(font)
         info["preview"] = True
 
     return info
@@ -350,6 +335,27 @@ def loadTtfFont(filename: str, /):
                 fixEncoding(name)
 
     return font
+
+# Legacy fonts will likely fail the OpenType Sanitizer (see https://github.com/khaledhosny/ots)
+# For such a font we tried to fix the font as much as possible.
+def fixLegacy(font: TTFont, /):
+    # It is known that 金梅 series fonts, for example, have problems in their mort tables.
+    # Here we perform a check to see if mort table data make sense.
+    # If not, just delete the table.
+    if "mort" in font:
+        try:
+            font["mort"].ensureDecompiled()
+        except:
+            print("Drop corrupted mort table.")
+            del font["mort"]
+
+    # Simply re-saving the font should fix most table alignment issues.
+    font.save("input", reorderTables=None)
+
+
+def processLegacy():
+    font = loadTtfFont("input")
+    fixLegacy(font)
 
 
 def processFont(args, /):

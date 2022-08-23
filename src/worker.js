@@ -80,6 +80,7 @@
 			let result;
 			if(command == "open") result = await open(data);
 			if(command == "save") result = save(data);
+			if(command == "legacy") result = legacy();
 			event.ports[0].postMessage({
 				success: true,
 				data: result
@@ -99,12 +100,19 @@
 		pyodide.FS.writeFile('temp', array);
 		const info = pyodide.runPython("loadFont('temp')")
 			.toJs({ dict_converter: Object.fromEntries });
-		if(info.preview) {
-			const content = pyodide.FS.readFile('input');
-			const blob = new Blob([content], { type: "font/ttf" });
-			info.preview = URL.createObjectURL(blob);
-		}
+		if(info.preview) info.preview = createPreviewUrl();
 		return info;
+	}
+
+	function legacy() {
+		pyodide.globals.get("processLegacy")();
+		return createPreviewUrl();
+	}
+
+	function createPreviewUrl() {
+		const content = pyodide.FS.readFile('input');
+		const blob = new Blob([content], { type: "font/ttf" });
+		return URL.createObjectURL(blob);
 	}
 
 	let saveURL;

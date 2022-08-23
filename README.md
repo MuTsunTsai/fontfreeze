@@ -27,10 +27,11 @@ without any options to select variants or toggle features.
 FontFreeze is a tool that allows you to create a customized instance of a given font,
 so that you may use exactly the font you want in those environments.
 
+- Purely front-end, no uploading delay for large font files.
 - Instantly preview results in your browser.
 - Exports to TTF or WOFF2 formats.
 - Supports freezing ligature features.
-- Supports most legacy CJK fonts.
+- Supports most legacy fonts.
 
 ## How to use it
 
