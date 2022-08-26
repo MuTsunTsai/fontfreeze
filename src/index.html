@@ -27,11 +27,10 @@
 	<meta property="og:image:height" content="511">
 	<meta property="og:description" content="Freeze variations and features in font.">
 
-	<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.2.0/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="style.css">
-	<script src="https://unpkg.com/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
-	<script src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
-	<script src="main.js"></script>
+	<script defer src="https://unpkg.com/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+	<script defer src="https://unpkg.com/petite-vue@0.4.1/dist/petite-vue.iife.js"></script>
+	<script defer src="main.js"></script>
 </head>
 
 <body>
@@ -41,8 +40,8 @@
 		</div>
 	</div>
 	<div class="container py-3 px-sm-2 px-md-3 px-lg-5">
-		<div class="mb-3 text-end">
-			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</a>&emsp;
+		<div class="mb-3 d-flex justify-content-end" style="gap:1rem">
+			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</a>
 			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</a>
 		</div>
 		<div class="card bg-light">
@@ -58,22 +57,22 @@
 
 					<!-- shields.io -->
 					<div class="my-3">
-						<img class="mx-2" alt="GitHub package.json version"
-							 src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green">
-						<a class="mx-2" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
-								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a>
-						<a class="mx-2" href="https://github.com/mutsuntsai"><img
+						<img class="me-1 me-sm-2 me-md-3" alt="GitHub package.json version"
+							 src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green"><a
+						   class="me-1 me-sm-2 me-md-3" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
+								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a><a
+						   href="https://github.com/mutsuntsai"><img
 								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
 					</div>
 
-					<div class="mt-3">
+					<input type="file" id="upload" onchange="openFile(this)" title="Open font file">
+					<div class="mt-3 d-flex justify-content-center" style="gap:1rem">
 						<label type="button" class="btn btn-success" for="upload" :class="{disabled:store.loading}">
 							<div class="display-4">📂</div>
 							<div>Open font file</div>
 						</label>
-						<input type="file" id="upload" onchange="openFile(this)" title="Open font file" :disable="store.loading">
 						<span v-if="store.localFontSupport" v-cloak>
-							<button type="button" :disabled="store.loading" class="btn btn-secondary ms-3" @click="local">
+							<button type="button" :disabled="store.loading" class="btn btn-secondary" @click="local">
 								<div class="display-4 text-warning">𝕬</div>
 								<div>Select local font</div>
 							</button>
