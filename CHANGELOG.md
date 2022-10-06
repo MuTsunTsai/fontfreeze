@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 - Incorrectly handles glyphs within the higher Unicode range.
 - Emoji icons not showing in some environments.
+- 1.6.1: Preview box may only use plaintext from now.
 
 ## [1.5.0] - 2022-08-23
 

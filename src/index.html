@@ -208,7 +208,8 @@
 								   v-model="store.previewSize">
 						</div>
 					</div>
-					<div class="pre form-control p-3" :style="previewStyle" contenteditable="true" v-text="store.sample">
+
+					<div class="pre form-control p-3" :style="previewStyle" v-effect="setupDiv()">
 					</div>
 
 					<h5>Output options</h5>

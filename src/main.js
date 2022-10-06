@@ -185,6 +185,18 @@
 				}
 				return `font-family:'${f.fullName}', '${f.postscriptName}', '${f.family}'`;
 			},
+			setupDiv() {
+				// There's nothing reactive here, so this method only run once.
+				const div = document.querySelector("div.pre");
+				if(supportPlaintext(div)) {
+					// Chrome needs this, or the initial empty lines won't be selectable.
+					div.innerText = store.sample;
+				}else {
+					setupPlaintext(div);
+					// Firefox needs this, or hitting enter will completely mess up the text.
+					div.textContent = store.sample;
+				}
+			},
 			async local() {
 				gtag('event', 'show_local');
 				await navigator.permissions.query({
@@ -248,6 +260,62 @@
 			console.log(e);
 		}
 		store.running = false;
+	}
+
+	// plaintext-only support detection
+	// https://stackoverflow.com/questions/10672081
+	function supportPlaintext(div) {
+		try {
+			const p = "plaintext-only";
+			div.contentEditable = p;
+			return div.contentEditable == p;
+		} catch(e) {
+			return false;
+		}
+	}
+
+	// Fallback for browsers not supporting plaintext-only (i.e. Firefox)
+	// https://stackoverflow.com/questions/21205785
+	function setupPlaintext(div) {
+		div.contentEditable = "true";
+		div.addEventListener("keydown", e => {
+			//override pressing enter in contenteditable
+			if(e.keyCode == 13) {
+				//don't automatically put in divs
+				e.preventDefault();
+				e.stopPropagation();
+				//insert newline
+				insertTextAtSelection(div, "\n");
+			}
+		});
+		div.addEventListener("paste", e => {
+			//cancel paste
+			e.preventDefault();
+			//get plaintext from clipboard
+			let text = (e.originalEvent || e).clipboardData.getData('text/plain');
+			//insert text manually
+			insertTextAtSelection(div, text);
+		});
+	}
+
+	function insertTextAtSelection(div, txt) {
+		//get selection area so we can position insert
+		let sel = window.getSelection();
+		let text = div.textContent;
+		let before = Math.min(sel.focusOffset, sel.anchorOffset);
+		let after = Math.max(sel.focusOffset, sel.anchorOffset);
+		//ensure string ends with \n so it displays properly
+		let afterStr = text.substring(after);
+		if(afterStr == "") afterStr = "\n";
+		//insert content
+		div.textContent = text.substring(0, before) + txt + afterStr;
+		//restore cursor at correct position
+		sel.removeAllRanges();
+		let range = document.createRange();
+		//childNodes[0] should be all the text
+		range.setStart(div.childNodes[0], before + txt.length);
+		range.setEnd(div.childNodes[0], before + txt.length);
+		sel.addRange(range);
 	}
 
 	function startAnime() {
