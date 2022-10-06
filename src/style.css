@@ -1,9 +1,23 @@
+@font-face {
+	font-family: Emoji;
+	src:
+		local("Twemoji Mozilla"),
+		local("Apple Color Emoji"),
+		local("Segoe UI Emoji"),
+		local("Noto Color Emoji"),
+		local("EmojiOne Color"),
+		local("Android Emoji"),
+		url("twemoji.woff2");
+	unicode-range: U+1F4C2, U+1F4DC, U+1F41B;
+}
+
 html {
 	font-size: min(3vw, 12pt);
 }
 
 html,
 body {
+	font-family: Emoji, var(--bs-body-font-family);
 	height: 100%;
 }
 

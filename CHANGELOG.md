@@ -2,6 +2,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2022-10-06
+
+### Added
+
+- One may choose to exclude or to include the subsetting glyphs.
+- Update to Pyodide 0.21.3.
+
+### Fixed
+
+- Incorrectly handles glyphs within the higher Unicode range.
+- Emoji icons not showing in some environments.
+
 ## [1.5.0] - 2022-08-23
 
 ### Added

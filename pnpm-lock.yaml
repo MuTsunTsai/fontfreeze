@@ -9,10 +9,10 @@ specifiers:
   gulp-exec: ^5.0.0
   gulp-html-minifier-terser: ^7.0.0-beta.0
   gulp-newer: ^1.4.0
-  gulp-purgecss: ^4.1.3
+  gulp-purgecss: 5.0.0
   gulp-replace: ^1.1.3
   gulp-terser: ^2.1.0
-  purgecss-from-html: ^4.1.1
+  purgecss-from-html: 5.0.0
 
 dependencies:
   '@popperjs/core': 2.11.6
@@ -25,10 +25,10 @@ devDependencies:
   gulp-exec: 5.0.0
   gulp-html-minifier-terser: 7.0.0-beta.0
   gulp-newer: 1.4.0
-  gulp-purgecss: 4.1.3
+  gulp-purgecss: 5.0.0
   gulp-replace: 1.1.3
   gulp-terser: 2.1.0
-  purgecss-from-html: 4.1.1
+  purgecss-from-html: 5.0.0
 
 packages:
 
@@ -335,6 +335,12 @@ packages:
       concat-map: 0.0.1
     dev: true
 
+  /brace-expansion/2.0.1:
+    resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
+    dependencies:
+      balanced-match: 1.0.2
+    dev: true
+
   /braces/2.3.2:
     resolution: {integrity: sha512-aNdbnj9P8PjdXU4ybaWLK2IF3jc/EoDYbC7AazW6to3TRsfXxscC9UXOB5iDiEQrkyIbWp2SLQda4+QAa7nc3w==}
     engines: {node: '>=0.10.0'}
@@ -500,11 +506,6 @@ packages:
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
-    dev: true
-
-  /commander/8.3.0:
-    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
-    engines: {node: '>= 12'}
     dev: true
 
   /commander/9.4.0:
@@ -986,6 +987,17 @@ packages:
       path-is-absolute: 1.0.1
     dev: true
 
+  /glob/8.0.3:
+    resolution: {integrity: sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      fs.realpath: 1.0.0
+      inflight: 1.0.6
+      inherits: 2.0.4
+      minimatch: 5.1.0
+      once: 1.4.0
+    dev: true
+
   /global-modules/1.0.0:
     resolution: {integrity: sha512-sKzpEkf11GpOFuw0Zzjzmt4B4UZwjOcG757PPvrfhxcLFbq0wpsgpOqxpxtxFiCG4DtG93M6XRVbF2oGdev7bg==}
     engines: {node: '>=0.10.0'}
@@ -1086,12 +1098,12 @@ packages:
       plugin-error: 0.1.2
     dev: true
 
-  /gulp-purgecss/4.1.3:
-    resolution: {integrity: sha512-UjdUf5DBFig5mdZBiCM5VqMzUmu+cRaMfICSolmWfOO9d53g6n729Nvl7J/r3GC+hM1yeWj6QC1yT7f+p+OvXQ==}
+  /gulp-purgecss/5.0.0:
+    resolution: {integrity: sha512-/s4bEI1JhwhCDrYu665rfJ/O9uMfAked3k6pQJlDC86JwJAUMXiMxfex6fV0WP36kRb+9ZTLVb6RC/DgfbS4/g==}
     dependencies:
-      glob: 7.2.3
-      plugin-error: 1.0.1
-      purgecss: 4.1.3
+      glob: 8.0.3
+      plugin-error: 2.0.0
+      purgecss: 5.0.0
       through2: 4.0.2
     dev: true
 
@@ -1594,6 +1606,13 @@ packages:
       brace-expansion: 1.1.11
     dev: true
 
+  /minimatch/5.1.0:
+    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: true
+
   /mixin-deep/1.3.2:
     resolution: {integrity: sha512-WRoDn//mXBiJ1H40rqa3vH0toePwSsGb45iInWlTySa+Uu4k3tYUSxa2v1KqAiLtvlrSzaExqS1gtk96A9zvEA==}
     engines: {node: '>=0.10.0'}
@@ -1965,19 +1984,19 @@ packages:
       pump: 2.0.1
     dev: true
 
-  /purgecss-from-html/4.1.1:
-    resolution: {integrity: sha512-eX8vT7jRdhTbLdZYOwm8lxJxsR5oDYiccNJzmlIpJPdDuTA8dCYS22CbAts3GGyQ+20nW76mzdDlBl7DSEIZTg==}
+  /purgecss-from-html/5.0.0:
+    resolution: {integrity: sha512-P1f3n4zvtvRLDlU2JzliZ81bVrOD7ZdE0H2Ks/BHASEQ82W/1YPW01KdGfP9Y8jBA0qzrtEMzsKIgk0QHjGZfQ==}
     dependencies:
       parse5: 6.0.1
       parse5-htmlparser2-tree-adapter: 6.0.1
     dev: true
 
-  /purgecss/4.1.3:
-    resolution: {integrity: sha512-99cKy4s+VZoXnPxaoM23e5ABcP851nC2y2GROkkjS8eJaJtlciGavd7iYAw2V84WeBqggZ12l8ef44G99HmTaw==}
+  /purgecss/5.0.0:
+    resolution: {integrity: sha512-RAnuxrGuVyLLTr8uMbKaxDRGWMgK5CCYDfRyUNNcaz5P3kGgD2b7ymQGYEyo2ST7Tl/ScwFgf5l3slKMxHSbrw==}
     hasBin: true
     dependencies:
-      commander: 8.3.0
-      glob: 7.2.3
+      commander: 9.4.0
+      glob: 8.0.3
       postcss: 8.4.16
       postcss-selector-parser: 6.0.10
     dev: true

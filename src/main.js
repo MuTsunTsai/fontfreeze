@@ -29,7 +29,8 @@
 		loading: null,
 		font: null,
 		sample: "",
-		removeGlyphs: "",
+		glyphs: "",
+		subsetMode: "exclude",
 		previewSize: 12,
 		running: false,
 		message: null,
@@ -331,7 +332,7 @@
 		store.features = {};
 		lastValues = {};
 		store.variations = {};
-		store.removeGlyphs = "";
+		store.glyphs = "";
 		store.options = {
 			family: info.family + " Freeze",
 			subfamily: "Regular",
@@ -371,29 +372,42 @@
 		alert("Font preview won't work for this font. " + note);
 	}
 
-	function getRemoveCharCodes() {
-		const removes = [];
-		for(let i = 0; i < store.removeGlyphs.length; i++) {
-			removes.push(store.removeGlyphs.charCodeAt(i));
+	function getGlyphCharCodes() {
+		const set = new Set();
+		for(let i = 0; i < store.glyphs.length; i++) {
+			// Handle UTF-32 code
+			const codePoint = store.glyphs.codePointAt(i);
+			const charCode = store.glyphs.charCodeAt(i);
+			if(charCode != codePoint) i++;
+			set.add(codePoint);
 		}
-		removes.sort();
-		return removes;
+		const result = [...set];
+		result.sort();
+		return result;
 	}
 
 	function getUnicodes() {
-		const removes = getRemoveCharCodes(), ranges = [[0, 0x10FFFF]];
-		if(removes.length == 0) return "";
-		for(let code of removes) {
-			const range = ranges.find(r => r[0] <= code && code <= r[1]);
-			if(!range) continue;
-			const end = range[1];
-			range[1] = code - 1;
-			ranges.push([code + 1, end]);
+		const glyphs = getGlyphCharCodes();
+		if(store.subsetMode == 'exclude') {
+			const ranges = [[0, 0x10FFFF]]; // Full unicode range
+			if(glyphs.length == 0) return "";
+			for(let code of glyphs) {
+				const range = ranges.find(r => r[0] <= code && code <= r[1]);
+				if(!range) continue;
+				const end = range[1];
+				range[1] = code - 1;
+				ranges.push([code + 1, end]);
+			}
+			return ranges
+				.filter(r => r[0] <= r[1])
+				.map(r => `U+${r[0].toString(16)}-${r[1].toString(16)}`)
+				.join(',');
+		} else {
+			if(glyphs.length == 0) return "U+0";
+			return glyphs
+				.map(g => `U+${g.toString(16)}`)
+				.join(',');
 		}
-		return ranges
-			.filter(r => r[0] <= r[1])
-			.map(r => `U+${r[0].toString(16)}-${r[1].toString(16)}`)
-			.join(',');
 	}
 
 	function setPreviewFont(url) {

@@ -1,6 +1,6 @@
 {
 	"name": "fontfreeze",
-	"version": "1.5.1",
+	"version": "1.6.0",
 	"description": "Freeze variations and features in font.",
 	"scripts": {
 		"serve": "npx serve docs",
@@ -23,10 +23,10 @@
 		"gulp-exec": "^5.0.0",
 		"gulp-html-minifier-terser": "^7.0.0-beta.0",
 		"gulp-newer": "^1.4.0",
-		"gulp-purgecss": "^4.1.3",
+		"gulp-purgecss": "5.0.0",
 		"gulp-replace": "^1.1.3",
 		"gulp-terser": "^2.1.0",
-		"purgecss-from-html": "^4.1.1"
+		"purgecss-from-html": "5.0.0"
 	},
 	"dependencies": {
 		"@popperjs/core": "^2.11.6",
