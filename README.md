@@ -49,9 +49,9 @@ You can also select features you want to activate (or deactivate) from the featu
   deactivating `calt` will usually do the trick.
 - Leaving a feature blank means keeping its default behavior
   (which may or may not be activated depending on the environment).
-
-You can also remove some of the glyphs by entering those characters in the `Remove glyphs`.
-This is useful when you want those characters to fallback to other fonts.
+- There are two modes of subsetting: remove certain glyphs from the font
+  (useful when you want those characters to fallback to other fonts),
+  or keep only certain glyphs (useful when you only need a few characters for your website, for example).
 
 Finally, click `Generate font!` to generate your font.
 It's that simple!
