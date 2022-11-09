@@ -59,7 +59,8 @@
 					<div class="my-3">
 						<img class="me-1 me-sm-2 me-md-3" alt="GitHub package.json version"
 							 src="https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze?color=green"><a
-						   class="me-1 me-sm-2 me-md-3" href="https://github.com/mutsuntsai/fontfreeze"><img alt="GitHub Repo stars"
+						   class="me-1 me-sm-2 me-md-3" href="https://github.com/mutsuntsai/fontfreeze"><img
+								 alt="GitHub Repo stars"
 								 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow"></a><a
 						   href="https://github.com/mutsuntsai"><img
 								 src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
@@ -186,8 +187,7 @@
 					<div class="row mt-3" v-effect="setUnicodeRange()">
 						<div class="col-12 col-md-7">
 							<label>Subsetting</label>
-							<input class="form-control" v-model="store.glyphs"
-								   placeholder="Enter characters here.">
+							<input class="form-control" v-model="store.glyphs" placeholder="Enter characters here.">
 						</div>
 						<div class="col-12 col-md-5">
 							<label>Subsetting mode</label>
@@ -227,6 +227,11 @@
 								<option value="Italic">Italic</option>
 								<option value="Bold Italic">Bold Italic</option>
 							</select>
+						</div>
+						<div class="col-12 mt-2">
+							<label>Typographic Subfamily</label>
+							<input class="form-control" v-model="store.options.typo_subfamily"
+								   placeholder="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily.">
 						</div>
 						<div class="col-12 col-md-6 mt-2">
 							<label>Output format</label>

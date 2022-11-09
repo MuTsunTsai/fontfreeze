@@ -153,6 +153,7 @@
 					axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
 			},
 			setInstance(instance) {
+				store.options.typo_subfamily = instance.name;
 				for(let t in instance.coordinates) {
 					store.variations[t] = instance.coordinates[t];
 				}
@@ -191,7 +192,7 @@
 				if(supportPlaintext(div)) {
 					// Chrome needs this, or the initial empty lines won't be selectable.
 					div.innerText = store.sample;
-				}else {
+				} else {
 					setupPlaintext(div);
 					// Firefox needs this, or hitting enter will completely mess up the text.
 					div.textContent = store.sample;
@@ -341,6 +342,8 @@
 				// Fix bugs of petite-vue with <input type="range"> 
 				store.variations[tag] = Number(store.variations[tag]);
 			}
+			store.options.family = store.options.family.trim();
+			store.options.typo_subfamily = store.options.typo_subfamily.trim();
 			const args = {
 				options: store.options,
 				version: store.version,
@@ -404,6 +407,7 @@
 		store.options = {
 			family: info.family + " Freeze",
 			subfamily: "Regular",
+			typo_subfamily: "",
 			fixContour: false,
 			singleSub: true,
 			target: "calt",

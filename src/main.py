@@ -43,7 +43,14 @@ class Instantiate:
         self.nameTable.names = []
         family = options.get("family")
         subfamily = options.get("subfamily")
-        fullName = f"{family} {subfamily}"
+        typo_subfamily = options.get("typo_subfamily")
+
+        if not typo_subfamily or typo_subfamily == subfamily:
+            typo_subfamily = subfamily
+            fullName = f"{family} {subfamily}"
+        else:
+            fullName = f"{family} {typo_subfamily} {subfamily}"
+
         self.setName(family, 1)
         self.setName(subfamily, 2)
         self.setName(fullName, 3)
@@ -53,6 +60,9 @@ class Instantiate:
         self.setName("FontFreeze" + args.get("version"), 8)
         self.setName(description, 10)
         self.setName("https://mutsuntsai.github.io/fontfreeze", 11)
+        self.setName(family, 16)
+        self.setName(typo_subfamily, 17)
+        self.setName(fullName, 18)
 
         try:
             font["head"].macStyle = MACSTYLE[subfamily]
@@ -68,7 +78,8 @@ class Instantiate:
     def getPostscriptName(familyName, subfamilyName, /):
         familyName = familyName.replace(" ", "")
         subfamilyName = subfamilyName.replace(" ", "")
-        return f"{familyName}-{subfamilyName}"
+        result = f"{familyName}-{subfamilyName}"
+        return result[:63] # The limit is 63 characters
 
     def setName(self, content: str, index: int, /):
         # Setting MAC platform seems to cause trouble in some fonts,

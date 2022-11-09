@@ -2,6 +2,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2022-11-09
+
+### Added
+
+- Supporting typographic subfamily name setting. ([#3](https://github.com/MuTsunTsai/fontfreeze/issues/3))
+
 ## [1.6.0] - 2022-10-06
 
 ### Added
