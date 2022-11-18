@@ -72,7 +72,7 @@
 							<div class="display-4">📂</div>
 							<div>Open font file</div>
 						</label>
-						<span v-if="store.localFontSupport" v-cloak>
+						<span v-if="localFontSupport" v-cloak>
 							<button type="button" :disabled="store.loading" class="btn btn-secondary" @click="local">
 								<div class="display-4 text-warning">𝕬</div>
 								<div>Select local font</div>
@@ -285,12 +285,10 @@
 									<option v-for="(f,i) in store.localFonts" :key="i" :value="i" :style="optionStyle(f)"
 											:disabled="store.unavailableFonts.includes(f.postscriptName)">{{f.fullName}}</option>
 								</select>
-								<div class="mt-3">
+								<div class="mt-3" v-if="chromiumVersion<109">
 									Note: This is an experimental feature and it may not work for manually installed fonts.
 									If it doesn't work for a particular font, you can still upload the font file manually.
-									This bug has been
-									<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=1347845">reported</a>
-									and I'll keep tracking its progress.
+									This is a bug in Chromium and will be fixed in version 109.
 								</div>
 							</div>
 							<div class="modal-footer">

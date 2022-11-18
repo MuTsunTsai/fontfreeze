@@ -7,6 +7,7 @@
 		local("Noto Color Emoji"),
 		local("EmojiOne Color"),
 		local("Android Emoji"),
+		/* fallback to font file if none of the above is found */
 		url("twemoji.woff2");
 	unicode-range: U+1F4C2, U+1F4DC, U+1F41B;
 }

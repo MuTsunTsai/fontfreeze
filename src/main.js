@@ -22,7 +22,6 @@
 	const style = document.createElement("style");
 
 	const store = reactive({
-		localFontSupport: 'queryLocalFonts' in window,
 		localFonts: [],
 		localFont: "",
 		unavailableFonts: [],
@@ -116,6 +115,8 @@
 
 		// Initialize Vue
 		createApp({
+			chromiumVersion: parseInt(navigator.userAgentData?.brands.find(b => b.brand == 'Chromium')?.version ?? 0),
+			localFontSupport: 'queryLocalFonts' in window,
 			store: store,
 			get previewStyle() {
 				if(!store.font) return null;

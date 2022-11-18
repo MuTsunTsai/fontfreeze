@@ -51,6 +51,7 @@ class Instantiate:
         else:
             fullName = f"{family} {typo_subfamily} {subfamily}"
 
+        # refer to https://learn.microsoft.com/en-us/typography/opentype/spec/name#name-ids for a list of name codes
         self.setName(family, 1)
         self.setName(subfamily, 2)
         self.setName(fullName, 3)
