@@ -292,9 +292,10 @@
 								</div>
 							</div>
 							<div class="modal-footer">
-								<button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+								<button class="btn btn-secondary" type="button" @click="store.localFont=''"
+										data-bs-dismiss="modal">Cancel</button>
 								<button class="btn btn-primary" type="button" @click="loadLocal"
-										:disabled="store.localFont===null">OK</button>
+										:disabled="typeof store.localFont!='number'">OK</button>
 							</div>
 						</div>
 					</div>
