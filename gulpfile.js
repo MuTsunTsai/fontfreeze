@@ -53,7 +53,9 @@ gulp.task('buildCss', () =>
 			safelist: {
 				standard: [
 					/show/, /modal-static/, /modal-backdrop/, // Bootstrap modal
-					'disabled', // extractor can't figure Vue dynamic class
+					// extractor can't figure dynamic class
+					'disabled',
+					'drag',
 				],
 				variables: [
 					/^--bs-btn-disabled/, // Fixes a bug of purgeCss
