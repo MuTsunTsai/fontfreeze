@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.7.0] - 2022-11-09
 
+### Fixed
+
+- 1.7.3: Fix the bug that hiding deactivated features doesn't work for some fonts ([#4](https://github.com/MuTsunTsai/fontfreeze/issues/4)). In that case FontFreeze will fallback to not hiding those features.
+
 ### Added
 
 - Supporting typographic subfamily name setting. ([#3](https://github.com/MuTsunTsai/fontfreeze/issues/3))

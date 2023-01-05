@@ -1,6 +1,6 @@
 {
 	"name": "fontfreeze",
-	"version": "1.7.2",
+	"version": "1.7.3",
 	"description": "Freeze variations and features in font.",
 	"scripts": {
 		"serve": "pnpm dlx serve docs",

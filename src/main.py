@@ -4,6 +4,7 @@ from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
 from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 
+hideRemovedFeature = True
 
 MACSTYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
 
@@ -38,6 +39,8 @@ class Instantiate:
         if len(disables) > 0:
             disables = ", ".join(disables)
             description += f" Deactivates {disables}."
+        if not hideRemovedFeature:
+            description += " Use fallback mode."
 
         self.nameTable = font["name"]
         self.nameTable.names = []
@@ -140,7 +143,8 @@ def removeFeature(font: TTFont, features: list, /):
 def clearFeatureRecord(featureRecord, /):
     featureRecord.Feature.LookupListIndex.clear()
     featureRecord.Feature.LookupCount = 0
-    featureRecord.FeatureTag = "DELT"  # Special value
+    if hideRemovedFeature:
+        featureRecord.FeatureTag = "DELT"  # Special value
 
 
 class Activator:
@@ -375,6 +379,25 @@ def processFont(args, /):
 
 
 def main(args: dict, filename: str, output: str, /):
+    global hideRemovedFeature
+    hideRemovedFeature = True
+    font = generateFont(args, filename)
+
+    try:
+        font.save(output)
+    except AssertionError as msg:
+        if "DELT" in str(msg):
+            # For unknown reason, some fonts have problem with the "DELT" idea,
+            # for example JetBrains Mono v2.303 (specifically).
+            # In that case fallback and do not change the feature name.
+            hideRemovedFeature = False
+            font = generateFont(args, filename)
+            font.save(output)
+        else:
+            raise
+
+
+def generateFont(args: dict, filename: str):
     font = loadTtfFont(filename)
     Instantiate(font, args)
     removeFeature(font, args.get("disables"))
@@ -384,4 +407,4 @@ def main(args: dict, filename: str, output: str, /):
     if args.get("options").get("format") == "woff2":
         font.flavor = "woff2"
 
-    font.save(output)
+    return font
