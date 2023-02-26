@@ -7,10 +7,10 @@ specifiers:
   gulp-clean-css: ^4.3.0
   gulp-concat: ^2.6.1
   gulp-exec: ^5.0.0
-  gulp-html-minifier-terser: ^7.0.0-beta.0
+  gulp-html-minifier-terser: ^7.1.0
   gulp-newer: ^1.4.0
   gulp-purgecss: 5.0.0
-  gulp-replace: ^1.1.3
+  gulp-replace: ^1.1.4
   gulp-terser: ^2.1.0
   purgecss-from-html: 5.0.0
 
@@ -23,10 +23,10 @@ devDependencies:
   gulp-clean-css: 4.3.0
   gulp-concat: 2.6.1
   gulp-exec: 5.0.0
-  gulp-html-minifier-terser: 7.0.0-beta.0
+  gulp-html-minifier-terser: 7.1.0
   gulp-newer: 1.4.0
   gulp-purgecss: 5.0.0
-  gulp-replace: 1.1.3
+  gulp-replace: 1.1.4
   gulp-terser: 2.1.0
   purgecss-from-html: 5.0.0
 
@@ -1079,8 +1079,8 @@ packages:
       through2: 3.0.2
     dev: true
 
-  /gulp-html-minifier-terser/7.0.0-beta.0:
-    resolution: {integrity: sha512-5egVjMLeJ7c5SB28zEZEFBd0uQwPexMPDzVtxC2qIlMl+yPBcF7eZ+9qj5UBq71oIGxDHQQ8Sf8x2ftSaPCWkA==}
+  /gulp-html-minifier-terser/7.1.0:
+    resolution: {integrity: sha512-5aZUMmF2NhQ+eBxfK3YNhYXcqgdbAQfrIe9Nq4BbI5p4AO9zbk3Kz7teZTyyvNizWRI8eA22Q25H4yE+a+3B+g==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       html-minifier-terser: 7.1.0
@@ -1105,8 +1105,8 @@ packages:
       through2: 4.0.2
     dev: true
 
-  /gulp-replace/1.1.3:
-    resolution: {integrity: sha512-HcPHpWY4XdF8zxYkDODHnG2+7a3nD/Y8Mfu3aBgMiCFDW3X2GiOKXllsAmILcxe3KZT2BXoN18WrpEFm48KfLQ==}
+  /gulp-replace/1.1.4:
+    resolution: {integrity: sha512-SVSF7ikuWKhpAW4l4wapAqPPSToJoiNKsbDoUnRrSgwZHH7lH8pbPeQj1aOVYQrbZKhfSVBxVW+Py7vtulRktw==}
     engines: {node: '>=10'}
     dependencies:
       '@types/node': 14.18.34

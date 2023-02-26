@@ -345,8 +345,18 @@
 			}
 			store.options.family = store.options.family.trim();
 			store.options.typo_subfamily = store.options.typo_subfamily.trim();
+			const options = clone(store.options);
+			if(options.suffix) {
+				if(
+					options.family &&
+					options.family.length + options.suffix.length < 32 // There's a 32-char limit in MS Word
+				) {
+					options.family += " " + options.suffix;
+				}
+				if(options.typo_family) options.typo_family += " " + options.suffix;
+			}
 			const args = {
-				options: store.options,
+				options: options,
 				version: store.version,
 				unicodes: getUnicodes(),
 				variations: store.variations,
@@ -406,11 +416,14 @@
 		store.variations = {};
 		store.glyphs = "";
 		store.options = {
-			family: info.family + " Freeze",
-			subfamily: "Regular",
-			typo_subfamily: "",
+			suffix: "Freeze",
+			family: info.family,
+			subfamily: info.subfamily,
+			typo_family: info.typo_family || info.family,
+			typo_subfamily: info.typo_subfamily || "",
 			fixContour: false,
 			singleSub: true,
+			customNames: false,
 			target: "calt",
 			format: "ttf",
 		};

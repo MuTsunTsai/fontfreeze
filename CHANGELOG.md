@@ -2,6 +2,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - 2023-02-26
+
+### Changed
+
+- Will now automatically fill-in typographic family and subfamily names.
+- Name settings are now initially hidden, with only the suffix option visible.
+
 ## [1.7.0] - 2022-11-09
 
 ### Fixed

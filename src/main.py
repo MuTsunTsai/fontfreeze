@@ -46,7 +46,11 @@ class Instantiate:
         self.nameTable.names = []
         family = options.get("family")
         subfamily = options.get("subfamily")
+        typo_family = options.get("typo_family")
         typo_subfamily = options.get("typo_subfamily")
+
+        if not typo_family:
+            typo_family = family
 
         if not typo_subfamily or typo_subfamily == subfamily:
             typo_subfamily = subfamily
@@ -64,7 +68,7 @@ class Instantiate:
         self.setName("FontFreeze" + args.get("version"), 8)
         self.setName(description, 10)
         self.setName("https://mutsuntsai.github.io/fontfreeze", 11)
-        self.setName(family, 16)
+        self.setName(typo_family, 16)
         self.setName(typo_subfamily, 17)
         self.setName(fullName, 18)
 
@@ -276,6 +280,7 @@ def loadFont(filename: str, /):
 
     info = {
         "family": font["name"].getBestFamilyName(),
+        "subfamily": font["name"].getDebugName(2),
         "copyright": font["name"].getDebugName(0),
         "id": font["name"].getDebugName(3),
         "version": font["name"].getDebugName(5),
@@ -287,6 +292,8 @@ def loadFont(filename: str, /):
         "designerURL": font["name"].getDebugName(12),
         "license": font["name"].getDebugName(13),
         "licenseURL": font["name"].getDebugName(14),
+        "typo_family": font["name"].getDebugName(16),
+        "typo_subfamily": font["name"].getDebugName(17),
         "fvar": fvar,
         "gsub": list(dict.fromkeys(features)),
     }
