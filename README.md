@@ -64,6 +64,9 @@ Tips:
   You can put any sample source code in it to preview the result.
 - If you have multiple screens with different DPIs,
   preview on each of them to make sure the result is perfect.
+- To work with [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts),
+  make sure that you freeze the font first, and then patch it.
+  Do it the other way could lead to error (see [#8](https://github.com/MuTsunTsai/fontfreeze/issues/8#event-9248246359)).
 
 ## How it works
 
