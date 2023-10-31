@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 - Will now automatically fill-in typographic family and subfamily names.
 - Name settings are now initially hidden, with only the suffix option visible.
 
+### Fixed
+
+- 1.8.3: Fix issue [#11].
+
 ## [1.7.0] - 2022-11-09
 
 ### Fixed

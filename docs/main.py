@@ -27,18 +27,17 @@ from fontTools.ttLib import TTFont as g
 from fontTools.subset import Subsetter as h,Options as i,parse_unicodes as j
 from fontTools.varLib.instancer import instantiateVariableFont as k
 from fontTools.ttLib.tables._c_m_a_p import CmapSubtable as l
-from fontTools.ttLib.tables.otTables import featureParamTypes as A,FeatureParamsStylisticSet as m
+from fontTools.ttLib.tables.otTables import featureParamTypes as m,FeatureParamsStylisticSet as n,FeatureParamsCharacterVariants as o
 H=E
-n={S:0,T:1,U:2,V:3}
-A['calt']=m
-def o(A,C):
+p={S:0,T:1,U:2,V:3}
+def q(A,C):
 	for D in A[G].axes:
 		if D.axisTag==C:return A[B].getDebugName(D.axisNameID)
 	return C
 class I:
 	def __init__(A,C,J):
 		V='OS/2';T=', ';U=J.get('variations');K=J.get(O);F=C[B].getBestFamilyName();d=C[B].getDebugName(5);L=f"Frozen from {F} {d}."
-		if G in C:e=T.join((f"{o(C,A)}={B}"for(A,B)in U.items()));L+=f" Sets {e}.";k(C,U,inplace=E,overlap=E)
+		if G in C:e=T.join((f"{q(C,A)}={B}"for(A,B)in U.items()));L+=f" Sets {e}.";k(C,U,inplace=E,overlap=E)
 		P=J.get(W)
 		if N(P)>0:P=T.join(P);L+=f" Activates {P}."
 		Q=J.get(X)
@@ -49,7 +48,7 @@ class I:
 		if not M or M==D:M=D;R=f"{F} {D}"
 		else:R=f"{F} {M} {D}"
 		A.setName(F,1);A.setName(D,2);A.setName(R,3);A.setName(R,4);A.setName('Version 1.000',5);A.setName(I.getPostscriptName(F,D),6);A.setName('FontFreeze'+J.get(c),8);A.setName(L,10);A.setName('https://mutsuntsai.github.io/fontfreeze',11);A.setName(S,16);A.setName(M,17);A.setName(R,18)
-		try:C['head'].macStyle=n[D];C[V].fsSelection=I.makeSelection(C[V].fsSelection,D)
+		try:C['head'].macStyle=p[D];C[V].fsSelection=I.makeSelection(C[V].fsSelection,D)
 		except:pass
 		I.dropVariationTables(C)
 		if K.get('fixContour')==E:I.setOverlapFlags(C)
@@ -74,7 +73,7 @@ class I:
 		else:A&=~ 1
 		if not A:A=64
 		return A
-def p(A,B):
+def r(A,B):
 	if N(B)==0 or D not in A:return
 	E=A[D].table.FeatureList.FeatureRecord
 	for C in E:
@@ -100,7 +99,7 @@ class M:
 			A=B.featureRecords[E]
 			if A.FeatureTag in B.features:
 				if B.singleSub:B.findSingleSubstitution(A)
-				if D==C:D=A;A.FeatureTag=B.target
+				if D==C:D=A;m[B.target]=n if A.FeatureTag.startswith('ss')else o;A.FeatureTag=B.target
 				else:M.moveFeatureLookups(A.Feature,D.Feature);L(A)
 		if D!=C:D.Feature.LookupListIndex.sort()
 	def findSingleSubstitution(A,D):
@@ -115,7 +114,7 @@ class M:
 			for B in A.cmap:
 				if A.cmap[B]==D:A.cmap[B]=E
 	def moveFeatureLookups(A,B):B.LookupListIndex.extend(A.LookupListIndex);B.LookupCount+=A.LookupCount
-def q(D,B):
+def s(D,B):
 	A='*'
 	if B=='':return
 	C=h(i(layout_scripts=[A],layout_features=[A],name_IDs=[A],name_languages=[A]));C.populate(unicodes=j(B));C.subset(D)
@@ -123,9 +122,9 @@ def loadFont(I):
 	A=J(I);H=A[D].table.FeatureList.FeatureRecord if D in A else[];H=[A.FeatureTag for A in H];L={'axes':[{'tag':C.axisTag,'default':C.defaultValue,'min':C.minValue,'max':C.maxValue,B:A[B].getDebugName(C.axisNameID)}for C in A[G].axes],'instances':[{B:A[B].getDebugName(C.subfamilyNameID),'coordinates':C.coordinates}for C in A[G].instances]}if G in A else C
 	if os.path.exists(F):os.remove(F)
 	os.rename(I,F);K={Y:A[B].getBestFamilyName(),Z:A[B].getDebugName(2),'copyright':A[B].getDebugName(0),'id':A[B].getDebugName(3),c:A[B].getDebugName(5),'trademark':A[B].getDebugName(7),'manufacturer':A[B].getDebugName(8),'designer':A[B].getDebugName(9),'description':A[B].getDebugName(10),'vendorURL':A[B].getDebugName(11),'designerURL':A[B].getDebugName(12),'license':A[B].getDebugName(13),'licenseURL':A[B].getDebugName(14),a:A[B].getDebugName(16),b:A[B].getDebugName(17),G:L,'gsub':list(dict.fromkeys(H))}
-	if A.getBestCmap()==C and r(A):R('Legacy CJK font detected.');P(A);K['preview']=E
+	if A.getBestCmap()==C and t(A):R('Legacy CJK font detected.');P(A);K['preview']=E
 	return K
-def r(F):
+def t(F):
 	D=F[e]
 	for B in D.tables:
 		if B.platformID==3 and B.platEncID==4:
@@ -135,7 +134,7 @@ def r(F):
 				except:pass
 			D.tables=[A];return E
 	return K
-def s(B):
+def u(B):
 	A=B.string.decode('utf_16_be');A=bytes(A,encoding='raw_unicode_escape')
 	try:A.decode(f);B.string=A
 	except:pass
@@ -144,7 +143,7 @@ def J(D):
 	for A in C[B].names:
 		if A.platformID==3 and A.platEncID==4:
 			try:A.toStr()
-			except:s(A)
+			except:u(A)
 	return C
 def P(A):
 	B='mort'
@@ -161,6 +160,6 @@ def main(B,C,D):
 		if d in str(F):H=K;A=Q(B,C);A.save(D)
 		else:raise
 def Q(args,filename):
-	C='woff2';B=args;A=J(filename);I(A,B);p(A,B.get(X));M(A,B);q(A,B.get('unicodes'))
+	C='woff2';B=args;A=J(filename);I(A,B);r(A,B.get(X));M(A,B);s(A,B.get('unicodes'))
 	if B.get(O).get('format')==C:A.flavor=C
 	return A

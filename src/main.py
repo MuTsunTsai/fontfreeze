@@ -3,14 +3,11 @@ from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
 from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
-from fontTools.ttLib.tables.otTables import featureParamTypes, FeatureParamsStylisticSet
+from fontTools.ttLib.tables.otTables import featureParamTypes, FeatureParamsStylisticSet, FeatureParamsCharacterVariants
 
 hideRemovedFeature = True
 
 MACSTYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
-
-# This is required to make work with e.g. SourceCodePro
-featureParamTypes['calt'] = FeatureParamsStylisticSet
 
 def getAxisName(font: TTFont, tag: str, /) -> str:
     for a in font["fvar"].axes:
@@ -201,6 +198,8 @@ class Activator:
                 if targetRecord == None:
                     # if there's no existing one, use the first matching feature as target
                     targetRecord = featureRecord
+                    # This is required to make work with e.g. SourceCodePro
+                    featureParamTypes[self.target] = FeatureParamsStylisticSet if featureRecord.FeatureTag.startswith("ss") else FeatureParamsCharacterVariants
                     featureRecord.FeatureTag = self.target
                 else:
                     Activator.moveFeatureLookups(
