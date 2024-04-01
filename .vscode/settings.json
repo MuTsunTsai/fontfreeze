@@ -10,5 +10,8 @@
 	],
 	"cSpell.ignoreRegExpList": [
 		"/([\"'`])[a-z]{4}\\1/gi"
-	]
+	],
+	"files.exclude": {
+		"node_modules/": true
+	}
 }

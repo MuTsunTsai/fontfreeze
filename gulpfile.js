@@ -1,13 +1,7 @@
-const cleanCss = require('gulp-clean-css');
-const concat = require('gulp-concat');
-const exec = require('gulp-exec');
+const $ = require('gulp-load-plugins')();
 const gulp = require('gulp');
-const html = require('gulp-html-minifier-terser');
-const newer = require('gulp-newer');
-const purge = require('gulp-purgecss');
+const ordered = require('ordered-read-streams');
 const purgeHtml = require('purgecss-from-html');
-const replace = require('gulp-replace');
-const terser = require('gulp-terser');
 
 const dest = 'docs';
 const build = 'build';
@@ -15,39 +9,42 @@ const srcHtml = 'src/index.html';
 
 gulp.task('html', () =>
 	gulp.src(srcHtml)
-		.pipe(newer(dest))
-		.pipe(html({
+		.pipe($.newer(dest))
+		.pipe($.htmlMinifierTerser({
 			collapseWhitespace: true,
 			removeComments: true,
 			minifyJS: true,
 		}))
 		// Prevent VS Code Linter error
-		.pipe(replace(/<script>(.+?)<\/script>/g, "<script>$1;</script>"))
+		.pipe($.replace(/<script>(.+?)<\/script>/g, "<script>$1;</script>"))
 		.pipe(gulp.dest(dest))
 );
 
 gulp.task('js', () =>
 	gulp.src('src/*.js')
-		.pipe(newer(dest))
-		.pipe(terser())
+		.pipe($.newer(dest))
+		.pipe($.terser())
 		.pipe(gulp.dest(dest))
 );
 
 gulp.task('concatCss', () =>
-	gulp.src(['node_modules/bootstrap/dist/css/bootstrap.css', 'src/style.css'])
-		.pipe(newer(build + '/style.css'))
-		.pipe(concat('style.css'))
-		.pipe(replace(/(\r|\n)*\/\*.+?\*\/$/, '')) // remove sourcemap
+	ordered([
+		gulp.src('node_modules/bootstrap/dist/css/bootstrap.css'),
+		gulp.src('src/style.css')
+	])
+		.pipe($.newer(build + '/style.css'))
+		.pipe($.concat('style.css'))
+		.pipe($.replace(/(\r|\n)*\/\*.+?\*\/$/, '')) // remove sourcemap
 		.pipe(gulp.dest(build))
 );
 
 gulp.task('buildCss', () =>
 	gulp.src(build + '/style.css')
-		.pipe(newer({
+		.pipe($.newer({
 			dest: dest + '/style.css',
 			extra: [__filename, srcHtml]
 		}))
-		.pipe(purge({
+		.pipe($.purgecss({
 			content: [srcHtml],
 			defaultExtractor: purgeHtml,
 			safelist: {
@@ -63,7 +60,7 @@ gulp.task('buildCss', () =>
 			},
 			variables: true, // for Bootstrap
 		}))
-		.pipe(cleanCss())
+		.pipe($.cleanCss())
 		.pipe(gulp.dest(dest))
 );
 
@@ -71,8 +68,8 @@ gulp.task('css', gulp.series('concatCss', 'buildCss'));
 
 gulp.task('python', () =>
 	gulp.src('src/*.py')
-		.pipe(newer(dest))
-		.pipe(exec(file => `pyminify ${file.path} --rename-globals --preserve-globals loadFont,processFont,main,processLegacy`, { pipeStdout: true }))
+		.pipe($.newer(dest))
+		.pipe($.exec(file => `pyminify ${file.path} --rename-globals --preserve-globals loadFont,processFont,main,processLegacy`, { pipeStdout: true }))
 		.pipe(gulp.dest(dest))
 );
 

@@ -1,9 +1,9 @@
 {
 	"name": "fontfreeze",
-	"version": "1.8.3",
+	"version": "1.8.4",
 	"description": "Freeze variations and features in font.",
 	"scripts": {
-		"serve": "serve docs",
+		"start": "serve docs",
 		"build": "gulp",
 		"postinstall": "pip install -r requirements.txt"
 	},
@@ -17,20 +17,22 @@
 		"url": "git+https://github.com/MuTsunTsai/fontfreeze.git"
 	},
 	"devDependencies": {
-		"gulp": "^4.0.2",
+		"gulp": "^5.0.0",
 		"gulp-clean-css": "^4.3.0",
 		"gulp-concat": "^2.6.1",
 		"gulp-exec": "^5.0.0",
 		"gulp-html-minifier-terser": "^7.1.0",
+		"gulp-load-plugins": "^2.0.8",
 		"gulp-newer": "^1.4.0",
-		"gulp-purgecss": "5.0.0",
+		"gulp-purgecss": "6.0.0",
 		"gulp-replace": "^1.1.4",
 		"gulp-terser": "^2.1.0",
-		"purgecss-from-html": "5.0.0",
-		"serve": "^14.2.0"
+		"ordered-read-streams": "^2.0.0",
+		"purgecss-from-html": "6.0.0",
+		"serve": "^14.2.1"
 	},
 	"dependencies": {
-		"@popperjs/core": "^2.11.6",
-		"bootstrap": "^5.2.3"
+		"@popperjs/core": "^2.11.8",
+		"bootstrap": "5.3.3"
 	}
 }
