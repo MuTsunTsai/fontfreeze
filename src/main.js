@@ -25,6 +25,7 @@
 		localFonts: [],
 		localFont: "",
 		unavailableFonts: [],
+		unicodeRange: "",
 		loading: null,
 		font: null,
 		sample: "",
@@ -178,7 +179,7 @@
 				modal("#info").show();
 			},
 			setUnicodeRange() {
-				style.sheet.cssRules[0].style.unicodeRange = getUnicodes();
+				style.sheet.cssRules[0].style.unicodeRange = store.unicodeRange = getUnicodes();
 			},
 			optionStyle(f) {
 				if(!f) {
@@ -487,12 +488,12 @@
 			return ranges
 				.filter(r => r[0] <= r[1])
 				.map(r => `U+${r[0].toString(16)}-${r[1].toString(16)}`)
-				.join(',');
+				.join(', ').toUpperCase();
 		} else {
 			if(glyphs.length == 0) return "U+0";
 			return glyphs
 				.map(g => `U+${g.toString(16)}`)
-				.join(',');
+				.join(', ').toUpperCase();
 		}
 	}
 

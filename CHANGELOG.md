@@ -2,6 +2,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2024-04-11
+
+### Added
+
+- Display unicode-range for subsetting.
+
 ## [1.8.0] - 2023-02-26
 
 ### Changed
