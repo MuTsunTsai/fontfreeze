@@ -131,8 +131,8 @@ packages:
     resolution: {integrity: sha512-Q5Vn3yjTDyCMV50TB6VRIbQNxSE4OmZR86VSbGaNpfUolm0iePBB4KdEEHmxoY5sT2+2DIvXW0rvMDP2nHZ4Mg==}
     dev: true
 
-  /@types/node@20.12.2:
-    resolution: {integrity: sha512-zQ0NYO87hyN6Xrclcqp7f8ZbXNbRfoGWNcMvHTPQp9UUrwI0mI7XBz+cu7/W6/VClYo2g63B0cjull/srU7LgQ==}
+  /@types/node@20.12.7:
+    resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -141,7 +141,7 @@ packages:
     resolution: {integrity: sha512-vPXzCLmRp74e9LsP8oltnWKTH+jBwt86WgRUb4Pc9Lf3pkMVGyvIo2gm9bODeGfCay2DBB/hAWDuvf07JcK4rw==}
     dependencies:
       '@types/expect': 1.20.4
-      '@types/node': 20.12.2
+      '@types/node': 20.12.7
     dev: true
 
   /@zeit/schemas@2.29.0:
@@ -872,8 +872,8 @@ packages:
       is-glob: 4.0.3
     dev: true
 
-  /glob-stream@8.0.1:
-    resolution: {integrity: sha512-gkw+JQajGXmzky/Lil3/tQ+p96YKkqJwxiakKgfDGpNBNFHxklnK2nPmYukEW6n8/HmcAfeSvT6xCdRafidwZQ==}
+  /glob-stream@8.0.2:
+    resolution: {integrity: sha512-R8z6eTB55t3QeZMmU1C+Gv+t5UnNRkA55c5yo67fAVfxODxieTwsjNG7utxS/73NdP1NbDgCrhVEg2h00y4fFw==}
     engines: {node: '>=10.13.0'}
     dependencies:
       '@gulpjs/to-absolute-glob': 4.0.0
@@ -883,7 +883,6 @@ packages:
       is-glob: 4.0.3
       is-negated-glob: 1.0.0
       normalize-path: 3.0.0
-      now-and-later: 3.0.0
       streamx: 2.16.1
     dev: true
 
@@ -1037,7 +1036,7 @@ packages:
     resolution: {integrity: sha512-SVSF7ikuWKhpAW4l4wapAqPPSToJoiNKsbDoUnRrSgwZHH7lH8pbPeQj1aOVYQrbZKhfSVBxVW+Py7vtulRktw==}
     engines: {node: '>=10'}
     dependencies:
-      '@types/node': 20.12.2
+      '@types/node': 20.12.7
       '@types/vinyl': 2.0.11
       istextorbinary: 3.3.0
       replacestream: 4.0.3
@@ -1049,7 +1048,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       plugin-error: 1.0.1
-      terser: 5.30.0
+      terser: 5.30.3
       through2: 4.0.2
       vinyl-sourcemaps-apply: 0.2.1
     dev: true
@@ -1109,7 +1108,7 @@ packages:
       entities: 4.5.0
       param-case: 3.0.4
       relateurl: 0.2.7
-      terser: 5.30.0
+      terser: 5.30.3
     dev: true
 
   /human-signals@2.1.0:
@@ -2010,8 +2009,8 @@ packages:
       streamx: 2.16.1
     dev: true
 
-  /terser@5.30.0:
-    resolution: {integrity: sha512-Y/SblUl5kEyEFzhMAQdsxVHh+utAxd4IuRNJzKywY/4uzSogh3G219jqbDDxYu4MXO9CzY3tSEqmZvW6AoEDJw==}
+  /terser@5.30.3:
+    resolution: {integrity: sha512-STdUgOUx8rLbMGO9IOwHLpCqolkDITFFQSMYYwKE1N2lY6MVSaeoi10z/EhWxRc6ybqoVmKSkhKYH/XUpl7vSA==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -2144,7 +2143,7 @@ packages:
     engines: {node: '>=10.13.0'}
     dependencies:
       fs-mkdirp-stream: 2.0.1
-      glob-stream: 8.0.1
+      glob-stream: 8.0.2
       graceful-fs: 4.2.11
       iconv-lite: 0.6.3
       is-valid-glob: 1.0.0
