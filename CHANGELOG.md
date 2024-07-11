@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - 1.9.1: Improve range display logic.
+- 1.9.2: Improve local font UI.
 
 ## [1.8.0] - 2023-02-26
 

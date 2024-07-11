@@ -20,11 +20,16 @@
 	// We could also use Font Loading API to add the font directly without using a stylesheet,
 	// but it appears that the Unicode range cannot be modified afterwards with that approach.
 	const style = document.createElement("style");
+	document.head.appendChild(style);
+
+	const localStyle = document.createElement("style");
+	document.head.appendChild(localStyle);
 
 	const store = reactive({
 		localFonts: [],
-		localFont: "",
-		unavailableFonts: [],
+		localFont: '',
+		localFamily: '',
+		unavailableFonts: [], // postscriptName of the font
 		unicodeRange: "",
 		loading: null,
 		font: null,
@@ -85,8 +90,6 @@
 			};
 		});
 	}
-
-	document.head.appendChild(style);
 
 	fetch("sample.txt")
 		.then(r => r.text())
@@ -150,6 +153,14 @@
 				if(!store.font || !store.font.fvar) return [];
 				return store.font.fvar.axes;
 			},
+			get localFamilies() {
+				if(!store.localFonts.length) return [];
+				const result = new Set();
+				for(const font of store.localFonts) {
+					result.add(font.family);
+				}
+				return [...result];
+			},
 			getAxisName(axis) {
 				return axis.name ? axis.name :
 					axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
@@ -183,10 +194,23 @@
 			},
 			optionStyle(f) {
 				if(!f) {
-					if(!store.localFont) return "";
+					if(store.localFont === '') return "";
 					f = store.localFonts[store.localFont];
 				}
-				return `font-family:'${f.fullName}', '${f.postscriptName}', '${f.family}'`;
+				return `font-family:'local ${f.fullName}'`;
+			},
+			familyStyle(f = store.localFamily) {
+				const filtered = store.localFonts.filter(font => font.family == f);
+				if(!filtered.length) return "";
+				let font = filtered.find(f => f.style == "Regular");
+				if(!font) {
+					filtered.sort((a, b) => a.fullName.length - b.fullName.length);
+					font = filtered[0];
+				}
+				return `font-family:'local ${font.fullName}'`;
+			},
+			familyChange() {
+				store.localFont = store.localFonts.findIndex(f => f.family == store.localFamily);
 			},
 			setupDiv() {
 				// There's nothing reactive here, so this method only run once.
@@ -208,6 +232,7 @@
 				});
 				const fonts = await window.queryLocalFonts();
 				if(fonts.length == 0) return; // permission denied
+				buildLocalFonts(fonts);
 				store.localFonts = fonts;
 				modal("#local").show();
 			},
@@ -222,6 +247,7 @@
 					store.unavailableFonts.push(font.postscriptName);
 					return;
 				} finally {
+					store.localFamily = "";
 					store.localFont = "";
 				}
 				modal("#local").hide();
@@ -233,6 +259,14 @@
 			}
 		}).mount();
 	});
+
+	function buildLocalFonts(fonts) {
+		const sheet = localStyle.sheet;
+		while(sheet.cssRules.length) sheet.deleteRule(0);
+		for(const font of fonts) {
+			sheet.insertRule(`@font-face { font-family: 'local ${font.fullName}'; src: local('${font.fullName}'), local('${font.postscriptName}');}`);
+		}
+	}
 
 	globalThis.generate = async function() {
 		if(store.message) return; // button not ready

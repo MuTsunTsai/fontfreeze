@@ -4,11 +4,11 @@
 <head>
 	<meta charset="UTF-8">
 	<title>FontFreeze</title>
-	
+
 	<!-- Critical -->
 	<link rel="preload" as="image" href="logo.webp">
 	<link rel="stylesheet" href="style.css">
-	
+
 	<link rel="icon" href="./favicon.ico" type="image/x-icon">
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no">
 	<meta name="description" content="Freeze variations and features in font.">
@@ -222,7 +222,8 @@
 						<div class="col-12 col-md-6 mt-2">
 							<label>
 								Font family suffix
-								<span class="text-info" title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze.">ⓘ</span>
+								<span class="text-info"
+									  title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze.">ⓘ</span>
 							</label>
 							<input class="form-control" v-model="store.options.suffix">
 						</div>
@@ -258,9 +259,11 @@
 							<div class="col-12 col-md-6 mt-2">
 								<label>
 									Typographic subfamily
-									<span class="text-info" title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily.">ⓘ</span>
+									<span class="text-info"
+										  title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily.">ⓘ</span>
 								</label>
-								<input class="form-control" v-model="store.options.typo_subfamily" :placeholder="store.options.subfamily">
+								<input class="form-control" v-model="store.options.typo_subfamily"
+									   :placeholder="store.options.subfamily">
 							</div>
 						</template>
 						<div class="col-12 col-md-6 mt-2">
@@ -310,9 +313,15 @@
 								<h4>Select local font</h4>
 							</div>
 							<div class="modal-body">
+								<select class="form-select mb-3" v-model="store.localFamily" required @change="familyChange" :style="familyStyle()">
+									<option value="" hidden>Select local font family</option>
+									<option v-for="(f,i) in localFamilies" :key="i" :value="f" v-text="f" :style="familyStyle(f)"></option>
+								</select>
+
 								<select class="form-select" v-model.number="store.localFont" required :style="optionStyle()">
-									<option value="" hidden>Select local font</option>
+									<option value="" hidden>Select font style</option>
 									<option v-for="(f,i) in store.localFonts" :key="i" :value="i" :style="optionStyle(f)"
+											:hidden="f.family!=store.localFamily"
 											:disabled="store.unavailableFonts.includes(f.postscriptName)">{{f.fullName}}</option>
 								</select>
 								<div class="mt-3" v-if="chromiumVersion<109">
