@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - Display unicode-range for subsetting.
 
+### Fixed
+
+- 1.9.1: Improve range display logic.
+
 ## [1.8.0] - 2023-02-26
 
 ### Changed

@@ -3,11 +3,16 @@ from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
 from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
-from fontTools.ttLib.tables.otTables import featureParamTypes, FeatureParamsStylisticSet, FeatureParamsCharacterVariants
+from fontTools.ttLib.tables.otTables import (
+    featureParamTypes,
+    FeatureParamsStylisticSet,
+    FeatureParamsCharacterVariants,
+)
 
 hideRemovedFeature = True
 
 MACSTYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
+
 
 def getAxisName(font: TTFont, tag: str, /) -> str:
     for a in font["fvar"].axes:
@@ -87,7 +92,7 @@ class Instantiate:
         familyName = familyName.replace(" ", "")
         subfamilyName = subfamilyName.replace(" ", "")
         result = f"{familyName}-{subfamilyName}"
-        return result[:63] # The limit is 63 characters
+        return result[:63]  # The limit is 63 characters
 
     def setName(self, content: str, index: int, /):
         # Setting MAC platform seems to cause trouble in some fonts,
@@ -199,7 +204,11 @@ class Activator:
                     # if there's no existing one, use the first matching feature as target
                     targetRecord = featureRecord
                     # This is required to make work with e.g. SourceCodePro
-                    featureParamTypes[self.target] = FeatureParamsStylisticSet if featureRecord.FeatureTag.startswith("ss") else FeatureParamsCharacterVariants
+                    featureParamTypes[self.target] = (
+                        FeatureParamsStylisticSet
+                        if featureRecord.FeatureTag.startswith("ss")
+                        else FeatureParamsCharacterVariants
+                    )
                     featureRecord.FeatureTag = self.target
                 else:
                     Activator.moveFeatureLookups(
@@ -360,6 +369,7 @@ def loadTtfFont(filename: str, /):
                 fixEncoding(name)
 
     return font
+
 
 # Legacy fonts will likely fail the OpenType Sanitizer (see https://github.com/khaledhosny/ots)
 # For such a font we tried to fix the font as much as possible.
