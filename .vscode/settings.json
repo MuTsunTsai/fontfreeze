@@ -1,8 +1,10 @@
 {
 	"cSpell.words": [
+		"fontfaces",
 		"fonttools",
 		"fvar",
 		"gsub",
+		"onloadingdone",
 		"Pyodide",
 		"unicodes",
 		"vfit",

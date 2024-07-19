@@ -308,9 +308,11 @@
 								<h4>Select local font</h4>
 							</div>
 							<div class="modal-body">
-								<select class="form-select mb-3" v-model="store.localFamily" required @change="familyChange" :style="familyStyle()">
+								<select class="form-select mb-3" v-model="store.localFamily" required @change="familyChange"
+										:style="familyStyle()">
 									<option value="" hidden>Select local font family</option>
-									<option v-for="(f,i) in localFamilies" :key="i" :value="f" v-text="f" :style="familyStyle(f)"></option>
+									<option v-for="(f,i) in localFamilies" :key="i" :value="f" v-text="f" :style="familyStyle(f)">
+									</option>
 								</select>
 
 								<select class="form-select" v-model.number="store.localFont" required :style="optionStyle()">
