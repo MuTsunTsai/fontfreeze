@@ -1,2 +1,0 @@
-python-minifier>=2.6.0
-fonttools>=4.42.1
