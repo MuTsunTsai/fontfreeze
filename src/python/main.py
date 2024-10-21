@@ -82,10 +82,10 @@ class Instantiate:
             font["OS/2"].fsSelection = Instantiate.makeSelection(
                 font["OS/2"].fsSelection, subfamily
             )
-        except:
+        except Exception:
             pass
         Instantiate.dropVariationTables(font)
-        if options.get("fixContour") == True:
+        if options.get("fixContour"):
             Instantiate.setOverlapFlags(font)
 
     def getPostscriptName(familyName, subfamilyName, /):
@@ -180,7 +180,7 @@ class Activator:
             self.activateInScript(scriptRecord.Script)
 
     def activateInScript(self, script, /):
-        if script.DefaultLangSys != None:
+        if script.DefaultLangSys is not None:
             self.activateInLangSys(script.DefaultLangSys)
         for langSysRecord in script.LangSysRecord:
             self.activateInLangSys(langSysRecord.LangSys)
@@ -200,7 +200,7 @@ class Activator:
                 if self.singleSub:
                     self.findSingleSubstitution(featureRecord)
 
-                if targetRecord == None:
+                if targetRecord is None:
                     # if there's no existing one, use the first matching feature as target
                     targetRecord = featureRecord
                     # This is required to make work with e.g. SourceCodePro
@@ -216,7 +216,7 @@ class Activator:
                     )
                     clearFeatureRecord(featureRecord)
 
-        if targetRecord != None:
+        if targetRecord is not None:
             targetRecord.Feature.LookupListIndex.sort()
 
     def findSingleSubstitution(self, featureRecord, /):
@@ -309,7 +309,7 @@ def loadFont(filename: str, /):
         "gsub": list(dict.fromkeys(features)),
     }
 
-    if font.getBestCmap() == None and convertBig5Cmap(font):
+    if font.getBestCmap() is None and convertBig5Cmap(font):
         print("Legacy CJK font detected.")
         fixLegacy(font)
         info["preview"] = True
@@ -334,7 +334,7 @@ def convertBig5Cmap(font: TTFont, /) -> bool:
                         else key
                     )
                     newtable.cmap[newKey] = table.cmap[key]
-                except:
+                except Exception:
                     pass
             cmap.tables = [newtable]
             return True
@@ -349,7 +349,7 @@ def fixEncoding(name, /):
     try:
         temp.decode("big5")
         name.string = temp
-    except:
+    except Exception:
         pass  # We've tried our best
 
 
@@ -365,7 +365,7 @@ def loadTtfFont(filename: str, /):
         if name.platformID == 3 and name.platEncID == 4:  # Big5
             try:
                 name.toStr()
-            except:
+            except Exception:
                 fixEncoding(name)
 
     return font
@@ -380,7 +380,7 @@ def fixLegacy(font: TTFont, /):
     if "mort" in font:
         try:
             font["mort"].ensureDecompiled()
-        except:
+        except Exception:
             print("Drop corrupted mort table.")
             del font["mort"]
 
