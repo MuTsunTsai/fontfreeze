@@ -2,6 +2,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2024-10-21
+
+### Added
+
+- Allowing keeping the font variable [#17].
+
 ## [1.9.0] - 2024-04-11
 
 ### Added

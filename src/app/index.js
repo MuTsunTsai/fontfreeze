@@ -333,6 +333,7 @@ async function openBlob(blob, name) {
 	store.options = {
 		suffix: "Freeze",
 		family: info.family,
+		keepVar: false,
 		subfamily: info.subfamily,
 		typo_family: info.typo_family || info.family,
 		typo_subfamily: info.typo_subfamily || "",

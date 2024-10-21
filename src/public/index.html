@@ -149,23 +149,32 @@
 					</div>
 
 					<div v-if="store.font.fvar">
-						<h5>Variations</h5>
-						<div class="d-flex mb-3">
-							<label class="col-form-label pe-3">Predefined instances:</label>
-							<div class="flex-grow-1">
-								<select @change="setInstance(instances[$el.value])" class="form-select" required>
-									<option value="" hidden>Select a predefined instance</option>
-									<option v-for="(i, j) in instances" :key="i.name+j" :value="j">
-										{{i.name}}</button>
-								</select>
+						<div class="float-end">
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="chk_var" v-model="store.options.keepVar">
+								<label class="form-check-label" for="chk_var">Keep the font variable</label>
 							</div>
 						</div>
-						<div v-for="a in axes" class="mb-1" :key="a">
-							<input type="range" class="form-range me-4" style="width:10rem;" @input="clear"
-								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)">
-							<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
-								   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
-							<label>{{getAxisName(a)}}</label>
+						<h5>Variations</h5>
+						<div v-if="!store.options.keepVar">
+							<div class="d-flex mb-3">
+								<label class="col-form-label pe-3">Predefined instances:</label>
+								<div class="flex-grow-1">
+									<select @change="setInstance(instances[$el.value])" class="form-select" required>
+										<option value="" hidden>Select a predefined instance</option>
+										<option v-for="(i, j) in instances" :key="i.name+j" :value="j">
+											{{i.name}}</button>
+									</select>
+								</div>
+							</div>
+							<div v-for="a in axes" class="mb-1" :key="a">
+								<input type="range" class="form-range me-4" style="width:10rem;" @input="clear"
+									   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)">
+								<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
+									   v-model="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)"
+									   @input="clear">
+								<label>{{getAxisName(a)}}</label>
+							</div>
 						</div>
 					</div>
 

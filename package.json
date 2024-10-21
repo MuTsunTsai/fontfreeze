@@ -1,10 +1,11 @@
 {
 	"name": "fontfreeze",
-	"version": "1.9.3",
+	"version": "1.10.0",
 	"description": "Freeze variations and features in font.",
 	"scripts": {
-		"start": "gulp && rsbuild dev -o",
-		"build": "gulp && rsbuild build",
+		"start": "rsbuild dev",
+		"build": "rsbuild build",
+		"prebuild": "gulp",
 		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze",
 		"postinstall": "pipenv install"
 	},
@@ -18,17 +19,17 @@
 		"url": "git+https://github.com/MuTsunTsai/fontfreeze.git"
 	},
 	"devDependencies": {
-		"@rsbuild/core": "1.0.1-beta.3",
-		"@rsbuild/plugin-sass": "1.0.1-beta.3",
+		"@rsbuild/core": "1.0.16",
+		"@rsbuild/plugin-sass": "1.0.4",
 		"@types/gtag.js": "^0.0.20",
-		"@types/node": "^20.14.11",
-		"@vue/reactivity": "^3.4.32",
+		"@types/node": "^22.7.7",
+		"@vue/reactivity": "^3.5.12",
 		"gulp": "^5.0.0",
 		"gulp-exec": "^5.0.0",
 		"gulp-newer": "^1.4.0",
 		"gulp-purgecss": "6.0.0",
 		"purgecss-from-html": "6.0.0",
-		"rsbuild-plugin-html-minifier-terser": "^1.1.0"
+		"rsbuild-plugin-html-minifier-terser": "^1.1.1"
 	},
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",

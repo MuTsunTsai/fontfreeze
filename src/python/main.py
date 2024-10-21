@@ -1,4 +1,5 @@
 import os
+from typing import cast
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
@@ -30,10 +31,9 @@ class Instantiate:
         version = font["name"].getDebugName(5)
 
         description = f"Frozen from {family} {version}."
-        if "fvar" in font:
-            settings = ", ".join(
-                f"{getAxisName(font, k)}={v}" for k, v in variations.items()
-            )
+        keep_var = cast(bool, options.get("keepVar"))
+        if "fvar" in font and not keep_var:
+            settings = ", ".join(f"{getAxisName(font, k)}={v}" for k, v in variations.items())
             description += f" Sets {settings}."
             instantiateVariableFont(font, variations, inplace=True, overlap=True)
         features = args.get("features")
@@ -79,12 +79,12 @@ class Instantiate:
 
         try:
             font["head"].macStyle = MACSTYLE[subfamily]
-            font["OS/2"].fsSelection = Instantiate.makeSelection(
-                font["OS/2"].fsSelection, subfamily
-            )
+            font["OS/2"].fsSelection = Instantiate.makeSelection(font["OS/2"].fsSelection, subfamily)
         except Exception:
             pass
-        Instantiate.dropVariationTables(font)
+
+        if not keep_var:
+            Instantiate.dropVariationTables(font)
         if options.get("fixContour"):
             Instantiate.setOverlapFlags(font)
 
@@ -167,9 +167,7 @@ class Activator:
             return
 
         self.cmapTables = self.font["cmap"].tables
-        self.unicodeGlyphs = {
-            name for table in self.cmapTables for name in table.cmap.values()
-        }
+        self.unicodeGlyphs = {name for table in self.cmapTables for name in table.cmap.values()}
 
         table = self.font["GSUB"].table
         self.featureRecords = table.FeatureList.FeatureRecord
@@ -205,15 +203,11 @@ class Activator:
                     targetRecord = featureRecord
                     # This is required to make work with e.g. SourceCodePro
                     featureParamTypes[self.target] = (
-                        FeatureParamsStylisticSet
-                        if featureRecord.FeatureTag.startswith("ss")
-                        else FeatureParamsCharacterVariants
+                        FeatureParamsStylisticSet if featureRecord.FeatureTag.startswith("ss") else FeatureParamsCharacterVariants
                     )
                     featureRecord.FeatureTag = self.target
                 else:
-                    Activator.moveFeatureLookups(
-                        featureRecord.Feature, targetRecord.Feature
-                    )
+                    Activator.moveFeatureLookups(featureRecord.Feature, targetRecord.Feature)
                     clearFeatureRecord(featureRecord)
 
         if targetRecord is not None:
@@ -328,11 +322,7 @@ def convertBig5Cmap(font: TTFont, /) -> bool:
             newtable.cmap = {}
             for key in table.cmap:
                 try:
-                    newKey = (
-                        ord(key.to_bytes(2, byteorder="big").decode("big5"))
-                        if key > 255
-                        else key
-                    )
+                    newKey = ord(key.to_bytes(2, byteorder="big").decode("big5")) if key > 255 else key
                     newtable.cmap[newKey] = table.cmap[key]
                 except Exception:
                     pass

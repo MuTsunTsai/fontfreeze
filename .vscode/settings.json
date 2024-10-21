@@ -13,8 +13,19 @@
 	"cSpell.ignoreRegExpList": [
 		"/([\"'`])[a-z]{4}\\1/gi"
 	],
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.expand": false,
+	"explorer.fileNesting.patterns": {
+		"*.css": "$(capture).css.map",
+		"*.js": "$(capture).prod.js, $(capture).min.js, $(capture).js.map",
+		".gitignore": ".gitattributes",
+		"package.json": "pnpm-lock.yaml, .npmrc, .browserslistrc",
+		"Pipfile": "Pipfile.lock, pyproject.toml, .pylintrc",
+		"README.md": "LICENSE.md, CONTRIBUTING.md"
+	},
 	"files.exclude": {
-		"node_modules/": true
+		"node_modules/": true,
+		"**/__pycache__/": true
 	},
 	"python.analysis.typeCheckingMode": "off"
 }

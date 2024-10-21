@@ -18,6 +18,7 @@ export default defineConfig({
 		template: "./src/public/index.html",
 	},
 	server: {
+		base: "/fontfreeze",
 		port: 3090,
 		publicDir: {
 			name: "src/public",
@@ -28,7 +29,6 @@ export default defineConfig({
 		cleanDistPath: isProduction,
 		dataUriLimit: 100,
 		legalComments: "none",
-		assetPrefix: "/fontfreeze/",
 		polyfill: "off",
 		distPath: {
 			root: "docs",

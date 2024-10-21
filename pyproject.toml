@@ -1,0 +1,6 @@
+# https://docs.astral.sh/ruff/settings/#format
+[tool.ruff]
+line-length = 130
+
+[tool.ruff.format]
+quote-style = "double"

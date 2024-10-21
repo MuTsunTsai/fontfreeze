@@ -5,6 +5,18 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "Launch in Chrome",
+			"preLaunchTask": "PreLaunch",
+			"internalConsoleOptions": "neverOpen",
+			"url": "http://localhost:3090/fontfreeze/",
+			// For some unknown reason, source binding does not work
+			// for some (but not all) of the Vue files for now.
+			"webRoot": "${workspaceFolder}",
+			"sourceMaps": true
+		},
+		{
 			"name": "Python: Test",
 			"type": "debugpy",
 			"request": "launch",
