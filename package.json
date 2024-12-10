@@ -19,16 +19,16 @@
 		"url": "git+https://github.com/MuTsunTsai/fontfreeze.git"
 	},
 	"devDependencies": {
-		"@rsbuild/core": "1.0.16",
-		"@rsbuild/plugin-sass": "1.0.4",
+		"@rsbuild/core": "1.1.9",
+		"@rsbuild/plugin-sass": "1.1.2",
 		"@types/gtag.js": "^0.0.20",
-		"@types/node": "^22.7.7",
-		"@vue/reactivity": "^3.5.12",
+		"@types/node": "^22.10.1",
+		"@vue/reactivity": "^3.5.13",
 		"gulp": "^5.0.0",
 		"gulp-exec": "^5.0.0",
 		"gulp-newer": "^1.4.0",
-		"gulp-purgecss": "6.0.0",
-		"purgecss-from-html": "6.0.0",
+		"gulp-purgecss": "7.0.2",
+		"purgecss-from-html": "7.0.2",
 		"rsbuild-plugin-html-minifier-terser": "^1.1.1"
 	},
 	"dependencies": {
