@@ -1,11 +1,16 @@
 {
 	"cSpell.words": [
+		"cmap",
 		"fontfaces",
+		"fontfreeze",
 		"fonttools",
 		"fvar",
+		"glyf",
 		"gsub",
+		"gvar",
 		"onloadingdone",
 		"Pyodide",
+		"rsbuild",
 		"unicodes",
 		"vfit",
 		"Webfont"

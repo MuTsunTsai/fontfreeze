@@ -12,7 +12,7 @@ export default defineConfig({
 		entry: {
 			index: "./src/app/index.js",
 		},
-		// tsconfigPath: "./src/app/tsconfig.json",
+		tsconfigPath: "./src/app/tsconfig.json",
 	},
 	html: {
 		template: "./src/public/index.html",

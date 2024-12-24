@@ -1,0 +1,7 @@
+{
+	"compilerOptions": {
+		"resolveJsonModule": true,
+		"skipLibCheck": true
+	},
+	"include": ["./*.ts"]
+}

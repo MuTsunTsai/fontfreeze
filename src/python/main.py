@@ -12,7 +12,7 @@ from fontTools.ttLib.tables.otTables import (
 
 hideRemovedFeature = True
 
-MACSTYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
+MAC_STYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
 
 
 def getAxisName(font: TTFont, tag: str, /) -> str:
@@ -78,7 +78,7 @@ class Instantiate:
         self.setName(fullName, 18)
 
         try:
-            font["head"].macStyle = MACSTYLE[subfamily]
+            font["head"].macStyle = MAC_STYLE[subfamily]
             font["OS/2"].fsSelection = Instantiate.makeSelection(font["OS/2"].fsSelection, subfamily)
         except Exception:
             pass
@@ -315,18 +315,18 @@ def convertBig5Cmap(font: TTFont, /) -> bool:
     cmap = font["cmap"]
     for table in cmap.tables:
         if table.platformID == 3 and table.platEncID == 4:  # Big5
-            newtable = CmapSubtable.newSubtable(4)
-            newtable.platformID = 3  # Windows
-            newtable.platEncID = 1  # Unicode
-            newtable.language = 0
-            newtable.cmap = {}
+            new_table = CmapSubtable.newSubtable(4)
+            new_table.platformID = 3  # Windows
+            new_table.platEncID = 1  # Unicode
+            new_table.language = 0
+            new_table.cmap = {}
             for key in table.cmap:
                 try:
                     newKey = ord(key.to_bytes(2, byteorder="big").decode("big5")) if key > 255 else key
-                    newtable.cmap[newKey] = table.cmap[key]
+                    new_table.cmap[newKey] = table.cmap[key]
                 except Exception:
                     pass
-            cmap.tables = [newtable]
+            cmap.tables = [new_table]
             return True
     return False
 
