@@ -22,7 +22,7 @@
 		"@rsbuild/core": "1.1.9",
 		"@rsbuild/plugin-sass": "1.1.2",
 		"@types/gtag.js": "^0.0.20",
-		"@types/node": "^22.10.1",
+		"@types/node": "^22.10.2",
 		"@vue/reactivity": "^3.5.13",
 		"gulp": "^5.0.0",
 		"gulp-exec": "^5.0.0",
