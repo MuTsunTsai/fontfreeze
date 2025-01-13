@@ -6,7 +6,7 @@
 		"start": "rsbuild dev",
 		"build": "rsbuild build",
 		"prebuild": "gulp",
-		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze",
+		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze/",
 		"postinstall": "pipenv install"
 	},
 	"keywords": [
