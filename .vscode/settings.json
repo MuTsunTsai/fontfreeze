@@ -30,7 +30,8 @@
 	},
 	"files.exclude": {
 		"node_modules/": true,
-		"**/__pycache__/": true
+		"**/__pycache__/": true,
+		"patches/": true
 	},
 	"python.analysis.typeCheckingMode": "off"
 }

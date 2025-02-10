@@ -1,0 +1,12 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 598829d66a609154d47e7aed452b880374c48fa0..0000000000000000000000000000000000000000
+diff --git a/dist/petite-vue.es.d.ts b/dist/petite-vue.es.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..a6d213d23bdc88da4fcc7955d4b2f1a087f275f7
+--- /dev/null
++++ b/dist/petite-vue.es.d.ts
+@@ -0,0 +1,3 @@
++export { createApp } from './types/app';
++export { nextTick } from './types/scheduler';
++export { reactive } from '@vue/reactivity';

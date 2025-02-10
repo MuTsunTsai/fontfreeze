@@ -35,5 +35,10 @@
 		"@popperjs/core": "^2.11.8",
 		"bootstrap": "5.3.3",
 		"petite-vue": "^0.4.1"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"petite-vue": "patches/petite-vue.patch"
+		}
 	}
 }

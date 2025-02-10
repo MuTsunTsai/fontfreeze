@@ -37,7 +37,7 @@ gulp.task("css", () =>
 gulp.task("python", () =>
 	gulp.src("src/python/main.py")
 		.pipe(newer(build))
-		.pipe(exec(file => `pyminify ${file.path} --rename-globals --preserve-globals loadFont,processFont,main,processLegacy`, { pipeStdout: true }))
+		.pipe(exec(file => `pipenv run pyminify ${file.path} --rename-globals --preserve-globals loadFont,processFont,main,processLegacy`, { pipeStdout: true }))
 		.pipe(gulp.dest(build))
 );
 

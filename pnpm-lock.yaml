@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  petite-vue:
+    hash: 32fee6e15c71a843ad5a6599e4e8bd0a5499bdf2b876aeeaabc8f011c26eccb2
+    path: patches/petite-vue.patch
+
 importers:
 
   .:
@@ -16,7 +21,7 @@ importers:
         version: 5.3.3(@popperjs/core@2.11.8)
       petite-vue:
         specifier: ^0.4.1
-        version: 0.4.1
+        version: 0.4.1(patch_hash=32fee6e15c71a843ad5a6599e4e8bd0a5499bdf2b876aeeaabc8f011c26eccb2)
     devDependencies:
       '@rsbuild/core':
         specifier: 1.1.9
@@ -2020,7 +2025,7 @@ snapshots:
       lru-cache: 11.0.2
       minipass: 7.1.2
 
-  petite-vue@0.4.1: {}
+  petite-vue@0.4.1(patch_hash=32fee6e15c71a843ad5a6599e4e8bd0a5499bdf2b876aeeaabc8f011c26eccb2): {}
 
   picocolors@1.1.1: {}
 

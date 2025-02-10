@@ -1,5 +1,5 @@
 // See https://github.com/vuejs/petite-vue/discussions/210 for a hack on typings
-// It's not very satisfying but I don't see a better way
+// We've made a PNPM patch for it in this repo
 import { reactive } from "petite-vue";
 
 export const store = reactive({
