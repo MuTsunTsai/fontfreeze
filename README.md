@@ -9,7 +9,7 @@
 <img alt="GitHub Repo stars"
 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow">
 <a href="https://github.com/mutsuntsai"><img
-src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
+src="https://img.shields.io/badge/%C2%A92022--2025-Mu--Tsun%20Tsai-blue"></a>
 </p>
 
 <p align="center">
