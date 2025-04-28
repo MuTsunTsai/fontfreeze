@@ -13,11 +13,11 @@ src="https://img.shields.io/badge/%C2%A92022-Mu--Tsun%20Tsai-blue"></a>
 </p>
 
 <p align="center">
-<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=356516&theme=neutral" alt="FontFreeze - Freeze&#0032;variations&#0032;and&#0032;features&#0032;in&#0032;font | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50" src="https://abstreamace.com/php-tool/buymeacoffee" /></a>
 </p>
 
 <p align="center">
-<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=356516&theme=neutral" alt="FontFreeze - Freeze&#0032;variations&#0032;and&#0032;features&#0032;in&#0032;font | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
 > Freeze variations and features in font.

@@ -1,4 +1,11 @@
 {
+	"black-formatter.args": [
+		"--line-length",
+		"120"
+	],
+	"cSpell.ignoreRegExpList": [
+		"/([\"'`])[a-z]{4}\\1/gi"
+	],
 	"cSpell.words": [
 		"cmap",
 		"fontfaces",
@@ -15,22 +22,19 @@
 		"vfit",
 		"Webfont"
 	],
-	"cSpell.ignoreRegExpList": [
-		"/([\"'`])[a-z]{4}\\1/gi"
-	],
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.expand": false,
 	"explorer.fileNesting.patterns": {
 		"*.css": "$(capture).css.map",
 		"*.js": "$(capture).prod.js, $(capture).min.js, $(capture).js.map",
 		".gitignore": ".gitattributes",
-		"package.json": "pnpm-lock.yaml, .npmrc, .browserslistrc",
 		"Pipfile": "Pipfile.lock, pyproject.toml, .pylintrc",
-		"README.md": "LICENSE.md, CONTRIBUTING.md"
+		"README.md": "LICENSE.md, CONTRIBUTING.md",
+		"package.json": "pnpm-lock.yaml, .npmrc, .browserslistrc"
 	},
 	"files.exclude": {
-		"node_modules/": true,
 		"**/__pycache__/": true,
+		"node_modules/": true,
 		"patches/": true
 	},
 	"python.analysis.typeCheckingMode": "off"

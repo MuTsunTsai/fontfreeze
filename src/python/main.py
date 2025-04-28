@@ -203,7 +203,9 @@ class Activator:
                     targetRecord = featureRecord
                     # This is required to make work with e.g. SourceCodePro
                     featureParamTypes[self.target] = (
-                        FeatureParamsStylisticSet if featureRecord.FeatureTag.startswith("ss") else FeatureParamsCharacterVariants
+                        FeatureParamsStylisticSet
+                        if featureRecord.FeatureTag.startswith("ss")
+                        else FeatureParamsCharacterVariants
                     )
                     featureRecord.FeatureTag = self.target
                 else:
@@ -248,9 +250,33 @@ def subset(font: TTFont, unicodes: str, /):
     sub.subset(font)
 
 
+#####################################################################################################
+#####################################################################################################
+
+
+def change_font_width(font: TTFont, from_width: int, to_width: int):
+    hmtx = font["hmtx"]
+    cmap = font.getBestCmap()
+    lsb_delta = (to_width - from_width) / 2
+
+    for codepoint, glyph_name in cmap.items():
+        width, lsb = hmtx[glyph_name]
+        if width == from_width:
+            hmtx[glyph_name] = (to_width, lsb + lsb_delta)
+            # Uncomment the next line for debugging
+            # print(f"Change width {chr(codepoint)} ({glyph_name}): {width} → {to_width}")
+
+    font["hhea"].advanceWidthMax = max(to_width, font["hhea"].advanceWidthMax)
+
+
+#####################################################################################################
+#####################################################################################################
+
+
 def loadFont(filename: str, /):
     font = loadTtfFont(filename)
 
+    names = font["name"]
     features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
     features = [r.FeatureTag for r in features]
 
@@ -262,13 +288,13 @@ def loadFont(filename: str, /):
                     "default": a.defaultValue,
                     "min": a.minValue,
                     "max": a.maxValue,
-                    "name": font["name"].getDebugName(a.axisNameID),
+                    "name": names.getDebugName(a.axisNameID),
                 }
                 for a in font["fvar"].axes
             ],
             "instances": [
                 {
-                    "name": font["name"].getDebugName(i.subfamilyNameID),
+                    "name": names.getDebugName(i.subfamilyNameID),
                     "coordinates": i.coordinates,
                 }
                 for i in font["fvar"].instances
@@ -284,21 +310,21 @@ def loadFont(filename: str, /):
     os.rename(filename, "input")
 
     info = {
-        "family": font["name"].getBestFamilyName(),
-        "subfamily": font["name"].getDebugName(2),
-        "copyright": font["name"].getDebugName(0),
-        "id": font["name"].getDebugName(3),
-        "version": font["name"].getDebugName(5),
-        "trademark": font["name"].getDebugName(7),
-        "manufacturer": font["name"].getDebugName(8),
-        "designer": font["name"].getDebugName(9),
-        "description": font["name"].getDebugName(10),
-        "vendorURL": font["name"].getDebugName(11),
-        "designerURL": font["name"].getDebugName(12),
-        "license": font["name"].getDebugName(13),
-        "licenseURL": font["name"].getDebugName(14),
-        "typo_family": font["name"].getDebugName(16),
-        "typo_subfamily": font["name"].getDebugName(17),
+        "family": names.getBestFamilyName(),
+        "subfamily": names.getDebugName(2),
+        "copyright": names.getDebugName(0),
+        "id": names.getDebugName(3),
+        "version": names.getDebugName(5),
+        "trademark": names.getDebugName(7),
+        "manufacturer": names.getDebugName(8),
+        "designer": names.getDebugName(9),
+        "description": names.getDebugName(10),
+        "vendorURL": names.getDebugName(11),
+        "designerURL": names.getDebugName(12),
+        "license": names.getDebugName(13),
+        "licenseURL": names.getDebugName(14),
+        "typo_family": names.getDebugName(16),
+        "typo_subfamily": names.getDebugName(17),
         "fvar": fvar,
         "gsub": list(dict.fromkeys(features)),
     }
@@ -376,6 +402,10 @@ def fixLegacy(font: TTFont, /):
 
     # Simply re-saving the font should fix most table alignment issues.
     font.save("input", reorderTables=None)
+
+
+#####################################################################################################
+#####################################################################################################
 
 
 def processLegacy():
