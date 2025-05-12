@@ -67,12 +67,16 @@ async function getOutputURL(): Promise<string> {
 			}
 			if(options.typo_family) options.typo_family += " " + options.suffix;
 		}
+		const features = store.font.gsub.filter(g => store.features[g] === true);
+		if(features.length && store.options.target.length != 4) {
+			throw new Error("Must specify a valid activation target.");
+		}
 		const args = {
 			options: options,
 			version: store.version,
 			unicodes: getUnicodes(),
 			variations: store.variations,
-			features: store.font.gsub.filter(g => store.features[g] === true),
+			features,
 			disables: store.font.gsub.filter(g => store.features[g] === undefined),
 		};
 		return await callWorker("save", clone(args)) as string;
