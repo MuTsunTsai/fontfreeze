@@ -4,15 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [1.10.0] - 2024-10-21
 
+### Added
+
+- Allowing keeping the font variable ([#17](https://github.com/MuTsunTsai/fontfreeze/issues/17)).
+
 ### Patches
 
 - 1.10.1: Minor refactoring.
 - 1.10.2: Keeps feature settings during font loading if the feature set is the same.
 - 1.10.3: Adds error message for invalid activation targets.
-
-### Added
-
-- Allowing keeping the font variable [#17].
 
 ## [1.9.0] - 2024-04-11
 
