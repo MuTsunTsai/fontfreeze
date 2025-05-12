@@ -1,7 +1,7 @@
 
 import { store } from "./store";
 
-const worker = new Worker(new URL("./worker.js", import.meta.url));
+const worker = new Worker(new URL("./worker.ts", import.meta.url), { name: "worker" });
 
 export const initialized = new Promise<void>((resolve, reject) => {
 	const handler = (e: MessageEvent) => {

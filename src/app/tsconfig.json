@@ -10,6 +10,10 @@
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		"outDir": "../../dist",
-		"allowJs": true
+		"allowJs": true,
+		"types": [
+			"wicg-file-system-access",
+			"gtag.js"
+		]
 	}
 }

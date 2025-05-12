@@ -1,3 +1,5 @@
+import { callWorker } from "./bridge";
+import { note } from "./constants";
 import { store } from "./store";
 
 /**
@@ -10,7 +12,42 @@ document.head.appendChild(style);
 
 let fontURL: string;
 
-export function setPreviewFont(url: string): Promise<boolean> {
+export function getPreviewStyle(): string | null {
+	if(!store.font) return null;
+	const feat = store.font.gsub
+		.filter(g => store.features[g] !== false)
+		.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
+		.join(",");
+	const variation = !store.font.fvar ? "normal" :
+		store.font.fvar.axes
+			.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
+			.join(",");
+	return `white-space: pre-line;` +
+		`font-family: preview${store.previewIndex};` +
+		`font-feature-settings: ${feat};` +
+		`font-variation-settings: ${variation};` +
+		`font-size: ${store.previewSize}pt;`;
+}
+
+export async function tryPreview(url: string, info: FontInfo) {
+	if(await setPreviewFont(url)) return;
+
+	// If it's not done yet, try to fix legacy font issues.
+	if(!info.preview) {
+		try {
+			const url = await callWorker("legacy") as string;
+			if(await setPreviewFont(url)) return;
+		} catch(e) {
+			console.log(e);
+		}
+	}
+
+	// If it's already done or the fix fails, show message.
+	gtag("event", "preview_failed");
+	alert("Font preview won't work for this font. " + note);
+}
+
+function setPreviewFont(url: string): Promise<boolean> {
 	if(fontURL) URL.revokeObjectURL(fontURL);
 	fontURL = url;
 	const sheet = style.sheet!;
