@@ -38,7 +38,6 @@ export async function openBlob(blob: Blob, name: string) {
 	info.fileName = name;
 	info.fileSize = getFileSize(blob.size);
 	info.gsub = info.gsub.filter(g => !hiddenFeatures.includes(g));
-	store.features = {};
 	store.variations = {};
 	store.glyphs = "";
 	store.options = {

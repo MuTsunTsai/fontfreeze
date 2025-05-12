@@ -42,6 +42,8 @@ export const store = reactive({
 /** The last value before the current value for each features. */
 let lastValues: Record<string, boolean | undefined>;
 
+const lastFeatures = new Set<string>();
+
 export function changeFeature(f: string) {
 	if(lastValues[f] === true) store.features[f] = undefined;
 	if(lastValues[f] === undefined) store.features[f] = false;
@@ -49,8 +51,23 @@ export function changeFeature(f: string) {
 }
 
 export function setupFeatures(gsub: string[]) {
+	if(sameFeatures(gsub)) return;
+
+	lastFeatures.clear();
+	store.features = {};
 	lastValues = {};
-	for(let g of gsub) store.features[g] = lastValues[g] = false;
+	for(const g of gsub) {
+		lastFeatures.add(g);
+		store.features[g] = lastValues[g] = false;
+	}
+}
+
+function sameFeatures(gsub: string[]) {
+	if(gsub.length != lastFeatures.size) return false;
+	for(const g of gsub) {
+		if(!lastFeatures.has(g)) return false;
+	}
+	return true;
 }
 
 export type StoreType = typeof store;

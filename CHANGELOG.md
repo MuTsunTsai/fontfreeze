@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [1.10.0] - 2024-10-21
 
+### Patches
+
+- 1.10.1: Minor refactoring.
+- 1.10.2: Keeps feature settings during font loading if the feature set is the same.
+
 ### Added
 
 - Allowing keeping the font variable [#17].
