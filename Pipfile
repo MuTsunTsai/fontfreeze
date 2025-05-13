@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 python-minifier = ">=2.6.0"
-fonttools = ">=4.42.1"
+fonttools = "4.42.1"
 
 [dev-packages]
 

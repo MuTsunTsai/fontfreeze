@@ -1,5 +1,6 @@
 import os
 from typing import cast
+from fontTools import version
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
@@ -48,7 +49,9 @@ class Instantiate:
             description += " Use fallback mode."
 
         self.nameTable = font["name"]
+        old_names = self.nameTable.names
         self.nameTable.names = []
+
         family = options.get("family")
         subfamily = options.get("subfamily")
         typo_family = options.get("typo_family")
@@ -76,6 +79,12 @@ class Instantiate:
         self.setName(typo_family, 16)
         self.setName(typo_subfamily, 17)
         self.setName(fullName, 18)
+
+        for n in old_names:
+            # Keep all names that have IDs > 25, as those are custom names
+            # This is necessary for "keep font variable" to work properly
+            if n.nameID > 25:
+                self.nameTable.setName(n.string, n.nameID, n.platformID, n.platEncID, n.langID)
 
         try:
             font["head"].macStyle = MAC_STYLE[subfamily]
@@ -447,3 +456,6 @@ def generateFont(args: dict, filename: str):
         font.flavor = "woff2"
 
     return font
+
+
+print(f"FontTools version: {version}")
