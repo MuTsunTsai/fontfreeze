@@ -2,6 +2,8 @@ import { defineConfig } from "@rsbuild/core";
 import { pluginSass } from "@rsbuild/plugin-sass";
 import { pluginHtmlMinifierTerser } from "rsbuild-plugin-html-minifier-terser";
 
+import pkg from "./package.json";
+
 const isProduction = process.env.NODE_ENV === "production";
 
 export default defineConfig({
@@ -12,10 +14,16 @@ export default defineConfig({
 		entry: {
 			index: "./src/app/index.js",
 		},
+		define: {
+			VERSION: `"${pkg.version}"`,
+		},
 		tsconfigPath: "./src/app/tsconfig.json",
 	},
 	html: {
 		template: "./src/public/index.html",
+		templateParameters: {
+			VERSION: pkg.version,
+		},
 	},
 	server: {
 		base: "/fontfreeze",

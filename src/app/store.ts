@@ -4,6 +4,8 @@ import { reactive } from "petite-vue";
 
 import type { SupportedFormats } from "./constants";
 
+declare const VERSION: string;
+
 export const store = reactive({
 	localFonts: [] as FontData[],
 	localFont: "" as string | number,
@@ -21,7 +23,7 @@ export const store = reactive({
 	url: null as string | null,
 	download: null as string | null,
 	previewIndex: 0,
-	version: "",
+	version: " v" + VERSION,
 	features: {} as Record<string, boolean | undefined>,
 	variations: {} as Record<string, number>,
 	options: {
@@ -34,6 +36,8 @@ export const store = reactive({
 		fixContour: false,
 		singleSub: true,
 		customNames: false,
+		lineHeight: 0,
+		spacing: 0,
 		target: "",
 		format: "ttf" as SupportedFormats,
 	},
@@ -75,8 +79,3 @@ export type StoreType = typeof store;
 fetch("sample.txt")
 	.then(r => r.text())
 	.then(t => store.sample = t);
-
-// Use shields.io as API
-fetch("https://img.shields.io/github/package-json/v/mutsuntsai/fontfreeze.json")
-	.then(r => r.json())
-	.then(j => store.version = " " + j.value);

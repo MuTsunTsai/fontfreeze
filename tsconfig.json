@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"resolveJsonModule": true,
+		"esModuleInterop": true,
 		"skipLibCheck": true
 	},
 	"include": ["./*.ts"]
