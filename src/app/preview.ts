@@ -12,6 +12,8 @@ document.head.appendChild(style);
 
 let fontURL: string;
 
+const BASE_LINE_HEIGHT = 1.5;
+
 export function getPreviewStyle(): string | null {
 	if(!store.font) return null;
 	const feat = store.font.gsub
@@ -22,11 +24,15 @@ export function getPreviewStyle(): string | null {
 		store.font.fvar.axes
 			.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
 			.join(",");
+	const lineHeight = (store.font.lineHeight + store.options.lineHeight) / store.font.fontHeight;
+	const spacing = store.options.spacing / store.font.fontHeight;
 	return `white-space: pre-line;` +
 		`font-family: preview${store.previewIndex};` +
 		`font-feature-settings: ${feat};` +
 		`font-variation-settings: ${variation};` +
-		`font-size: ${store.previewSize}pt;`;
+		`font-size: ${store.previewSize}pt;` +
+		`line-height: ${lineHeight * BASE_LINE_HEIGHT};` +
+		`letter-spacing: ${spacing}em`;
 }
 
 export async function tryPreview(url: string, info: FontInfo) {

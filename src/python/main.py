@@ -1,4 +1,4 @@
-import os
+import os, math
 from typing import cast
 from fontTools import version
 from fontTools.ttLib import TTFont
@@ -278,6 +278,36 @@ def change_font_width(font: TTFont, from_width: int, to_width: int):
     font["hhea"].advanceWidthMax = max(to_width, font["hhea"].advanceWidthMax)
 
 
+def change_font_spacing(font: TTFont, delta: int):
+    hmtx = font["hmtx"]
+    cmap = font.getBestCmap()
+
+    max_width = 0
+    for codepoint, glyph_name in cmap.items():
+        width, lsb = hmtx[glyph_name]
+        width += delta
+        hmtx[glyph_name] = (width, lsb + delta / 2)
+        if width > max_width:
+            max_width = width
+
+    font["hhea"].advanceWidthMax = max_width
+
+
+def change_line_height(font: TTFont, delta: int):
+    OS2 = font["OS/2"]
+    ascent = OS2.usWinAscent
+    descent = OS2.usWinDescent
+    total = ascent + descent
+    new_total = total + delta
+    ascent = math.ceil(ascent * new_total / total)
+    descent = math.floor(descent * new_total / total)
+
+    hhea = font["hhea"]
+    hhea.ascent = hhea.ascender = OS2.usWinAscent = ascent
+    OS2.usWinDescent = descent
+    hhea.descent = hhea.descender = -descent
+
+
 #####################################################################################################
 #####################################################################################################
 
@@ -285,6 +315,7 @@ def change_font_width(font: TTFont, from_width: int, to_width: int):
 def loadFont(filename: str, /):
     font = loadTtfFont(filename)
 
+    OS2 = font["OS/2"]
     names = font["name"]
     features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
     features = [r.FeatureTag for r in features]
@@ -336,6 +367,8 @@ def loadFont(filename: str, /):
         "typo_subfamily": names.getDebugName(17),
         "fvar": fvar,
         "gsub": list(dict.fromkeys(features)),
+        "fontHeight": OS2.sTypoAscender - OS2.sTypoDescender,
+        "lineHeight": OS2.usWinAscent + OS2.usWinDescent,
     }
 
     if font.getBestCmap() is None and convertBig5Cmap(font):
@@ -452,7 +485,15 @@ def generateFont(args: dict, filename: str):
     Activator(font, args)
     subset(font, args.get("unicodes"))
 
-    if args.get("options").get("format") == "woff2":
+    options = args.get("options")
+    spacing = options.get("spacing")
+    if spacing != 0:
+        change_font_spacing(font, spacing)
+    line_height = options.get("lineHeight")
+    if line_height != 0:
+        change_line_height(font, line_height)
+
+    if options.get("format") == "woff2":
         font.flavor = "woff2"
 
     return font

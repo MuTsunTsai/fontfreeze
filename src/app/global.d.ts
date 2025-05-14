@@ -27,6 +27,8 @@ interface FontInfo {
 	fvar: null | {
 		axes: Axis[];
 	}
+	fontHeight: number;
+	lineHeight: number;
 }
 
 interface Axis {

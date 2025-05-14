@@ -120,6 +120,12 @@ createApp({
 	},
 	local,
 	loadLocal,
+	validateNumber(e) {
+		const input = e.target;
+		const value = Number(input.value);
+		if(!input.value.trim() || Number.isNaN(value)) input.value = "0";
+		if(!Number.isInteger(value)) input.value = Math.round(value).toString();
+	}
 }).mount();
 
 globalThis.generate = generate;

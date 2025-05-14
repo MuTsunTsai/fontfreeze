@@ -221,6 +221,31 @@
 					<div class="pre form-control p-3" :style="previewStyle" v-effect="setupDiv()">
 					</div>
 
+					<div class="row">
+						<div class="col-12 col-md-6 mt-2">
+							<div class="row">
+								<label class="col-8 col-form-label text-end">
+									Additional line height
+									<span class="text-info"
+										  title="Only works in supported environments. The preview here is the simulated result.">ⓘ</span>
+								</label>
+								<div class="col">
+									<input class="form-control" type="number" v-model.number="store.options.lineHeight"
+										   @blur="validateNumber" placeholder="in font units">
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-md-6 mt-2">
+							<div class="row">
+								<label class="col-8 col-form-label text-end">Additional letter spacing</label>
+								<div class="col">
+									<input class="form-control" type="number" v-model.number="store.options.spacing"
+										   @blur="validateNumber" placeholder="in font units">
+								</div>
+							</div>
+						</div>
+					</div>
+
 					<h5>Output options</h5>
 					<div class="row">
 						<div class="col-12 col-md-6 mt-2">

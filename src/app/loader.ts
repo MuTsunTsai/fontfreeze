@@ -50,6 +50,8 @@ export async function openBlob(blob: Blob, name: string) {
 		fixContour: false,
 		singleSub: true,
 		customNames: false,
+		lineHeight: 0,
+		spacing: 0,
 		target: "calt",
 		format: "ttf",
 	};
