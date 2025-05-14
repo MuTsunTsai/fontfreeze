@@ -113,5 +113,3 @@ Other projects that inspired FontFreeze include:
 - [Font Squirrel Webfont Generator](https://www.fontsquirrel.com/tools/webfont-generator),
   for **NOT** working on any of the fonts I wanted to pass to it,
   and forcing me to create my own tool.
-
-The "FontFreeze" banner is generated using [Text Generator](https://www.textfx.co/).
