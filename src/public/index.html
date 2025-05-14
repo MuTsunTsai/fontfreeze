@@ -103,7 +103,7 @@
 									<table class="w-100">
 										<tr v-if="store.font.description">
 											<td>Description</td>
-											<td :class="{'small':store.font.description.length>200}">
+											<td :class="{'small':store.font.description&&store.font.description.length>200}">
 												{{store.font.description}}
 											</td>
 										</tr>
@@ -135,7 +135,7 @@
 										</tr>
 										<tr v-if="store.font.license">
 											<td>license</td>
-											<td :class="{'small':store.font.license.length>200}">
+											<td :class="{'small':store.font.license&&store.font.license.length>200}">
 												{{store.font.license}}
 											</td>
 										</tr>
