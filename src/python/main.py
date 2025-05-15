@@ -1,10 +1,19 @@
 import os, math
 from typing import cast
+
+# FontTools is very difficult to get the typings right by nature,
+# especially that many classes are dynamically constructed at runtime.
+# I have tried the best I can to get as much type hints here as possible.
 from fontTools import version
 from fontTools.ttLib import TTFont
 from fontTools.subset import Subsetter, Options as SSOptions, parse_unicodes
 from fontTools.varLib.instancer import instantiateVariableFont
-from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
+from fontTools.ttLib.tables._c_m_a_p import CmapSubtable, cmap_format_4
+from fontTools.ttLib.tables._f_v_a_r import Axis, NamedInstance, table__f_v_a_r
+from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent, table__g_l_y_f
+from fontTools.ttLib.tables._h_h_e_a import table__h_h_e_a
+from fontTools.ttLib.tables._n_a_m_e import NameRecord, table__n_a_m_e
+from fontTools.ttLib.tables._m_o_r_t import table__m_o_r_t
 from fontTools.ttLib.tables.otTables import (
     featureParamTypes,
     FeatureParamsStylisticSet,
@@ -17,19 +26,22 @@ MAC_STYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
 
 
 def getAxisName(font: TTFont, tag: str, /) -> str:
-    for a in font["fvar"].axes:
+    names: table__n_a_m_e = font["name"]
+    axes: list[Axis] = font["fvar"].axes
+    for a in axes:
         if a.axisTag == tag:
-            return font["name"].getDebugName(a.axisNameID)
+            return names.getDebugName(a.axisNameID)
     return tag
 
 
 class Instantiate:
-    def __init__(self, font: TTFont, args, /):
+    def __init__(self, font: TTFont, args: dict, /):
         variations = args.get("variations")
 
-        options = args.get("options")
-        family = font["name"].getBestFamilyName()
-        version = font["name"].getDebugName(5)
+        options: dict = args.get("options")
+        names: table__n_a_m_e = font["name"]
+        family = names.getBestFamilyName()
+        version = names.getDebugName(5)
 
         description = f"Frozen from {family} {version}."
         keep_var = cast(bool, options.get("keepVar"))
@@ -48,8 +60,8 @@ class Instantiate:
         if not hideRemovedFeature:
             description += " Use fallback mode."
 
-        self.nameTable = font["name"]
-        old_names = self.nameTable.names
+        self.nameTable = names
+        old_names: list[NameRecord] = self.nameTable.names
         self.nameTable.names = []
 
         family = options.get("family")
@@ -97,7 +109,7 @@ class Instantiate:
         if options.get("fixContour"):
             Instantiate.setOverlapFlags(font)
 
-    def getPostscriptName(familyName, subfamilyName, /):
+    def getPostscriptName(familyName: str, subfamilyName: str, /):
         familyName = familyName.replace(" ", "")
         subfamilyName = subfamilyName.replace(" ", "")
         result = f"{familyName}-{subfamilyName}"
@@ -114,22 +126,23 @@ class Instantiate:
             1033,  # LANG_ENGLISH
         )
 
-    def dropVariationTables(font, /):
+    def dropVariationTables(font: TTFont, /):
         for tag in "STAT cvar fvar gvar".split():
             if tag in font.keys():
                 del font[tag]
 
-    def setOverlapFlags(font, /):
-        glyf = font["glyf"]
+    def setOverlapFlags(font: TTFont, /):
+        glyf: table__g_l_y_f = font["glyf"]
         for glyph_name in glyf.keys():
-            glyph = glyf[glyph_name]
+            glyph: Glyph = glyf[glyph_name]
 
             if glyph.isComposite():
-                glyph.components[0].flags |= 0x0400  # OVERLAP_COMPOUND
+                components: list[GlyphComponent] = glyph.components
+                components[0].flags |= 0x0400  # OVERLAP_COMPOUND
             elif glyph.numberOfContours > 0:
                 glyph.flags[0] |= 0x40  # OVERLAP_SIMPLE
 
-    def makeSelection(bits, style, /):
+    def makeSelection(bits, style: str, /):
         bits = bits ^ bits
         if style == "Regular":
             bits |= 0b1000000
@@ -169,8 +182,9 @@ class Activator:
     def __init__(self, font: TTFont, args: dict, /) -> None:
         self.font = font
         self.features = args.get("features")
-        self.target = args.get("options").get("target")
-        self.singleSub = args.get("options").get("singleSub")
+        options: dict = args.get("options")
+        self.target = options.get("target")
+        self.singleSub = options.get("singleSub")
 
         if len(self.features) == 0 or "GSUB" not in self.font:
             return
@@ -178,11 +192,11 @@ class Activator:
         self.cmapTables = self.font["cmap"].tables
         self.unicodeGlyphs = {name for table in self.cmapTables for name in table.cmap.values()}
 
-        table = self.font["GSUB"].table
-        self.featureRecords = table.FeatureList.FeatureRecord
-        self.lookup = table.LookupList.Lookup
+        gsub_table = self.font["GSUB"].table
+        self.featureRecords = gsub_table.FeatureList.FeatureRecord
+        self.lookup = gsub_table.LookupList.Lookup
 
-        scriptRecords = table.ScriptList.ScriptRecord
+        scriptRecords = gsub_table.ScriptList.ScriptRecord
         for scriptRecord in scriptRecords:
             self.activateInScript(scriptRecord.Script)
 
@@ -275,7 +289,8 @@ def change_font_width(font: TTFont, from_width: int, to_width: int):
             # Uncomment the next line for debugging
             # print(f"Change width {chr(codepoint)} ({glyph_name}): {width} → {to_width}")
 
-    font["hhea"].advanceWidthMax = max(to_width, font["hhea"].advanceWidthMax)
+    hhea: table__h_h_e_a = font["hhea"]
+    hhea.advanceWidthMax = max(to_width, hhea.advanceWidthMax)
 
 
 def change_font_spacing(font: TTFont, delta: int):
@@ -290,7 +305,8 @@ def change_font_spacing(font: TTFont, delta: int):
         if width > max_width:
             max_width = width
 
-    font["hhea"].advanceWidthMax = max_width
+    hhea: table__h_h_e_a = font["hhea"]
+    hhea.advanceWidthMax = max_width
 
 
 def change_line_height(font: TTFont, delta: int):
@@ -302,7 +318,7 @@ def change_line_height(font: TTFont, delta: int):
     ascent = math.ceil(ascent * new_total / total)
     descent = math.floor(descent * new_total / total)
 
-    hhea = font["hhea"]
+    hhea: table__h_h_e_a = font["hhea"]
     hhea.ascent = hhea.ascender = OS2.usWinAscent = ascent
     OS2.usWinDescent = descent
     hhea.descent = hhea.descender = -descent
@@ -312,37 +328,42 @@ def change_line_height(font: TTFont, delta: int):
 #####################################################################################################
 
 
+def getFvar(font: TTFont) -> dict:
+    if not "fvar" in font:
+        return None
+
+    names: table__n_a_m_e = font["name"]
+    fvar: table__f_v_a_r = font["fvar"]
+    axes: list[Axis] = fvar.axes
+    instances: list[NamedInstance] = fvar.instances
+    return {
+        "axes": [
+            {
+                "tag": a.axisTag,
+                "default": a.defaultValue,
+                "min": a.minValue,
+                "max": a.maxValue,
+                "name": names.getDebugName(a.axisNameID),
+            }
+            for a in axes
+        ],
+        "instances": [
+            {
+                "name": names.getDebugName(i.subfamilyNameID),
+                "coordinates": i.coordinates,
+            }
+            for i in instances
+        ],
+    }
+
+
 def loadFont(filename: str, /):
     font = loadTtfFont(filename)
 
     OS2 = font["OS/2"]
-    names = font["name"]
+    names: table__n_a_m_e = font["name"]
     features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
     features = [r.FeatureTag for r in features]
-
-    fvar = (
-        {
-            "axes": [
-                {
-                    "tag": a.axisTag,
-                    "default": a.defaultValue,
-                    "min": a.minValue,
-                    "max": a.maxValue,
-                    "name": names.getDebugName(a.axisNameID),
-                }
-                for a in font["fvar"].axes
-            ],
-            "instances": [
-                {
-                    "name": names.getDebugName(i.subfamilyNameID),
-                    "coordinates": i.coordinates,
-                }
-                for i in font["fvar"].instances
-            ],
-        }
-        if "fvar" in font
-        else None
-    )
 
     # change temp to input, preventing input being overwritten by invalid file
     if os.path.exists("input"):
@@ -365,7 +386,7 @@ def loadFont(filename: str, /):
         "licenseURL": names.getDebugName(14),
         "typo_family": names.getDebugName(16),
         "typo_subfamily": names.getDebugName(17),
-        "fvar": fvar,
+        "fvar": getFvar(font),
         "gsub": list(dict.fromkeys(features)),
         "fontHeight": OS2.sTypoAscender - OS2.sTypoDescender,
         "lineHeight": OS2.usWinAscent + OS2.usWinDescent,
@@ -383,7 +404,7 @@ def convertBig5Cmap(font: TTFont, /) -> bool:
     cmap = font["cmap"]
     for table in cmap.tables:
         if table.platformID == 3 and table.platEncID == 4:  # Big5
-            new_table = CmapSubtable.newSubtable(4)
+            new_table: cmap_format_4 = CmapSubtable.newSubtable(4)
             new_table.platformID = 3  # Windows
             new_table.platEncID = 1  # Unicode
             new_table.language = 0
@@ -401,7 +422,7 @@ def convertBig5Cmap(font: TTFont, /) -> bool:
 
 # Legacy CJK fonts in Big5 encoding in particular might use mixed encoding. For more info, see
 # https://docs.microsoft.com/en-us/typography/opentype/spec/name#windows-encoding-ids
-def fixEncoding(name, /):
+def fixEncoding(name: NameRecord, /):
     temp = name.string.decode("utf_16_be")
     temp = bytes(temp, encoding="raw_unicode_escape")
     try:
@@ -419,7 +440,8 @@ def loadTtfFont(filename: str, /):
     )
 
     # Fix legacy CJK font name encoding
-    for name in font["name"].names:
+    names: list[NameRecord] = font["name"].names
+    for name in names:
         if name.platformID == 3 and name.platEncID == 4:  # Big5
             try:
                 name.toStr()
@@ -437,7 +459,8 @@ def fixLegacy(font: TTFont, /):
     # If not, just delete the table.
     if "mort" in font:
         try:
-            font["mort"].ensureDecompiled()
+            mort: table__m_o_r_t = font["mort"]
+            mort.ensureDecompiled()
         except Exception:
             print("Drop corrupted mort table.")
             del font["mort"]
@@ -485,7 +508,7 @@ def generateFont(args: dict, filename: str):
     Activator(font, args)
     subset(font, args.get("unicodes"))
 
-    options = args.get("options")
+    options: dict = args.get("options")
     spacing = options.get("spacing")
     if spacing != 0:
         change_font_spacing(font, spacing)
