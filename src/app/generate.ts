@@ -4,8 +4,10 @@ import { store } from "./store";
 import { getUnicodes } from "./unicode";
 import { clone } from "./utils";
 
-export async function generate() {
-	if(store.message) return; // button not ready
+const MESSAGE_TIMEOUT = 3000;
+
+export async function generate(): Promise<void> {
+	if(store.message || store.running) return;
 	gtag("event", "save_" + store.options.format);
 	try {
 		if("showSaveFilePicker" in window) {
@@ -22,20 +24,21 @@ export async function generate() {
 			const writable = await handle.createWritable();
 			await writable.write(blob);
 			await writable.close();
-			store.message = "Generating complete!";
-			setTimeout(() => store.message = null, 3000);
+			store.message ||= "Generating complete!";
+			setTimeout(() => store.message = null, MESSAGE_TIMEOUT);
 		} else {
 			await startAnime();
-			store.url = await getOutputURL();
+			const url = await getOutputURL();
+			if(store) store.url = url;
 			store.download = suggestedFileName();
 		}
 	} catch(e) {
 		console.log(e);
 	}
-	store.running = false;
+	if(store.running) store.running = false;
 }
 
-function startAnime() {
+function startAnime(): Promise<unknown> {
 	const anime = new Promise(resolve => {
 		addEventListener("animationstart", resolve, { once: true });
 	});
@@ -43,10 +46,13 @@ function startAnime() {
 	return anime;
 }
 
-function suggestedFileName() {
+function suggestedFileName(): string {
 	const name = store.font!.fileName.replace(/\.[a-z0-9]+$/i, "");
 	return name + "_freeze." + store.options.format;
 }
+
+const MS_CHAR_LIMIT = 32; // There's a 32-char limit in MS Word
+const FEATURE_LENGTH = 4; // All valid feature names has this length
 
 async function getOutputURL(): Promise<string> {
 	try {
@@ -57,18 +63,18 @@ async function getOutputURL(): Promise<string> {
 		if(options.suffix) {
 			if(
 				options.family &&
-				options.family.length + options.suffix.length < 32 // There's a 32-char limit in MS Word
+				options.family.length + options.suffix.length < MS_CHAR_LIMIT
 			) {
 				options.family += " " + options.suffix;
 			}
 			if(options.typo_family) options.typo_family += " " + options.suffix;
 		}
 		const features = store.font.gsub.filter(g => store.features[g] === true);
-		if(features.length && store.options.target.length != 4) {
+		if(features.length && store.options.target.length != FEATURE_LENGTH) {
 			throw new Error("Must specify a valid activation target.");
 		}
 		const args = {
-			options: options,
+			options,
 			version: store.version,
 			unicodes: getUnicodes(),
 			variations: store.variations,

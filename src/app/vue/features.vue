@@ -15,14 +15,14 @@
 </template>
 
 <script lang="ts">
-	import { store } from '../store';
+	import { store } from "../store";
 
 	/** The last value before the current value for each features. */
 	let lastValues: Record<string, boolean | undefined>;
 
 	const lastFeatures = new Set<string>();
 
-	export function setupFeatures(gsub: string[]) {
+	export function setupFeatures(gsub: readonly string[]): void {
 		if(sameFeatures(gsub)) return;
 
 		lastFeatures.clear();
@@ -34,7 +34,7 @@
 		}
 	}
 
-	function sameFeatures(gsub: string[]) {
+	function sameFeatures(gsub: readonly string[]): boolean {
 		if(gsub.length != lastFeatures.size) return false;
 		for(const g of gsub) {
 			if(!lastFeatures.has(g)) return false;
@@ -44,7 +44,7 @@
 </script>
 
 <script setup lang="ts">
-	function changeFeature(f: string) {
+	function changeFeature(f: string): void {
 		if(lastValues[f] === true) store.features[f] = undefined;
 		if(lastValues[f] === undefined) store.features[f] = false;
 		lastValues[f] = store.features[f];

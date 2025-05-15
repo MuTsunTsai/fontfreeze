@@ -38,17 +38,17 @@
 </template>
 
 <script setup lang="ts">
-	import { computed } from 'vue';
+	import { computed } from "vue";
 
 	import { loadLocal } from "../../localFonts";
-	import { store } from '../../store';
+	import { store } from "../../store";
 
 	const chromiumVersion = parseInt(navigator.userAgentData?.brands.find(b => b.brand == "Chromium")?.version ?? "0");
 
-	function familyStyle(f = store.localFamily) {
-		const filtered = store.localFonts.filter(font => font.family == f);
+	function familyStyle(family = store.localFamily): string {
+		const filtered = store.localFonts.filter(font => font.family == family);
 		if(!filtered.length) return "";
-		let font = filtered.find(f => f.style == "Regular");
+		let font = filtered.find((f: FontData): boolean => f.style == "Regular");
 		if(!font) {
 			filtered.sort((a, b) => a.fullName.length - b.fullName.length);
 			font = filtered[0];
@@ -56,7 +56,7 @@
 		return `font-family:'local ${font.fullName}'`;
 	}
 
-	function optionStyle(f?: FontData) {
+	function optionStyle(f?: FontData): string {
 		if(!f) {
 			if(store.localFont === "") return "";
 			f = store.localFonts[store.localFont];
@@ -73,7 +73,7 @@
 		return [...result];
 	});
 
-	function familyChange() {
+	function familyChange(): void {
 		store.localFont = store.localFonts.findIndex(f => f.family == store.localFamily);
 	}
 </script>

@@ -9,10 +9,10 @@ import { modal } from "./utils";
 const localStyle = document.createElement("style");
 document.head.appendChild(localStyle);
 
-export async function local() {
+export async function local(): Promise<void> {
 	gtag("event", "show_local");
 	await navigator.permissions.query({
-		name: "local-fonts" as PermissionName
+		name: "local-fonts" as PermissionName,
 	});
 	const fonts = await window.queryLocalFonts();
 	if(fonts.length == 0) return; // permission denied
@@ -21,7 +21,7 @@ export async function local() {
 	modal("#local").show();
 }
 
-export async function loadLocal() {
+export async function loadLocal(): Promise<void> {
 	gtag("event", "open_local");
 	const font = store.localFonts[store.localFont as number];
 	let blob;
@@ -32,8 +32,8 @@ export async function loadLocal() {
 		store.unavailableFonts.push(font.postscriptName);
 		return;
 	} finally {
-		store.localFamily = "";
-		store.localFont = "";
+		if(store.localFamily) store.localFamily = "";
+		if(store.localFont) store.localFont = "";
 	}
 	modal("#local").hide();
 	try {
@@ -43,7 +43,7 @@ export async function loadLocal() {
 	}
 }
 
-function buildLocalFonts(fonts: FontData[]) {
+function buildLocalFonts(fonts: FontData[]): void {
 	const sheet = localStyle.sheet!;
 	while(sheet.cssRules.length) sheet.deleteRule(0);
 	for(const font of fonts) {

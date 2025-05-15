@@ -5,7 +5,11 @@ import { tryPreview } from "./preview";
 import { clone } from "./utils";
 import { setupFeatures } from "./vue/features.vue";
 
-export async function tryOpenFile(file: File) {
+import type { OptionType } from "./store";
+
+const KB = 1024;
+
+export async function tryOpenFile(file: File): Promise<void> {
 	gtag("event", "open_ttf");
 	try {
 		await openBlob(file, file.name);
@@ -15,7 +19,7 @@ export async function tryOpenFile(file: File) {
 	}
 }
 
-export async function openBlob(blob: Blob, name: string) {
+export async function openBlob(blob: Blob, name: string): Promise<void> {
 	store.loading = "packages";
 	await initialized;
 	store.loading = "font";
@@ -41,7 +45,22 @@ export async function openBlob(blob: Blob, name: string) {
 	info.gsub = info.gsub.filter(g => !hiddenFeatures.includes(g));
 	store.variations = {};
 	store.glyphs = "";
-	store.options = {
+	store.options = createDefaultOption(info);
+	setupFeatures(info.gsub);
+	if(info.fvar) {
+		for(const a of info.fvar.axes) store.variations[a.tag] = a.default;
+	}
+	store.font = info;
+
+	// This needs to be done after we have turned on the font UI,
+	// so that the browser will actually try to load the font.
+	await tryPreview(tempURL, info);
+
+	store.loading = null;
+}
+
+function createDefaultOption(info: FontInfo): OptionType {
+	return {
 		suffix: "Freeze",
 		family: info.family,
 		keepVar: false,
@@ -56,21 +75,10 @@ export async function openBlob(blob: Blob, name: string) {
 		target: "calt",
 		format: "ttf",
 	};
-	setupFeatures(info.gsub);
-	if(info.fvar) {
-		for(let a of info.fvar.axes) store.variations[a.tag] = a.default;
-	}
-	store.font = info;
-
-	// This needs to be done after we have turned on the font UI,
-	// so that the browser will actually try to load the font.
-	await tryPreview(tempURL, info);
-
-	store.loading = null;
 }
 
 function getFileSize(size: number): string {
-	if(size < 1024) return size + "B"; else size /= 1024;
-	if(size < 1024) return size.toFixed(1) + "KiB"; else size /= 1024;
+	if(size < KB) return size + "B"; else size /= KB;
+	if(size < KB) return size.toFixed(1) + "KiB"; else size /= KB;
 	return size.toFixed(1) + "MiB";
 }

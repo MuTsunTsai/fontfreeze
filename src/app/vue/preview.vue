@@ -26,7 +26,7 @@
 		watchEffect(() => setPreviewUnicodeRange(store.unicodeRange = getUnicodes()));
 	});
 
-	async function setupDiv() {
+	async function setupDiv(): Promise<void> {
 		const div = document.querySelector("div.pre") as HTMLDivElement;
 		if(supportPlaintext(div)) {
 			// Chrome needs this, or the initial empty lines won't be selectable.

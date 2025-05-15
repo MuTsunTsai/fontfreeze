@@ -5,18 +5,18 @@ export const hiddenFeatures = [
 	"dist", "dtls", "fin2", "fin3", "fina", "flac", "half", "haln", "init", "isol",
 	"ljmo", "locl", "ltra", "ltrm", "mark", "med2", "medi", "mkmk", "nukt", "pref",
 	"pres", "pstf", "psts", "rclt", "rkrf", "rlig", "rphf", "rtla", "rtlm", "rvrn",
-	"ssty", "stch", "tjmo", "vjmo", "DELT" // last one is special value
+	"ssty", "stch", "tjmo", "vjmo", "DELT", // last one is special value
 ];
 
 export const formats = {
-	"ttf": {
+	ttf: {
 		description: "TTF font",
 		accept: { "font/ttf": ".ttf" as const },
 	},
-	"woff2": {
+	woff2: {
 		description: "WOFF2 font",
 		accept: { "font/woff2": ".woff2" as const },
-	}
+	},
 };
 
 export type SupportedFormats = keyof typeof formats;

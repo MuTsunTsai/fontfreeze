@@ -35,11 +35,11 @@
 	import { store } from "../store";
 
 	const axisNames: Record<string, string> = {
-		"ital": "Italic",
-		"opsz": "Optical size",
-		"slnt": "Slant",
-		"wdth": "Width",
-		"wght": "Weight",
+		ital: "Italic",
+		opsz: "Optical size",
+		slnt: "Slant",
+		wdth: "Width",
+		wght: "Weight",
 	};
 
 	const instances = computed(() => {
@@ -47,9 +47,9 @@
 		return store.font.fvar.instances;
 	});
 
-	function setInstance(instance: FontInstance) {
+	function setInstance(instance: FontInstance): void {
 		store.options.typo_subfamily = instance.name;
-		for(let t in instance.coordinates) {
+		for(const t in instance.coordinates) {
 			store.variations[t] = instance.coordinates[t];
 		}
 	}
@@ -59,19 +59,23 @@
 		return store.font.fvar.axes;
 	});
 
-	function getStep(axis: Axis) {
+	const LARGE_THRESHOLD = 20;
+	const MINI_STEP = 0.1;
+	const TINY_STEP = 0.01;
+
+	function getStep(axis: Axis): number {
 		const range = axis.max - axis.min;
-		if(range > 20) return 1;
-		if(range > 1) return 0.1;
-		return 0.01;
+		if(range > LARGE_THRESHOLD) return 1;
+		if(range > 1) return MINI_STEP;
+		return TINY_STEP;
 	}
 
-	function getAxisName(axis: Axis) {
-		return axis.name ? axis.name :
-			axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
+	function getAxisName(axis: Axis): string {
+		if(axis.name) return axis.name;
+		return axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
 	}
 
-	function clear() {
+	function clear(): void {
 		const selectElement = document.getElementsByTagName("select")[0];
 		if(selectElement) selectElement.value = "";
 	}

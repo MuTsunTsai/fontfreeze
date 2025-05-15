@@ -12,14 +12,14 @@ document.head.appendChild(style);
 
 let fontURL: string;
 
-export async function tryPreview(url: string, info: FontInfo) {
+export async function tryPreview(url: string, info: FontInfo): Promise<void> {
 	if(await setPreviewFont(url)) return;
 
 	// If it's not done yet, try to fix legacy font issues.
 	if(!info.preview) {
 		try {
-			const url = await callWorker("legacy") as string;
-			if(await setPreviewFont(url)) return;
+			const altUrl = await callWorker("legacy") as string;
+			if(await setPreviewFont(altUrl)) return;
 		} catch(e) {
 			console.log(e);
 		}
@@ -50,7 +50,7 @@ function setPreviewFont(url: string): Promise<boolean> {
 	});
 }
 
-export function setPreviewUnicodeRange(range: string) {
+export function setPreviewUnicodeRange(range: string): void {
 	const rule = style.sheet!.cssRules[0] as CSSFontFaceRule;
 	rule.style.unicodeRange = range;
 }

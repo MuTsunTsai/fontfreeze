@@ -74,14 +74,13 @@
 <script setup lang="ts">
 	import { store } from "../store";
 	import { generate } from "../generate";
-
 	import Info from "./modals/info.vue";
 	import Options from "./options.vue";
 	import Variable from "./variable.vue";
 	import Preview from "./preview.vue";
 	import Features from "./features.vue";
 
-	function validateNumber(e: Event) {
+	function validateNumber(e: Event): void {
 		const input = e.target as HTMLInputElement;
 		const value = Number(input.value);
 		if(!input.value.trim() || Number.isNaN(value)) input.value = "0";

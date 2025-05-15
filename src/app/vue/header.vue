@@ -40,14 +40,14 @@
 </template>
 
 <script setup lang="ts">
-	import { store } from '../store';
-	import { tryOpenFile } from '../loader';
+	import { store } from "../store";
+	import { tryOpenFile } from "../loader";
 	import { local } from "../localFonts";
 
 	const version = VERSION;
 	const localFontSupport = "queryLocalFonts" in window;
 
-	function openFile(event: Event) {
+	function openFile(event: Event): void {
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
 		if(!file) return;

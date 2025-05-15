@@ -1,7 +1,7 @@
 
 // plaintext-only support detection
 // https://stackoverflow.com/questions/10672081
-export function supportPlaintext(div: HTMLDivElement) {
+export function supportPlaintext(div: HTMLDivElement): boolean {
 	try {
 		const p = "plaintext-only";
 		div.contentEditable = p;
@@ -11,13 +11,15 @@ export function supportPlaintext(div: HTMLDivElement) {
 	}
 }
 
+const ENTER_CODE = 13;
+
 // Fallback for browsers not supporting plaintext-only (i.e. Firefox)
 // https://stackoverflow.com/questions/21205785
-export function setupPlaintext(div: HTMLDivElement) {
+export function setupPlaintext(div: HTMLDivElement): void {
 	div.contentEditable = "true";
 	div.addEventListener("keydown", e => {
 		//override pressing enter in contenteditable
-		if(e.keyCode == 13) {
+		if(e.keyCode == ENTER_CODE) {
 			//don"t automatically put in divs
 			e.preventDefault();
 			e.stopPropagation();
@@ -29,18 +31,18 @@ export function setupPlaintext(div: HTMLDivElement) {
 		//cancel paste
 		e.preventDefault();
 		//get plaintext from clipboard
-		let text = (e.originalEvent || e).clipboardData!.getData("text/plain");
+		const text = (e.originalEvent || e).clipboardData!.getData("text/plain");
 		//insert text manually
 		insertTextAtSelection(div, text);
 	});
 }
 
-function insertTextAtSelection(div: HTMLDivElement, txt: string) {
+function insertTextAtSelection(div: HTMLDivElement, txt: string): void {
 	//get selection area so we can position insert
-	let sel = window.getSelection()!;
-	let text = div.textContent!;
-	let before = Math.min(sel.focusOffset, sel.anchorOffset);
-	let after = Math.max(sel.focusOffset, sel.anchorOffset);
+	const sel = window.getSelection()!;
+	const text = div.textContent!;
+	const before = Math.min(sel.focusOffset, sel.anchorOffset);
+	const after = Math.max(sel.focusOffset, sel.anchorOffset);
 	//ensure string ends with \n so it displays properly
 	let afterStr = text.substring(after);
 	if(afterStr == "") afterStr = "\n";
@@ -48,7 +50,7 @@ function insertTextAtSelection(div: HTMLDivElement, txt: string) {
 	div.textContent = text.substring(0, before) + txt + afterStr;
 	//restore cursor at correct position
 	sel.removeAllRanges();
-	let range = document.createRange();
+	const range = document.createRange();
 	//childNodes[0] should be all the text
 	range.setStart(div.childNodes[0], before + txt.length);
 	range.setEnd(div.childNodes[0], before + txt.length);

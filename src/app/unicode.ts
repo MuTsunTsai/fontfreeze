@@ -2,10 +2,13 @@ import { store } from "./store";
 
 type Range = [number, number];
 
-export function getUnicodes() {
+const UNICODE_RANGE = 0x10FFFF; // Full unicode range
+const HEX = 16;
+
+export function getUnicodes(): string {
 	const glyphs = getGlyphCharCodes();
-	if(store.subsetMode == 'exclude') {
-		const ranges: Range[] = [[0, 0x10FFFF]]; // Full unicode range
+	if(store.subsetMode == "exclude") {
+		const ranges: Range[] = [[0, UNICODE_RANGE]];
 		if(glyphs.length == 0) return "";
 		for(const code of glyphs) {
 			const range = ranges.find(r => r[0] <= code && code <= r[1]);
@@ -14,21 +17,20 @@ export function getUnicodes() {
 			range[1] = code - 1;
 			ranges.push([code + 1, end]);
 		}
-		return ranges.filter(r => r[0] <= r[1]).map(formatRange).join(', ').toUpperCase();
+		return ranges.filter(r => r[0] <= r[1]).map(formatRange).join(", ").toUpperCase();
 	} else {
 		if(glyphs.length == 0) return "U+0";
 		const ranges: Range[] = [];
 		let start = glyphs[0], end = start;
 		for(let i = 1; i <= glyphs.length; i++) {
 			const code = glyphs[i];
-			if(end == code - 1) end = code;
-			else {
+			if(end == code - 1) { end = code; } else {
 				ranges.push([start, end]);
 				start = code;
 				end = code;
 			}
 		}
-		return ranges.map(formatRange).join(', ').toUpperCase();
+		return ranges.map(formatRange).join(", ").toUpperCase();
 	}
 }
 
@@ -46,8 +48,8 @@ function getGlyphCharCodes(): number[] {
 	return result;
 }
 
-function formatRange(r: Range) {
-	let result = "U+" + r[0].toString(16);
-	if(r[1] > r[0]) result += "-" + r[1].toString(16);
+function formatRange(r: Range): string {
+	let result = "U+" + r[0].toString(HEX);
+	if(r[1] > r[0]) result += "-" + r[1].toString(HEX);
 	return result;
 }

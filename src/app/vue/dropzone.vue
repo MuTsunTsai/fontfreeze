@@ -7,15 +7,16 @@
 </template>
 
 <script setup lang="ts">
-	import { onMounted } from 'vue';
-	import { tryOpenFile } from '../loader';
+	import { onMounted } from "vue";
+
+	import { tryOpenFile } from "../loader";
 
 	onMounted(() => {
 		const dropzone = document.querySelector(".dropzone") as HTMLDivElement;
-		const toggle = (event: Event, drag: boolean) => {
+		const toggle = (event: Event, drag: boolean): void => {
 			event.stopPropagation();
 			event.preventDefault();
-			dropzone.classList.toggle("drag", drag)
+			dropzone.classList.toggle("drag", drag);
 		};
 		document.body.addEventListener("dragover", event => toggle(event, true));
 		dropzone.addEventListener("dragleave", event => toggle(event, false));

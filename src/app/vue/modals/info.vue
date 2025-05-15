@@ -54,12 +54,12 @@
 </template>
 
 <script setup lang="ts">
-	import { computed } from 'vue';
+	import { computed } from "vue";
 
-	import { store } from '../../store';
-	import { modal } from '../../utils';
+	import { store } from "../../store";
+	import { modal } from "../../utils";
 
-	function info() {
+	function info(): void {
 		modal("#info").show();
 	}
 

@@ -11,7 +11,7 @@ gulp.task("css", () =>
 	gulp.src("node_modules/bootstrap/dist/css/bootstrap.css")
 		.pipe(newer({
 			dest: build + "/bootstrap.css",
-			extra: [__filename, srcHtml]
+			extra: [__filename, srcHtml],
 		}))
 		.pipe(purgecss({
 			content: [srcHtml],

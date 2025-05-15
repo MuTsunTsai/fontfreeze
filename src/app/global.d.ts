@@ -18,7 +18,7 @@ interface ClipboardEvent {
 }
 
 interface FontInfo {
-	gsub: string[];
+	gsub: readonly string[];
 	fileName: string;
 	fileSize: string;
 	readonly version: string;
@@ -36,12 +36,12 @@ interface FontInfo {
 	readonly typo_subfamily: string;
 	preview: boolean;
 	previewUrl: string;
-	fvar: null | {
+	readonly fvar: null | {
 		axes: Axis[];
 		instances: FontInstance[];
-	}
-	fontHeight: number;
-	lineHeight: number;
+	};
+	readonly fontHeight: number;
+	readonly lineHeight: number;
 }
 
 interface Axis {

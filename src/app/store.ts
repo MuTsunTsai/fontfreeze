@@ -39,3 +39,4 @@ export const store = reactive({
 });
 
 export type StoreType = typeof store;
+export type OptionType = StoreType["options"];
