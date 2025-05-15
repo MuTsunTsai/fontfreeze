@@ -25,8 +25,11 @@ gulp.task("css", () =>
 				],
 				variables: [
 					/^--bs-btn-disabled/, // Fixes a bug of purgeCss
-					/^--bs-gray-(8|6)00/,
+					/^--bs-gray-(\d)00/,
 					/^--bs-(danger|info)$/,
+				],
+				greedy: [
+					/tooltip/,
 				],
 			},
 			variables: true, // for Bootstrap

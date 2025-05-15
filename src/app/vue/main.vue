@@ -34,8 +34,7 @@
 				<div class="row">
 					<label class="col-8 col-form-label text-end">
 						Additional line height
-						<span class="text-info"
-							  title="Only works in supported environments. The preview here is the simulated result.">ⓘ</span>
+						<Tip title="Only works in supported environments. The preview here is the simulated result." />
 					</label>
 					<div class="col">
 						<input class="form-control" type="number" v-model.number="store.options.lineHeight" @blur="validateNumber"
@@ -79,6 +78,7 @@
 	import Variable from "./variable.vue";
 	import Preview from "./preview.vue";
 	import Features from "./features.vue";
+	import Tip from "./components/tip.vue";
 
 	function validateNumber(e: Event): void {
 		const input = e.target as HTMLInputElement;

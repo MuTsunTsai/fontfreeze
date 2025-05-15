@@ -4,8 +4,7 @@
 		<div class="col-12 col-md-6 mt-2">
 			<label>
 				Font family suffix
-				<span class="text-info"
-					  title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze.">ⓘ</span>
+				<Tip title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze." />
 			</label>
 			<input class="form-control" v-model="store.options.suffix">
 		</div>
@@ -24,7 +23,7 @@
 			<div class="col-12 col-md-6 mt-2">
 				<label>
 					Font subfamily
-					<span class="text-info" title="This can only be one of the four values.">ⓘ</span>
+					<Tip title="This can only be one of the four values." />
 				</label>
 				<select class="form-select" v-model="store.options.subfamily">
 					<option value="Regular">Regular</option>
@@ -40,8 +39,7 @@
 			<div class="col-12 col-md-6 mt-2">
 				<label>
 					Typographic subfamily
-					<span class="text-info"
-						  title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily.">ⓘ</span>
+					<Tip title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily." />
 				</label>
 				<input class="form-control" v-model="store.options.typo_subfamily" :placeholder="store.options.subfamily">
 			</div>
@@ -74,4 +72,5 @@
 
 <script setup lang="ts">
 	import { store } from "../store";
+	import Tip from "./components/tip.vue";
 </script>
