@@ -1,6 +1,7 @@
 import { openBlob } from "./loader";
 import { store } from "./store";
 import { modal } from "./utils";
+import { alert } from "./vue/modals/alert.vue";
 
 /**
  * We similarly use a stylesheet to handle local fonts.

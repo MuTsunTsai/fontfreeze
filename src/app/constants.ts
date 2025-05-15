@@ -22,5 +22,5 @@ export const formats = {
 export type SupportedFormats = keyof typeof formats;
 
 export const note =
-	"Please try re-exporting the font with editors such as FontForge and see if it fixes the issue. " +
-	"If it still doesn't, please submit an issue.";
+	`Please try re-exporting the font with editors such as <a href="https://fontforge.org/">FontForge</a> and see if it fixes the issue. ` +
+	`If it still doesn't, please submit an <a href="https://github.com/MuTsunTsai/fontfreeze/issues">issue</a>.`;

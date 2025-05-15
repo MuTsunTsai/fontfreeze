@@ -101,7 +101,7 @@ export default [
 			"max-statements": "off",
 			"multiline-comment-style": "off",
 			"new-cap": "warn",
-			"no-alert": "off", // This is an exception for this project for now.
+			"no-alert": "warn",
 			"no-array-constructor": "warn",
 			"no-await-in-loop": "warn",
 			"no-bitwise": "off",

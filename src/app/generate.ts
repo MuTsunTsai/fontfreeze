@@ -3,6 +3,7 @@ import { formats } from "./constants";
 import { store } from "./store";
 import { getUnicodes } from "./unicode";
 import { clone } from "./utils";
+import { alert } from "./vue/modals/alert.vue";
 
 const MESSAGE_TIMEOUT = 3000;
 

@@ -1,6 +1,7 @@
 import { callWorker } from "./bridge";
 import { note } from "./constants";
 import { store } from "./store";
+import { alert } from "./vue/modals/alert.vue";
 
 /**
  * We use a stylesheet to handle preview font.

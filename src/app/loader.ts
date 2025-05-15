@@ -4,6 +4,7 @@ import { hiddenFeatures, note } from "./constants";
 import { tryPreview } from "./preview";
 import { clone } from "./utils";
 import { setupFeatures } from "./vue/features.vue";
+import { alert } from "./vue/modals/alert.vue";
 
 import type { OptionType } from "./store";
 

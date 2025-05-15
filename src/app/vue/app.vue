@@ -1,5 +1,6 @@
 <template>
 	<Dropzone />
+	<Alert />
 	<div class="container py-3 px-sm-2 px-md-3 px-lg-5">
 		<div class="mb-3 d-flex justify-content-end" style="gap:1rem">
 			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</a>
@@ -30,5 +31,6 @@
 	import Header from "./header.vue";
 	import Dropzone from "./dropzone.vue";
 	import Main from "./main.vue";
+	import Alert from "./modals/alert.vue";
 	import Local from "./modals/local.vue";
 </script>
