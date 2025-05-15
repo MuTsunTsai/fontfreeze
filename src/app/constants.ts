@@ -21,14 +21,6 @@ export const formats = {
 
 export type SupportedFormats = keyof typeof formats;
 
-export const axisNames = {
-	"ital": "Italic",
-	"opsz": "Optical size",
-	"slnt": "Slant",
-	"wdth": "Width",
-	"wght": "Weight",
-};
-
 export const note =
 	"Please try re-exporting the font with editors such as FontForge and see if it fixes the issue. " +
 	"If it still doesn't, please submit an issue.";

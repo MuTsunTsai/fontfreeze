@@ -1,6 +1,6 @@
 {
 	"name": "fontfreeze",
-	"version": "1.11.0",
+	"version": "1.11.1",
 	"description": "Freeze variations and features in font.",
 	"scripts": {
 		"start": "rsbuild dev",
@@ -21,6 +21,7 @@
 	"devDependencies": {
 		"@rsbuild/core": "^1.3.20",
 		"@rsbuild/plugin-sass": "^1.3.1",
+		"@rsbuild/plugin-vue": "^1.0.7",
 		"@types/bootstrap": "^5.2.10",
 		"@types/gtag.js": "^0.0.20",
 		"@types/node": "^22.15.18",
@@ -32,17 +33,15 @@
 		"gulp-purgecss": "7.0.2",
 		"purgecss-from-html": "7.0.2",
 		"pyodide": "^0.27.5",
-		"rsbuild-plugin-html-minifier-terser": "^1.1.1"
+		"rsbuild-plugin-html-minifier-terser": "^1.1.1",
+		"user-agent-data-types": "^0.4.2"
 	},
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
 		"bootstrap": "^5.3.6",
-		"petite-vue": "^0.4.1"
+		"vue": "^3.5.13"
 	},
 	"pnpm": {
-		"patchedDependencies": {
-			"petite-vue": "patches/petite-vue.patch"
-		},
 		"onlyBuiltDependencies": [
 			"core-js"
 		]

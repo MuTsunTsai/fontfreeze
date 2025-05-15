@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 - Change line height and letter spacing ([#13](https://github.com/MuTsunTsai/fontfreeze/issues/13)).
 
+### Patches
+
+- 1.11.1: Migrate from petite-vue to vue.
+
 ## [1.10.0] - 2024-10-21
 
 ### Added

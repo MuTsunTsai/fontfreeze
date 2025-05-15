@@ -1,8 +1,9 @@
-import { setupFeatures, store } from "./store";
+import { store } from "./store";
 import { initialized, callWorker } from "./bridge";
 import { hiddenFeatures, note } from "./constants";
 import { tryPreview } from "./preview";
 import { clone } from "./utils";
+import { setupFeatures } from "./vue/features.vue";
 
 export async function tryOpenFile(file: File) {
 	gtag("event", "open_ttf");

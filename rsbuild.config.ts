@@ -1,5 +1,6 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginSass } from "@rsbuild/plugin-sass";
+import { pluginVue } from "@rsbuild/plugin-vue";
 import { pluginHtmlMinifierTerser } from "rsbuild-plugin-html-minifier-terser";
 
 import pkg from "./package.json";
@@ -12,7 +13,7 @@ export default defineConfig({
 	},
 	source: {
 		entry: {
-			index: "./src/app/index.js",
+			index: "./src/app/index.ts",
 		},
 		define: {
 			VERSION: `"${pkg.version}"`,
@@ -21,9 +22,6 @@ export default defineConfig({
 	},
 	html: {
 		template: "./src/public/index.html",
-		templateParameters: {
-			VERSION: pkg.version,
-		},
 	},
 	server: {
 		base: "/fontfreeze",
@@ -44,6 +42,7 @@ export default defineConfig({
 	},
 	plugins: [
 		pluginSass(),
+		pluginVue(),
 		pluginHtmlMinifierTerser({
 			removeComments: true,
 		}),

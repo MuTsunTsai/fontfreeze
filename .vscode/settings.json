@@ -36,6 +36,5 @@
 		"**/__pycache__/": true,
 		"node_modules/": true,
 		"patches/": true
-	},
-	"python.analysis.typeCheckingMode": "off"
+	}
 }

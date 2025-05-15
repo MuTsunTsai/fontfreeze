@@ -51,10 +51,6 @@ function suggestedFileName() {
 async function getOutputURL(): Promise<string> {
 	try {
 		if(!store.font) throw new Error();
-		for(let tag in store.variations) {
-			// Fix bugs of petite-vue with <input type="range">
-			store.variations[tag] = Number(store.variations[tag]);
-		}
 		store.options.family = store.options.family.trim();
 		store.options.typo_subfamily = store.options.typo_subfamily.trim();
 		const options = clone(store.options);

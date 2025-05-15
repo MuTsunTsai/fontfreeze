@@ -5,7 +5,7 @@ const purgecss = require("gulp-purgecss");
 const purgeHtml = require("purgecss-from-html");
 
 const build = "build";
-const srcHtml = "src/public/index.html";
+const srcHtml = "src/app/**/*.vue";
 
 gulp.task("css", () =>
 	gulp.src("node_modules/bootstrap/dist/css/bootstrap.css")

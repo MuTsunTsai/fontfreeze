@@ -12,29 +12,6 @@ document.head.appendChild(style);
 
 let fontURL: string;
 
-const BASE_LINE_HEIGHT = 1.5;
-
-export function getPreviewStyle(): string | null {
-	if(!store.font) return null;
-	const feat = store.font.gsub
-		.filter(g => store.features[g] !== false)
-		.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
-		.join(",");
-	const variation = !store.font.fvar ? "normal" :
-		store.font.fvar.axes
-			.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
-			.join(",");
-	const lineHeight = (store.font.lineHeight + store.options.lineHeight) / store.font.fontHeight;
-	const spacing = store.options.spacing / store.font.fontHeight;
-	return `white-space: pre-line;` +
-		`font-family: preview${store.previewIndex};` +
-		`font-feature-settings: ${feat};` +
-		`font-variation-settings: ${variation};` +
-		`font-size: ${store.previewSize}pt;` +
-		`line-height: ${lineHeight * BASE_LINE_HEIGHT};` +
-		`letter-spacing: ${spacing}em`;
-}
-
 export async function tryPreview(url: string, info: FontInfo) {
 	if(await setPreviewFont(url)) return;
 
@@ -77,6 +54,8 @@ export function setPreviewUnicodeRange(range: string) {
 	const rule = style.sheet!.cssRules[0] as CSSFontFaceRule;
 	rule.style.unicodeRange = range;
 }
+
+export const sample = fetch("sample.txt").then(r => r.text());
 
 // https://github.com/microsoft/TypeScript/issues/51885
 interface FontFaceSetLoadEvent extends Event {

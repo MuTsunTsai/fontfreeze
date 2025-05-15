@@ -9,11 +9,15 @@
 		"strict": true,
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
-		"outDir": "../../dist",
-		"allowJs": true,
+		"noEmit": true,
 		"types": [
 			"wicg-file-system-access",
-			"gtag.js"
+			"gtag.js",
+			"user-agent-data-types"
 		]
-	}
+	},
+	"include": [
+		"./**/*.ts",
+		"./**/*.vue"
+	]
 }
