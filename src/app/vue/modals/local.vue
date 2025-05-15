@@ -3,15 +3,16 @@
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4>Select local font</h4>
+					<h4 class="m-0">Select local font</h4>
 				</div>
 				<div class="modal-body">
-					<select class="form-select mb-3" v-model="store.localFamily" required @change="familyChange"
-							:style="familyStyle()">
+					<select v-if="shouldLoadList" class="form-select mb-3" v-model="store.localFamily" required @change="familyChange"
+							:style="familyStyle()" size="5">
 						<option value="" hidden>Select local font family</option>
 						<option v-for="(f, i) in localFamilies" :key="i" :value="f" v-text="f" :style="familyStyle(f)">
 						</option>
 					</select>
+					<div v-else class="form-control loading w-100 mb-3" style="font-size: 3rem !important; height: 10rem;"></div>
 
 					<select class="form-select" v-model.number="store.localFont" required :style="optionStyle()">
 						<option value="" hidden>Select font style</option>
@@ -38,12 +39,19 @@
 </template>
 
 <script setup lang="ts">
-	import { computed } from "vue";
+	import { computed, onMounted, shallowRef } from "vue";
 
 	import { loadLocal } from "../../localFonts";
 	import { store } from "../../store";
 
 	const chromiumVersion = parseInt(navigator.userAgentData?.brands.find(b => b.brand == "Chromium")?.version ?? "0");
+
+	const shouldLoadList = shallowRef(false);
+	onMounted(() => {
+		const el = document.getElementById("local")!;
+		el.addEventListener("shown.bs.modal", () => shouldLoadList.value = true);
+		el.addEventListener("hidden.bs.modal", () => shouldLoadList.value = false);
+	});
 
 	function familyStyle(family = store.localFamily): string {
 		const filtered = store.localFonts.filter(font => font.family == family);
