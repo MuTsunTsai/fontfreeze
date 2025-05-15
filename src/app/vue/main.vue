@@ -34,7 +34,7 @@
 				<div class="row">
 					<label class="col-8 col-form-label text-end">
 						Additional line height
-						<Tip title="Only works in supported environments. The preview here is the simulated result." />
+						<Tip title="Only works in supported environments. The preview here is the simulated result (for non-zero values)." />
 					</label>
 					<div class="col">
 						<input class="form-control" type="number" v-model.number="store.options.lineHeight" @blur="validateNumber"

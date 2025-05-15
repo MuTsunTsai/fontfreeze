@@ -48,14 +48,15 @@
 			store.font.fvar.axes
 				.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
 				.join(",");
-		const lineHeight = (store.font.lineHeight + store.options.lineHeight) / store.font.fontHeight;
+		const lineHeight = store.options.lineHeight == 0 ? BASE_LINE_HEIGHT :
+			(store.font.lineHeight + store.options.lineHeight) / store.font.fontHeight;
 		const spacing = store.options.spacing / store.font.fontHeight;
 		return `white-space: pre-line;` +
 			`font-family: preview${store.previewIndex};` +
 			`font-feature-settings: ${feat};` +
 			`font-variation-settings: ${variation};` +
 			`font-size: ${store.previewSize}pt;` +
-			`line-height: ${lineHeight * BASE_LINE_HEIGHT};` +
+			`line-height: ${lineHeight};` +
 			`letter-spacing: ${spacing}em`;
 	}
 </script>
