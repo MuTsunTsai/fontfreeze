@@ -16,7 +16,7 @@
 		<div class="row justify-content-center mt-3 gx-2 gy-3">
 			<div class="col-auto">
 				<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50"
-						 src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00&v=1" /></a>
+						 src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
 			</div>
 			<div class="col-auto">
 				<!-- Product Hunt -->
