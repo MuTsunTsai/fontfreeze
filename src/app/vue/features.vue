@@ -1,6 +1,10 @@
 <template>
 	<div v-if="store.font?.gsub?.length">
-		<h5>Features</h5>
+		<h5>
+			Features
+			<Tip
+				 title="In most cases, the feature you are looking for will be among cv01-cv99, ss01-ss20, zero, onum, etc. (look up the user manual of your font). Hover over the a tag name to link to its general documentation." />
+		</h5>
 		<div class="d-flex flex-wrap">
 			<div v-for="f in store.font.gsub" style="flex-basis: 5.5rem;" :key="f">
 				<div class="form-check">
@@ -49,7 +53,7 @@
 	function featureTip(f: string): string {
 		if(f in featureTitle) {
 			const d = featureTitle[f];
-			return `<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/features_${d[1]}">${d[0]}</a>`;
+			return `<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/features_${d[1]}">${d[0]}</a> ↗️`;
 		}
 		return "Unknown feature";
 	}

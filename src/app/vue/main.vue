@@ -15,13 +15,13 @@
 		<div class="row mt-3">
 			<div class="col-12 col-md-7">
 				<label>Subsetting</label>
-				<input class="form-control" v-model="store.glyphs" placeholder="Enter characters here.">
+				<input class="form-control" v-model="store.glyphs" placeholder="Enter characters here">
 			</div>
 			<div class="col-12 col-md-5">
 				<label>Subsetting mode</label>
 				<select class="form-select" v-model="store.subsetMode">
-					<option value="exclude">Exclude these glyphs.</option>
-					<option value="include">Include only these glyphs.</option>
+					<option value="exclude">Exclude these glyphs</option>
+					<option value="include">Include only these glyphs</option>
 				</select>
 			</div>
 		</div>

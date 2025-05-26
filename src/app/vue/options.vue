@@ -52,7 +52,10 @@
 			</select>
 		</div>
 		<div class="col-12 col-md-6 mt-2">
-			<label>Target feature for activation</label>
+			<label>
+				Target feature for activation
+				<Tip title="Set this to 'calt' will usually do. Try 'rvrn' if the former doesn't work." />
+			</label>
 			<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
 		</div>
 		<div class="col-12 col-md-6 mt-2">

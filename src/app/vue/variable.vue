@@ -6,7 +6,10 @@
 				<label class="form-check-label" for="chk_var">Keep the font variable</label>
 			</div>
 		</div>
-		<h5>Variations</h5>
+		<h5>
+			Variations
+			<Tip title="Whenever possible, use a non-variable version of the font as starting point, as it will likely give better hinting than the variable one." />
+		</h5>
 		<div v-if="!store.options.keepVar">
 			<div class="d-flex mb-3">
 				<label class="col-form-label pe-3">Predefined instances:</label>
@@ -32,6 +35,7 @@
 <script setup lang="ts">
 	import { computed } from "vue";
 
+	import Tip from "./components/tip.vue";
 	import { store } from "../store";
 
 	const axisNames: Record<string, string> = {
