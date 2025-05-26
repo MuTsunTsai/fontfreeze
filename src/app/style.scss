@@ -13,6 +13,10 @@
 	unicode-range: U+1F4C2, U+1F4DC, U+1F41B;
 }
 
+label {
+	user-select: none;
+}
+
 html {
 	font-size: min(3vw, 12pt);
 }

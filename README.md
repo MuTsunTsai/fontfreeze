@@ -47,7 +47,8 @@ or customize each variable axis.
 You can also select features you want to activate (or deactivate) from the feature list:
 
 - For the meaning of each feature, look up the user manual of your font.
-  In most cases, the feature you are looking for will be among `cv01`-`cv99`, `ss01`-`ss20`, `zero`, `onum`, etc.
+  In most cases, the feature you are looking for will be among `cv01`-`cv99`, `ss01`-`ss20`, `zero`, `onum`, etc.\
+  (Hover your mouse over the a tag name to display a link to the corresponding documentation in the Microsoft Typography website.)
 - Most coding fonts have their coding ligatures defined in the `calt` feature.
   If you want to completely disable ligatures,
   deactivating `calt` will usually do the trick.

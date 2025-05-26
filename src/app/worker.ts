@@ -1,5 +1,7 @@
 ///<reference lib="WebWorker" />
 
+import script from "../../build/main.py?raw";
+
 import type { PyodideInterface, loadPyodide as loadPy } from "pyodide";
 import type { StoreType } from "./store";
 
@@ -49,23 +51,16 @@ importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
 
 let pyodide: PyodideInterface;
 
-async function initPyodide(): Promise<void> {
-	pyodide = await loadPyodide({ fullStdLib: false });
-	await pyodide.loadPackage("brotli");
-	await pyodide.loadPackage("fonttools");
-}
-
 async function init(): Promise<void> {
 	try {
-		const [_, script] = await Promise.all([
-			initPyodide(),
-			fetchOriginal(new URL("../../build/main.py", import.meta.url)).then(r => r.text()), // exclude from totalBytes
-		]);
-		pyodide.runPython(script);
+		pyodide = await loadPyodide({ fullStdLib: false });
+		await pyodide.loadPackage("brotli");
+		await pyodide.loadPackage("fonttools");
 
 		// Use this to update totalBytes
 		console.log("Total loaded bytes: " + bytesLoaded);
 
+		pyodide.runPython(script);
 		postMessage("initialized");
 	} catch(e) {
 		if(e instanceof Error) postMessage({ error: e.message });

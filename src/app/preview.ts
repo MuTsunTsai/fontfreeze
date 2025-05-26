@@ -2,6 +2,7 @@ import { callWorker } from "./bridge";
 import { note } from "./constants";
 import { store } from "./store";
 import { alert } from "./vue/modals/alert.vue";
+import sample from "./sample.txt?raw";
 
 /**
  * We use a stylesheet to handle preview font.
@@ -56,7 +57,7 @@ export function setPreviewUnicodeRange(range: string): void {
 	rule.style.unicodeRange = range;
 }
 
-export const sample = fetch("sample.txt").then(r => r.text());
+export { sample };
 
 // https://github.com/microsoft/TypeScript/issues/51885
 interface FontFaceSetLoadEvent extends Event {

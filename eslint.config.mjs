@@ -1,8 +1,3 @@
-// import globals from "globals";
-// import pluginJs from "@eslint/js";
-// import pluginTs from "typescript-esnlint";
-// import pluginVue from "eslint-plugin-vue";
-// import pluginImport from "eslint-plugi-import";
 import { createConfig } from "@mutsuntsai/eslint";
 
 export default [

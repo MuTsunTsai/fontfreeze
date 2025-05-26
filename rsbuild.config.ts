@@ -18,6 +18,7 @@ export default defineConfig({
 		define: {
 			VERSION: `"${pkg.version}"`,
 		},
+		assetsInclude: [/\.txt$/, /\.py$/],
 		tsconfigPath: "./src/app/tsconfig.json",
 	},
 	html: {

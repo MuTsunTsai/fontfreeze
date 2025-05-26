@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 - 1.11.1: Migrate from petite-vue to vue and improve UI.
 - 1.11.2: Improve local font selector UI.
+- 1.11.3: Feature documentation links and improve build.
 
 ## [1.10.0] - 2024-10-21
 

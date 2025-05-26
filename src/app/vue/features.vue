@@ -7,7 +7,9 @@
 					<input type="checkbox" class="form-check-input" :id="'chk' + f"
 						   :indeterminate.prop="store.features[f] === undefined" v-model="store.features[f]"
 						   @change="changeFeature(f)">
-					<label class="form-check-label" :for="'chk' + f">{{ f }}</label>
+					<label class="form-check-label" :class="{ 'text-secondary': !(f in featureTitle) }" :for="'chk' + f">
+						<Tip :title="featureTip(f)">{{ f }}</Tip>
+					</label>
 				</div>
 			</div>
 		</div>
@@ -16,6 +18,8 @@
 
 <script lang="ts">
 	import { store } from "../store";
+	import { featureTitle } from "../constants";
+	import Tip from "./components/tip.vue";
 
 	/** The last value before the current value for each features. */
 	let lastValues: Record<string, boolean | undefined>;
@@ -40,6 +44,14 @@
 			if(!lastFeatures.has(g)) return false;
 		}
 		return true;
+	}
+
+	function featureTip(f: string): string {
+		if(f in featureTitle) {
+			const d = featureTitle[f];
+			return `<a href="https://learn.microsoft.com/en-us/typography/opentype/spec/features_${d[1]}">${d[0]}</a>`;
+		}
+		return "Unknown feature";
 	}
 </script>
 

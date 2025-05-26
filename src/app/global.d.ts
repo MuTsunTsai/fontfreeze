@@ -56,3 +56,9 @@ interface FontInstance {
 	name: string;
 	coordinates: Record<string, number>;
 }
+
+/** Allowing bundling raw contents as strings. */
+declare module "*?raw" {
+	declare const content: string;
+	export default content;
+}
