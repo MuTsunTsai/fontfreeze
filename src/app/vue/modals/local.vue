@@ -51,9 +51,9 @@
 
 	const shouldLoadList = shallowRef(false);
 	onMounted(() => {
-		// const el = document.getElementById("local")!;
-		// el.addEventListener("shown.bs.modal", () => shouldLoadList.value = true);
-		// el.addEventListener("hidden.bs.modal", () => shouldLoadList.value = false);
+		const el = document.getElementById("local")!;
+		el.addEventListener("shown.bs.modal", () => shouldLoadList.value = true);
+		el.addEventListener("hidden.bs.modal", () => shouldLoadList.value = false);
 	});
 
 	function familyStyle(family = store.localFamily): string {
