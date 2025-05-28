@@ -103,7 +103,7 @@ h5 {
 		bottom: 0;
 		margin: auto;
 		border: 0.15em solid transparent;
-		border-top-color: #ffffff;
+		border-top-color: var(--bs-body-color);
 		border-radius: 50%;
 		animation: button-loading-spinner 1s ease infinite;
 	}
