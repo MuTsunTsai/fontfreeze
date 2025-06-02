@@ -10,6 +10,7 @@
 src="https://img.shields.io/github/stars/mutsuntsai/fontfreeze?logo=GitHub&color=yellow">
 <a href="https://github.com/mutsuntsai"><img
 src="https://img.shields.io/badge/%C2%A92022--2025-Mu--Tsun%20Tsai-blue"></a>
+<a href="https://github.com/Jolg42/awesome-typography"><img alt="Featured in Awesome Typography" src="https://awesome.re/badge.svg"></a>
 </p>
 
 <p align="center">
