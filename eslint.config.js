@@ -3,10 +3,10 @@ import { createConfig } from "@mutsuntsai/eslint";
 export default [
 	...createConfig({
 		ignores: ["docs/**"],
-		import: ["src/**/*.vue", "**/*.ts", "eslint.config.mjs"],
+		import: ["src/**/*.vue", "**/*.ts", "eslint.config.js", "gulpfile.js"],
 		project: ["src/app"],
 		globals: {
-			cjs: ["gulpfile.js"],
+			esm: ["gulpfile.js", "eslint.config.js"],
 			browser: ["src/**"],
 		},
 	}),
