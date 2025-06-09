@@ -1,6 +1,11 @@
 
-// plaintext-only support detection
-// https://stackoverflow.com/questions/10672081
+/**
+ * `plaintext-only` support detection.
+ * @see https://stackoverflow.com/questions/10672081
+ *
+ * Note that this feature is now Baseline 2025.
+ * @see https://webstatus.dev/features/contenteditable-plaintextonly?q=baseline_date%3A2025-01-01..2025-12-31
+ */
 export function supportPlaintext(div: HTMLDivElement): boolean {
 	try {
 		const p = "plaintext-only";
@@ -13,8 +18,10 @@ export function supportPlaintext(div: HTMLDivElement): boolean {
 
 const ENTER_CODE = 13;
 
-// Fallback for browsers not supporting plaintext-only (i.e. Firefox)
-// https://stackoverflow.com/questions/21205785
+/**
+ * Fallback for browsers not supporting plaintext-only (i.e. Firefox < 136)
+ * @see https://stackoverflow.com/questions/21205785
+ */
 export function setupPlaintext(div: HTMLDivElement): void {
 	div.contentEditable = "true";
 	div.addEventListener("keydown", e => {

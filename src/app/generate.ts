@@ -1,7 +1,7 @@
 import { callWorker } from "./bridge";
-import { formats } from "./constants";
+import { formats } from "./meta/constants";
 import { store } from "./store";
-import { getUnicodes } from "./unicode";
+import { getUnicodes } from "./meta/unicode";
 import { clone } from "./utils";
 import { alert } from "./vue/modals/alert.vue";
 

@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 
-import type { SupportedFormats } from "./constants";
+import type { SupportedFormats } from "./meta/constants";
 
 export const store = reactive({
 	localFonts: [] as FontData[],

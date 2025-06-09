@@ -17,7 +17,7 @@
 	import { setupPlaintext, supportPlaintext } from "../plainText";
 	import { sample, setPreviewUnicodeRange } from "../preview";
 	import { store } from "../store";
-	import { getUnicodes } from "../unicode";
+	import { getUnicodes } from "../meta/unicode";
 
 	const BASE_LINE_HEIGHT = 1.5;
 
@@ -26,15 +26,15 @@
 		watchEffect(() => setPreviewUnicodeRange(store.unicodeRange = getUnicodes()));
 	});
 
-	async function setupDiv(): Promise<void> {
+	function setupDiv(): void {
 		const div = document.querySelector("div.pre") as HTMLDivElement;
 		if(supportPlaintext(div)) {
 			// Chrome needs this, or the initial empty lines won't be selectable.
-			div.innerText = await sample;
+			div.innerText = sample;
 		} else {
 			setupPlaintext(div);
 			// Firefox needs this, or hitting enter will completely mess up the text.
-			div.textContent = await sample;
+			div.textContent = sample;
 		}
 	}
 

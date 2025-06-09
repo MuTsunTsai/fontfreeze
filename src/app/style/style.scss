@@ -1,4 +1,4 @@
-@import "../../build/bootstrap.css";
+@import "../../../build/bootstrap.css";
 
 @font-face {
 	font-family: Emoji;
@@ -12,8 +12,8 @@
 		/* fallback to font file if none of the above is found */
 		url("twemoji.woff2");
 
-	/* 📜🐛📂↗️ */
-	unicode-range: U+1F4C2, U+1F4DC, U+1F41B;
+	/* 📜🐛📂↗️🔣 */
+	unicode-range: U+2197, U+FE0F, U+1F41B, U+1F4C2, U+1F4DC, U+1F523;
 }
 
 label {

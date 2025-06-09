@@ -1,6 +1,6 @@
 import { store } from "./store";
 import { initialized, callWorker } from "./bridge";
-import { hiddenFeatures, note } from "./constants";
+import { hiddenFeatures, note } from "./meta/constants";
 import { tryPreview } from "./preview";
 import { clone } from "./utils";
 import { setupFeatures } from "./vue/features.vue";

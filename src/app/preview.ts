@@ -1,8 +1,8 @@
 import { callWorker } from "./bridge";
-import { note } from "./constants";
+import { note } from "./meta/constants";
 import { store } from "./store";
 import { alert } from "./vue/modals/alert.vue";
-import sample from "./sample.txt?raw";
+import sample from "./meta/sample.txt?raw";
 
 /**
  * We use a stylesheet to handle preview font.
@@ -59,7 +59,9 @@ export function setPreviewUnicodeRange(range: string): void {
 
 export { sample };
 
-// https://github.com/microsoft/TypeScript/issues/51885
+/**
+ * @see https://github.com/microsoft/TypeScript/issues/51885
+ */
 interface FontFaceSetLoadEvent extends Event {
 	readonly fontfaces: readonly FontFace[];
 }

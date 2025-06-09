@@ -22,7 +22,7 @@
 
 <script lang="ts">
 	import { store } from "../store";
-	import { featureTitle } from "../constants";
+	import { featureTitle } from "../meta/constants";
 	import Tip from "./components/tip.vue";
 
 	/** The last value before the current value for each features. */

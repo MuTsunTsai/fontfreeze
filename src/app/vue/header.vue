@@ -26,7 +26,7 @@
 			</label>
 			<span v-if="localFontSupport">
 				<button type="button" :disabled="Boolean(store.loading)" class="btn btn-secondary" @click="local">
-					<div class="display-4 text-warning">𝕬</div>
+					<div class="display-4">🔣</div>
 					<div>Select local font</div>
 				</button>
 			</span>

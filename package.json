@@ -1,32 +1,36 @@
 {
 	"name": "fontfreeze",
 	"version": "1.11.3",
-	"type": "module",
 	"description": "Freeze variations and features in font.",
-	"scripts": {
-		"start": "rsbuild dev",
-		"build": "rsbuild build",
-		"prebuild": "gulp",
-		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze/",
-		"postinstall": "pipenv install"
-	},
 	"keywords": [
 		"font"
 	],
-	"author": "Mu-Tsun Tsai<don.m.t.tsai@gmail.com>",
-	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/MuTsunTsai/fontfreeze.git"
 	},
+	"license": "MIT",
+	"author": "Mu-Tsun Tsai <don.m.t.tsai@gmail.com> (https://github.com/MuTsunTsai)",
+	"type": "module",
+	"scripts": {
+		"prebuild": "gulp",
+		"build": "rsbuild build",
+		"postinstall": "pipenv install",
+		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze/",
+		"start": "rsbuild dev"
+	},
+	"dependencies": {
+		"bootstrap": "^5.3.6",
+		"vue": "^3.5.16"
+	},
 	"devDependencies": {
-		"@mutsuntsai/eslint": "^1.0.0",
+		"@mutsuntsai/eslint": "^1.2.4",
 		"@rsbuild/core": "^1.3.22",
-		"@rsbuild/plugin-sass": "^1.3.1",
+		"@rsbuild/plugin-sass": "^1.3.2",
 		"@rsbuild/plugin-vue": "^1.0.7",
 		"@types/bootstrap": "^5.2.10",
 		"@types/gtag.js": "^0.0.20",
-		"@types/node": "^22.15.29",
+		"@types/node": "^22.15.30",
 		"@types/wicg-file-system-access": "^2023.10.6",
 		"@vue/reactivity": "^3.5.16",
 		"eslint": "^9.28.0",
@@ -35,13 +39,9 @@
 		"gulp-newer": "^1.4.0",
 		"gulp-purgecss": "7.0.2",
 		"purgecss-from-html": "7.0.2",
-		"pyodide": "^0.27.6",
+		"pyodide": "^0.27.7",
 		"rsbuild-plugin-html-minifier-terser": "^1.1.1",
 		"user-agent-data-types": "^0.4.2"
-	},
-	"dependencies": {
-		"bootstrap": "^5.3.6",
-		"vue": "^3.5.16"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
