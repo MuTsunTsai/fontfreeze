@@ -2,7 +2,7 @@
 	<v-app>
 		<Dropzone />
 		<Alert />
-		<v-container>
+		<v-container style="max-width: 1200px;">
 			<v-row justify="end" class="mb-3">
 				<v-col>
 					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</v-btn>
