@@ -36,6 +36,7 @@ export function getUnicodes(): string {
 
 function getGlyphCharCodes(): number[] {
 	const set = new Set<number>();
+	store.glyphs ||= ""; // In case it is cleared by Vuetify
 	for(let i = 0; i < store.glyphs.length; i++) {
 		// Handle UTF-32 code
 		const codePoint = store.glyphs.codePointAt(i)!;

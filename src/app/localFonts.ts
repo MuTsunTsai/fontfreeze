@@ -1,6 +1,7 @@
+import { shallowRef } from "vue";
+
 import { openBlob } from "./loader";
 import { store } from "./store";
-import { modal } from "./utils";
 import { alert } from "./vue/modals/alert.vue";
 
 /**
@@ -9,6 +10,8 @@ import { alert } from "./vue/modals/alert.vue";
  */
 const localStyle = document.createElement("style");
 document.head.appendChild(localStyle);
+
+export const showLocal = shallowRef(false);
 
 export async function local(): Promise<void> {
 	gtag("event", "show_local");
@@ -19,7 +22,7 @@ export async function local(): Promise<void> {
 	if(fonts.length == 0) return; // permission denied
 	buildLocalFonts(fonts);
 	store.localFonts = fonts;
-	modal("#local").show();
+	showLocal.value = true;
 }
 
 export async function loadLocal(): Promise<void> {
@@ -36,7 +39,7 @@ export async function loadLocal(): Promise<void> {
 		if(store.localFamily) store.localFamily = "";
 		if(store.localFont) store.localFont = "";
 	}
-	modal("#local").hide();
+	showLocal.value = false;
 	try {
 		await openBlob(blob, font.fullName);
 	} catch(e) {

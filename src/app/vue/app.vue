@@ -1,30 +1,35 @@
 <template>
-	<Dropzone />
-	<Alert />
-	<div class="container py-3 px-sm-2 px-md-3 px-lg-5">
-		<div class="mb-3 d-flex justify-content-end" style="gap:1rem">
-			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</a>
-			<a class="btn btn-secondary btn-sm" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</a>
-		</div>
-		<div class="card bg-light">
-			<div class="card-body">
+	<v-app>
+		<Dropzone />
+		<Alert />
+		<v-container>
+			<v-row justify="end" class="mb-3">
+				<v-col>
+					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</v-btn>
+				</v-col>
+				<v-col>
+					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report issue</v-btn>
+				</v-col>
+			</v-row>
+			<v-card elevation="3">
 				<Header />
 				<Main />
 				<Local />
-			</div>
-		</div>
-		<div class="row justify-content-center mt-3 gx-2 gy-3">
-			<div class="col-auto">
-				<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50"
-						 src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
-			</div>
-			<div class="col-auto">
-				<!-- Product Hunt -->
-				<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze"
-				   target="_blank"><img class="product-hunt" style="width: 235px; height: 50px;" width="235" height="50" /></a>
-			</div>
-		</div>
-	</div>
+			</v-card>
+			<v-row justify="center" class="mt-3">
+				<v-col>
+					<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50"
+							 src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+				</v-col>
+				<v-col>
+					<!-- Product Hunt -->
+					<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze"
+					   target="_blank"><img class="product-hunt" style="width: 235px; height: 50px;" width="235"
+							 height="50" /></a>
+				</v-col>
+			</v-row>
+		</v-container>
+	</v-app>
 </template>
 
 <script setup lang="ts">

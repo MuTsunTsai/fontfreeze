@@ -1,34 +1,26 @@
 <template>
-	<Teleport to="body">
-		<div class="modal fade" id="alert" data-bs-backdrop="static">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body" v-html="message"></div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</Teleport>
+	<v-dialog v-model="show" width="auto" persistent>
+		<v-card>
+			<v-card-text>
+				<div v-html="message"></div>
+			</v-card-text>
+			<v-card-actions>
+				<v-btn color="primary" @click="show = false">OK</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script lang="ts">
-	const alertModal = shallowRef<Modal>();
 	const message = shallowRef<string>();
+	const show = shallowRef(false);
 
 	export function alert(msg: string): void {
 		message.value = msg;
-		alertModal.value?.show();
+		show.value = true;
 	}
 </script>
 
 <script setup lang="ts">
-	import { onMounted, shallowRef } from "vue";
-
-	import { modal } from "../../utils";
-
-	import type { Modal } from "bootstrap";
-
-	onMounted(() => alertModal.value = modal("#alert"));
+	import { shallowRef } from "vue";
 </script>

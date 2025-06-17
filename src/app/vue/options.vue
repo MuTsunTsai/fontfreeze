@@ -1,79 +1,91 @@
 <template>
-	<h5>Output options</h5>
-	<div class="row">
-		<div class="col-12 col-md-6 mt-2">
-			<label>
-				Font family suffix
-				<Tip title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze." />
-			</label>
-			<input class="form-control" v-model="store.options.suffix">
-		</div>
-		<div class="col-12 col-md-6 mt-md-2 pt-md-3">
-			<div class="form-check mt-3">
-				<input type="checkbox" class="form-check-input" id="chkContour" v-model="store.options.customNames">
-				<label class="form-check-label" for="chkContour">Custom font names</label>
-			</div>
-		</div>
+	<h5 class="text-h5 mt-4">Output options</h5>
+	<v-row align="baseline">
+		<v-col cols="12" sm="6" class="mt-2">
+			<v-text-field label="Font family suffix" v-model="store.options.suffix">
+				<template v-slot:prepend-inner>
+					<Tip
+						 title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze." />
+				</template>
+			</v-text-field>
+		</v-col>
+		<v-col cols="12" sm="6" class="mt-md-2 pt-md-3">
+			<v-checkbox label="Custom font names" v-model="store.options.customNames" />
+		</v-col>
 		<template v-if="store.options.customNames">
-			<div class="col-12 col-md-6 mt-2">
-				<label>Font family</label>
-				<input class="form-control" v-model="store.options.family"
-					   placeholder="Better be different from the original family name">
-			</div>
-			<div class="col-12 col-md-6 mt-2">
-				<label>
-					Font subfamily
-					<Tip title="This can only be one of the four values." />
-				</label>
-				<select class="form-select" v-model="store.options.subfamily">
-					<option value="Regular">Regular</option>
-					<option value="Bold">Bold</option>
-					<option value="Italic">Italic</option>
-					<option value="Bold Italic">Bold Italic</option>
-				</select>
-			</div>
-			<div class="col-12 col-md-6 mt-2">
-				<label>Typographic family</label>
-				<input class="form-control" v-model="store.options.typo_family">
-			</div>
-			<div class="col-12 col-md-6 mt-2">
-				<label>
-					Typographic subfamily
-					<Tip title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily." />
-				</label>
-				<input class="form-control" v-model="store.options.typo_subfamily" :placeholder="store.options.subfamily">
-			</div>
+			<v-col cols="12" sm="6" class="mt-2">
+				<v-text-field label="Font family" placeholder="Better be different from the original family name"
+							  v-model="store.options.family" />
+			</v-col>
+			<v-col cols="12" sm="6" class="mt-2">
+				<v-select label="Font subfamily" v-model="store.options.subfamily" :items="subfamilies">
+					<template v-slot:prepend-inner>
+						<Tip title="This can only be one of the four values." />
+					</template>
+				</v-select>
+			</v-col>
+			<v-col cols="12" sm="6" class="mt-2">
+				<v-text-field label="Typographic family" v-model="store.options.typo_family" />
+			</v-col>
+			<v-col cols="12" sm="6" class="mt-2">
+				<v-text-field label="Typographic subfamily" v-model="store.options.typo_subfamily"
+							  :placeholder="store.options.subfamily">
+					<template v-slot:prepend-inner>
+						<Tip title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily." />
+					</template>
+				</v-text-field>
+			</v-col>
 		</template>
-		<div class="col-12 col-md-6 mt-2">
-			<label>Output format</label>
-			<select class="form-select" v-model="store.options.format">
-				<option value="ttf">TTF</option>
-				<option value="woff2">WOFF2</option>
-			</select>
-		</div>
-		<div class="col-12 col-md-6 mt-2">
-			<label>
-				Target feature for activation
-				<Tip title="Set this to 'calt' will usually do. Try 'rvrn' if the former doesn't work." />
-			</label>
-			<input class="form-control" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
-		</div>
-		<div class="col-12 col-md-6 mt-2">
-			<div class="form-check mt-3">
-				<input type="checkbox" class="form-check-input" id="chkSub" v-model="store.options.singleSub">
-				<label class="form-check-label" for="chkSub">Apply substitution by single-glyph features.</label>
-			</div>
-		</div>
-		<div class="col-12 col-md-6 mt-md-2">
-			<div class="form-check mt-3">
-				<input type="checkbox" class="form-check-input" id="chkContour" v-model="store.options.fixContour">
-				<label class="form-check-label" for="chkContour">Fix contour overlap issues on macOS.</label>
-			</div>
-		</div>
-	</div>
+		<v-col cols="12" sm="6" class="mt-2">
+			<v-select label="Output format" :items="formats" v-model="store.options.format" />
+		</v-col>
+		<v-col cols="12" sm="6" class="mt-2">
+			<v-text-field label="Target feature for activation" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
+				<template v-slot:prepend-inner>
+					<Tip title="Set this to 'calt' will usually do. Try 'rvrn' if the former doesn't work." />
+				</template>
+			</v-text-field>
+		</v-col>
+		<v-col cols="12" md="6" class="mt-2">
+			<v-checkbox class="my-n3 my-md-0" label="Apply substitution by single-glyph features." v-model="store.options.singleSub" />
+		</v-col>
+		<v-col cols="12" md="6" class="mt-2">
+			<v-checkbox class="my-n3 my-md-0" label="Fix contour overlap issues on macOS." v-model="store.options.fixContour" />
+		</v-col>
+	</v-row>
 </template>
 
 <script setup lang="ts">
 	import { store } from "../store";
 	import Tip from "./components/tip.vue";
+
+	const formats = [
+		{
+			title: "TTF (TrueType Font)",
+			value: "ttf",
+		},
+		{
+			title: "WOFF2 (Web Open Font Format v2)",
+			value: "woff2",
+		},
+	];
+
+	const subfamilies = [
+		{
+			title: "Regular",
+			value: "Regular",
+		},
+		{
+			title: "Bold",
+			value: "Bold",
+		},
+		{
+			title: "Italic",
+			value: "Italic",
+		},
+		{
+			title: "Bold Italic",
+			value: "Bold Italic",
+		},
+	];
 </script>

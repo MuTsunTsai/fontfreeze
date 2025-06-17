@@ -1,60 +1,67 @@
 <template>
-	<Teleport to="body">
-		<div class="modal fade" id="local" data-bs-backdrop="static">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="m-0">Select local font</h4>
-					</div>
-					<div class="modal-body">
-						<select v-if="shouldLoadList" class="form-select mb-3" v-model="store.localFamily" required
-								@change="familyChange" :style="familyStyle()" size="5">
-							<option value="" hidden>Select local font family</option>
-							<option v-for="(f, i) in localFamilies" :key="i" :value="f" v-text="f" :style="familyStyle(f)">
-							</option>
-						</select>
-						<div v-else class="form-control loading w-100 mb-3" style="font-size: 3rem !important; height: 10rem;">
-						</div>
+	<v-dialog v-model="showLocal" max-width="500" @after-enter="shouldLoadList = true" @after-leave="shouldLoadList = false">
+		<v-card>
+			<v-card-title>
+				<h4 class="text-h5">Select local font</h4>
+			</v-card-title>
+			<v-card-text>
+				<template v-if="shouldLoadList">
+					<v-list class="control mb-3 pa-0" style="max-height: 20rem; overflow-y: scroll;" color="primary"
+							v-model:selected="selected" selectable :items="localFamilies.map((f, i) => ({ title: f, value: f }))">
+						<template v-slot:title="{ item }">
+							<div :style="familyStyle(item.title)">{{ item.title }}</div>
+						</template>
+						<template v-slot:subtitle="{ item }">
+							<div class="text-caption">{{ item.title }}</div>
+						</template>
+					</v-list>
 
-						<select class="form-select" v-model.number="store.localFont" required :style="optionStyle()">
-							<option value="" hidden>Select font style</option>
-							<option v-for="(f, i) in store.localFonts" :key="i" :value="i" :style="optionStyle(f)"
-									:hidden="f.family != store.localFamily"
-									:disabled="store.unavailableFonts.includes(f.postscriptName)">
-								{{ f.fullName }}</option>
-						</select>
-						<div class="mt-3" v-if="chromiumVersion < 109">
-							Note: This is an experimental feature and it may not work for manually installed fonts.
-							If it doesn't work for a particular font, you can still upload the font file manually.
-							This is a bug in Chromium and will be fixed in version 109.
-						</div>
+					<v-select v-model.number="store.localFont" :items="items" :disabled="!store.localFamily" style="height:64px;">
+						<template v-slot:item="{ item, props }">
+							<v-list-item v-bind="props">
+								<template v-slot:title>
+									<div :style="optionStyle(item.raw.font)">{{ item.title }}aa</div>
+								</template>
+								<template v-slot:subtitle>
+									<div class="text-caption">{{ item.title }}</div>
+								</template>
+							</v-list-item>
+						</template>
+						<template v-slot:selection="{ item }">
+							<div>
+								<div :style="optionStyle()">{{ item.title }}</div>
+								<div class="text-caption">{{ item.title }}</div>
+							</div>
+						</template>
+					</v-select>
+
+					<div class="mt-3" v-if="chromiumVersion < 109">
+						Note: This is an experimental feature and it may not work for manually installed fonts.
+						If it doesn't work for a particular font, you can still upload the font file manually.
+						This is a bug in Chromium and will be fixed in version 109.
 					</div>
-					<div class="modal-footer">
-						<button class="btn btn-secondary" type="button" @click="store.localFont = ''"
-								data-bs-dismiss="modal">Cancel</button>
-						<button class="btn btn-primary" type="button" @click="loadLocal"
-								:disabled="(typeof store.localFont) != 'number'">OK</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</Teleport>
+				</template>
+				<v-skeleton-loader v-else type="card" />
+			</v-card-text>
+			<v-card-actions>
+				<v-btn color="secondary" @click="cancel">Cancel</v-btn>
+				<v-btn color="primary" @click="loadLocal" :disabled="(typeof store.localFont) != 'number'">OK</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script setup lang="ts">
-	import { computed, onMounted, shallowRef } from "vue";
+	import { computed, ref, shallowRef, watch } from "vue";
 
-	import { loadLocal } from "../../localFonts";
+	import { loadLocal, showLocal } from "../../localFonts";
 	import { store } from "../../store";
 
 	const chromiumVersion = parseInt(navigator.userAgentData?.brands.find(b => b.brand == "Chromium")?.version ?? "0");
 
 	const shouldLoadList = shallowRef(false);
-	onMounted(() => {
-		const el = document.getElementById("local")!;
-		el.addEventListener("shown.bs.modal", () => shouldLoadList.value = true);
-		el.addEventListener("hidden.bs.modal", () => shouldLoadList.value = false);
-	});
+
+	const selected = ref([] as string[]);
 
 	function familyStyle(family = store.localFamily): string {
 		const filtered = store.localFonts.filter(font => font.family == family);
@@ -72,7 +79,7 @@
 			if(store.localFont === "") return "";
 			f = store.localFonts[store.localFont];
 		}
-		return `font-family:'local ${f.fullName}'`;
+		return `font-family:'local ${f.fullName}' !important`;
 	}
 
 	const localFamilies = computed(() => {
@@ -84,7 +91,23 @@
 		return [...result];
 	});
 
-	function familyChange(): void {
+	watch(selected, () => {
+		store.localFamily = selected.value[0];
 		store.localFont = store.localFonts.findIndex(f => f.family == store.localFamily);
+	});
+
+	function cancel(): void {
+		store.localFont = "";
+		showLocal.value = false;
 	}
+
+	const items = computed(() => store.localFonts
+		.map((f, i) => ({ f, i }))
+		.filter(f => f.f.family == store.localFamily)
+		.map(f => ({
+			title: f.f.fullName,
+			value: f.i,
+			font: f.f,
+		}))
+	);
 </script>

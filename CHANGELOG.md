@@ -2,6 +2,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2025-06-17
+
+- Migrate to [Vuetify](https://vuetifyjs.com/) for UI.
+
 ## [1.11.0] - 2025-05-14
 
 - Change line height and letter spacing ([#13](https://github.com/MuTsunTsai/fontfreeze/issues/13)).

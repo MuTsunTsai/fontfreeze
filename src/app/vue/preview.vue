@@ -1,14 +1,16 @@
 <template>
-	<div class="row align-items-baseline">
-		<div class="col-4">
-			<h5>Preview</h5>
-		</div>
-		<div class="col-8 text-end">
+	<v-row align="baseline" class="mt-3">
+		<v-col cols="4">
+			<h5 class="text-h5">Preview</h5>
+		</v-col>
+		<v-col cols="8" class="text-end">
 			<span class="me-3">{{ store.previewSize }}pt</span>
-			<input type="range" class="form-range" style="width:10rem;" min="8" max="48" v-model="store.previewSize">
-		</div>
-	</div>
-	<div class="pre form-control p-3" :style="getPreviewStyle()"></div>
+			<div class="d-inline-block" style="vertical-align: 0.25rem;">
+				<v-slider :min="8" :max="48" v-model="store.previewSize" :step="1" width="10rem" />
+			</div>
+		</v-col>
+	</v-row>
+	<div class="pre control" :style="getPreviewStyle()"></div>
 </template>
 
 <script setup lang="ts">
@@ -48,8 +50,10 @@
 			store.font.fvar.axes
 				.map(a => `'${a.tag}' ${store.variations[a.tag]}`)
 				.join(",");
+		store.options.lineHeight ??= 0;
 		const lineHeight = store.options.lineHeight == 0 ? BASE_LINE_HEIGHT :
 			(store.font.lineHeight + store.options.lineHeight) / store.font.fontHeight;
+		store.options.spacing ??= 0;
 		const spacing = store.options.spacing / store.font.fontHeight;
 		return `white-space: pre-line;` +
 			`font-family: preview${store.previewIndex};` +

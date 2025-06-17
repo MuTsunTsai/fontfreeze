@@ -6,36 +6,40 @@ import purgeHtml from "purgecss-from-html";
 import { fileURLToPath } from "url";
 
 const build = "build";
-const srcHtml = "src/app/**/*.vue";
+const srcVue = "src/app/**/*.vue";
+const srcHtml = "src/public/index.html";
 
 const __filename = fileURLToPath(import.meta.url);
 
+// This is a very native extractor for Vuetify
+function vuetifyExtract(content, attr, prefix = attr) {
+	return (content.match(new RegExp(`(?<=${attr}=")[^"]+(?=")`, "g")) ?? []).map(s => prefix + "-" + s);
+}
+
 export const css = () =>
-	gulp.src("node_modules/bootstrap/dist/css/bootstrap.css")
+	gulp.src("node_modules/vuetify/dist/vuetify.css")
 		.pipe(newer({
-			dest: build + "/bootstrap.css",
-			extra: [__filename, srcHtml],
+			dest: build + "/vuetify.css",
+			extra: [__filename, srcVue, srcHtml],
 		}))
 		.pipe(purgecss({
-			content: [srcHtml],
-			defaultExtractor: purgeHtml,
+			content: [srcVue, srcHtml],
+			defaultExtractor: content => {
+				const result = purgeHtml(content);
+				result.classes.push(
+					...vuetifyExtract(content, "justify"),
+					...vuetifyExtract(content, "align"),
+					...vuetifyExtract(content, "elevation"),
+					...vuetifyExtract(content, "color", "bg")
+				);
+				return result;
+			},
 			safelist: {
 				standard: [
-					/show/, /modal-static/, /modal-backdrop/, // Bootstrap modal
-					// extractor can't figure dynamic class
-					"disabled",
-					"drag",
-				],
-				variables: [
-					/^--bs-btn-disabled/, // Fixes a bug of purgeCss
-					/^--bs-gray-(\d)00/,
-					/^--bs-(danger|info)$/,
-				],
-				greedy: [
-					/tooltip/,
+					/text-none/,
 				],
 			},
-			variables: true, // for Bootstrap
+			variables: false,
 		}))
 		.pipe(gulp.dest(build));
 

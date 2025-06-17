@@ -81,7 +81,7 @@ a Python library for manipulating fonts.
 In then utilizes [Pyodide](https://pyodide.org/)
 to run Python code directly in your browser through WebAssembly,
 so it's purely front-end and nothing is stored in the back-end.
-The UI part is built with [Vue](https://github.com/vuejs/vue) and [Bootstrap](https://getbootstrap.com/).
+The UI part is built with [Vue](https://github.com/vuejs/vue) and [Vuetify](https://vuetifyjs.com/).
 
 The way FontFreeze deactivates a feature is by removing all lookups inside it,
 and it activates a feature by moving all lookups in it into `calt`,

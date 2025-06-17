@@ -1,39 +1,44 @@
 <template>
-	<div v-if="store.font!.fvar">
-		<div class="float-end">
-			<div class="form-check">
-				<input type="checkbox" class="form-check-input" id="chk_var" v-model="store.options.keepVar">
-				<label class="form-check-label" for="chk_var">Keep the font variable</label>
-			</div>
-		</div>
-		<h5>
-			Variations
-			<Tip title="Whenever possible, use a non-variable version of the font as starting point, as it will likely give better hinting than the variable one." />
-		</h5>
+	<div v-if="store.font!.fvar" class="mb-3">
+		<v-row align="center" justify="space-between">
+			<v-col>
+				<h5 class="text-h5">
+					Variations
+					<Tip
+						 title="Whenever possible, use a non-variable version of the font as starting point, as it will likely give better hinting than the variable one." />
+				</h5>
+			</v-col>
+			<v-col>
+				<v-checkbox v-model="store.options.keepVar" label="Keep the font variable" />
+			</v-col>
+		</v-row>
+
 		<div v-if="!store.options.keepVar">
-			<div class="d-flex mb-3">
-				<label class="col-form-label pe-3">Predefined instances:</label>
-				<div class="flex-grow-1">
-					<select @change="setInstance(instances[Number(($event.target as HTMLSelectElement).value)])"
-							class="form-select" required>
-						<option value="" hidden>Select a predefined instance</option>
-						<option v-for="(i, j) in instances" :key="i.name + j" :value="j">{{ i.name }}</option>
-					</select>
-				</div>
+			<div class="d-flex mb-3 mt-2">
+				<v-select label="Predefined instances" :items="instanceItems" v-model="selectedInstance" />
 			</div>
 			<div v-for="(a, i) in axes" class="mb-1" :key="i">
-				<input type="range" class="form-range me-4" style="width:10rem;" @input="clear"
-					   v-model.number="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)">
-				<input type="number" class="form-control form-control-sm d-inline-block me-4" style="width:5rem;"
-					   v-model.number="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)" @input="clear">
-				<label>{{ getAxisName(a) }}</label>
+				<v-row align="center">
+					<v-col style="width: 5rem;">
+						{{ getAxisName(a) }}
+					</v-col>
+					<v-col class="d-none d-sm-block">
+						<v-slider v-model.number="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)"
+								  width="15rem" @update:model-value="clear">
+						</v-slider>
+					</v-col>
+					<v-col>
+						<v-number-input density="compact" v-model="store.variations[a.tag]" :min="a.min" :max="a.max"
+										:step="getStep(a)" />
+					</v-col>
+				</v-row>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import { computed } from "vue";
+	import { computed, shallowRef, watch } from "vue";
 
 	import Tip from "./components/tip.vue";
 	import { store } from "../store";
@@ -50,13 +55,6 @@
 		if(!store.font || !store.font.fvar) return [];
 		return store.font.fvar.instances;
 	});
-
-	function setInstance(instance: FontInstance): void {
-		store.options.typo_subfamily = instance.name;
-		for(const t in instance.coordinates) {
-			store.variations[t] = instance.coordinates[t];
-		}
-	}
 
 	const axes = computed(() => {
 		if(!store.font || !store.font.fvar) return [];
@@ -80,7 +78,20 @@
 	}
 
 	function clear(): void {
-		const selectElement = document.getElementsByTagName("select")[0];
-		if(selectElement) selectElement.value = "";
+		selectedInstance.value = undefined;
 	}
+
+	const selectedInstance = shallowRef<number>();
+	const instanceItems = computed(() => instances.value.map((i, j) => ({
+		title: i.name,
+		value: j,
+	})));
+	watch(selectedInstance, () => {
+		if(selectedInstance.value === undefined) return;
+		const instance = instances.value[selectedInstance.value];
+		store.options.typo_subfamily = instance.name;
+		for(const t in instance.coordinates) {
+			store.variations[t] = instance.coordinates[t];
+		}
+	});
 </script>

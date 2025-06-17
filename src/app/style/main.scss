@@ -1,0 +1,78 @@
+@import "../../../build/vuetify.css";
+// @import "vuetify/styles";
+
+@font-face {
+	font-family: Emoji;
+	src:
+		local("Twemoji Mozilla"),
+		local("Apple Color Emoji"),
+		local("Segoe UI Emoji"),
+		local("Noto Color Emoji"),
+		local("EmojiOne Color"),
+		local("Android Emoji"),
+		/* fallback to font file if none of the above is found */ url("twemoji.woff2");
+
+	/* 📜🐛📂↗️🔣 */
+	unicode-range: U+2197, U+FE0F, U+1F41B, U+1F4C2, U+1F4DC, U+1F523;
+}
+
+html,
+body {
+	font-family: Emoji, Roboto, sans-serif;
+	height: 100%;
+}
+
+.product-hunt {
+	content: url("https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=356516&theme=neutral");
+}
+
+.v-field__prepend-inner {
+	padding-right: 0.1rem;
+}
+
+.text-caption {
+	font-size: 0.6rem !important;
+}
+
+/* This mimics the behavior of variant="outlined" color="primary" */
+.control {
+	width: 100%;
+	--v-border-opacity: 0.38;
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+	border-radius: 4px !important;
+	padding: 16px;
+
+	&:focus,
+	&:focus-visible,
+	&:has(:focus, :focus-visible) {
+		--v-border-color: var(--v-theme-primary) !important;
+		outline: rgb(var(--v-theme-primary)) 1px solid !important;
+	}
+
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		--v-border-opacity: 1 !important;
+	}
+}
+
+.v-theme--dark {
+	.product-hunt {
+		content: url("https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=356516&theme=dark");
+	}
+}
+
+.v-checkbox {
+	.v-selection-control {
+		align-items: flex-start;
+
+		.v-selection-control__input {
+			margin-top: 0.75rem;
+		}
+	}
+	.v-label {
+		padding: 0.75rem 0;
+	}
+}

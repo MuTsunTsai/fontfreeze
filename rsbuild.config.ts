@@ -1,6 +1,7 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginSass } from "@rsbuild/plugin-sass";
 import { pluginVue } from "@rsbuild/plugin-vue";
+import { VuetifyPlugin } from "webpack-plugin-vuetify";
 import { pluginHtmlMinifierTerser } from "rsbuild-plugin-html-minifier-terser";
 
 import pkg from "./package.json";
@@ -41,6 +42,9 @@ export default defineConfig({
 			root: "docs",
 		},
 	},
+	performance: {
+		buildCache: true,
+	},
 	plugins: [
 		pluginSass(),
 		pluginVue(),
@@ -48,4 +52,9 @@ export default defineConfig({
 			removeComments: true,
 		}),
 	],
+	tools: {
+		rspack: (_, { appendPlugins }) => {
+			appendPlugins(new VuetifyPlugin({}));
+		},
+	},
 });

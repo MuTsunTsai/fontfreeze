@@ -1,6 +1,6 @@
 <template>
 	<div class="dropzone">
-		<div class="display-1">
+		<div class="text-h2">
 			<span>Drop font file</span>
 		</div>
 	</div>
@@ -53,7 +53,7 @@
 
 		& > * {
 			display: flex;
-			border: 5px dashed var(--bs-body-color);
+			border: 5px dashed rgb(var(--v-theme-on-background));
 			height: 100%;
 			width: 100%;
 			justify-content: center;
