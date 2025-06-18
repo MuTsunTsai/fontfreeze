@@ -37,6 +37,7 @@ export const css = () =>
 			safelist: {
 				standard: [
 					/text-none/,
+					/d-sm-table-cell/,
 				],
 			},
 			variables: false,

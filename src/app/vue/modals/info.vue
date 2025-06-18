@@ -6,14 +6,16 @@
 				<v-table>
 					<tbody>
 						<tr v-if="store.font.description">
-							<td>Description</td>
+							<td class="d-none d-sm-table-cell">Description</td>
 							<td :class="{ 'small': store.font.description.length > 200 }">
+								<h6 class="d-block d-sm-none text-h6 text-info">Description</h6>
 								{{ store.font.description }}
 							</td>
 						</tr>
 						<tr v-if="store.font.designer">
-							<td>Designer</td>
+							<td class="d-none d-sm-table-cell">Designer</td>
 							<td>
+								<h6 class="d-block d-sm-none text-h6 text-info">Designer</h6>
 								<a :href="store.font.designerURL" v-if="store.font.designerURL">
 									{{ store.font.designer }}
 								</a>
@@ -21,8 +23,9 @@
 							</td>
 						</tr>
 						<tr v-if="store.font.manufacturer">
-							<td>Manufacturer</td>
+							<td class="d-none d-sm-table-cell">Manufacturer</td>
 							<td>
+								<h6 class="d-block d-sm-none text-h6 text-info">Manufacturer</h6>
 								<a :href="store.font.vendorURL" v-if="store.font.vendorURL">
 									{{ store.font.manufacturer }}
 								</a>
@@ -30,17 +33,25 @@
 							</td>
 						</tr>
 						<tr v-if="store.font.copyright">
-							<td>Copyright</td>
-							<td>{{ store.font.copyright }}</td>
+							<td class="d-none d-sm-table-cell">Copyright</td>
+							<td>
+								<h6 class="d-block d-sm-none text-h6 text-info">Copyright</h6>
+								<div>{{ store.font.copyright }}</div>
+							</td>
 						</tr>
 						<tr v-if="store.font.trademark">
-							<td>Trademark</td>
-							<td>{{ store.font.trademark }}</td>
+							<td class="d-none d-sm-table-cell">Trademark</td>
+							<td>
+								<h6 class="d-block d-sm-none text-h6 text-info">Trademark</h6>
+								<div>{{ store.font.trademark }}</div>
+							</td>
 						</tr>
 						<tr v-if="store.font.license">
-							<td>license</td>
-							<td :class="{ 'small': store.font.license && store.font.license.length > 200 }">
-								{{ store.font.license }}
+							<td class="d-none d-sm-table-cell">license</td>
+							<td>
+								<h6 class="d-block d-sm-none text-h6 text-info">Trademark</h6>
+								<div :class="{ 'text-body-2': store.font.license && store.font.license.length > 200 }">{{
+									store.font.license }}</div>
 							</td>
 						</tr>
 					</tbody>
@@ -67,9 +78,14 @@
 	});
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 	.v-table td {
 		vertical-align: top !important;
 		padding: 4px 16px !important;
+
+		&:last-child {
+			overflow-wrap: break-word;
+			word-break: break-word;
+		}
 	}
 </style>
