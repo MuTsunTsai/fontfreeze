@@ -1,4 +1,5 @@
 ///<reference lib="WebWorker" />
+///<reference types="emscripten" />
 
 import script from "../../build/main.py?raw";
 
@@ -7,12 +8,6 @@ import type { StoreType } from "./store";
 
 declare global {
 	const loadPyodide: typeof loadPy;
-}
-
-interface ExtendedPyodide extends PyodideInterface {
-	FS: PyodideInterface["FS"] & {
-		readFile: (name: string) => Uint8Array<ArrayBuffer>;
-	};
 }
 
 let bytesLoaded = 0;
@@ -55,11 +50,11 @@ if(typeof TransformStream != "undefined") {
 // as Pyodide tends to focus only on the latest browsers as they develop.
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
 
-let pyodide: ExtendedPyodide;
+let pyodide: PyodideInterface;
 
 async function init(): Promise<void> {
 	try {
-		pyodide = await loadPyodide({ fullStdLib: false }) as ExtendedPyodide;
+		pyodide = await loadPyodide({ fullStdLib: false });
 		await pyodide.loadPackage("brotli");
 		await pyodide.loadPackage("fonttools");
 
@@ -114,7 +109,7 @@ function legacy(): string {
 }
 
 function createPreviewUrl(): string {
-	const content = pyodide.FS.readFile("input");
+	const content = pyodide.FS.readFile("input") as Uint8Array<ArrayBuffer>;
 	const blob = new Blob([content], { type: "font/ttf" });
 	return URL.createObjectURL(blob);
 }
@@ -123,7 +118,7 @@ let saveURL: string;
 
 function save(args: StoreType): string {
 	pyodide.globals.get("processFont")(args);
-	const content = pyodide.FS.readFile("output");
+	const content = pyodide.FS.readFile("output") as Uint8Array<ArrayBuffer>;
 	const blob = new Blob([content], { type: "font/" + args.options.format });
 	if(saveURL) URL.revokeObjectURL(saveURL);
 	saveURL = URL.createObjectURL(blob);

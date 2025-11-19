@@ -7,7 +7,7 @@
 			<v-card-text>
 				<template v-if="shouldLoadList">
 					<v-list class="control mb-3 pa-0" style="max-height: 20rem; overflow-y: scroll;" color="primary"
-						v-model:selected="selected" selectable :items="localFamilies.map((f, i) => ({ title: f, value: f }))">
+						v-model:selected="selected" selectable :items="localFamilies.map(f => ({ title: f, value: f }))">
 						<template v-slot:title="{ item }">
 							<div :style="familyStyle(item.title)">{{ item.title }}</div>
 						</template>

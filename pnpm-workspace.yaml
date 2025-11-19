@@ -1,4 +1,4 @@
-minimumReleaseAge: 1440
+minimumReleaseAge: 600
 minimumReleaseAgeExclude:
   - "@mutsuntsai/*"
 onlyBuiltDependencies:
