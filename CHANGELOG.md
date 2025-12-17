@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 - Migrate to [Vuetify](https://vuetifyjs.com/) for UI.
 
+### Patches
+
+- 1.12.1: Fix issue [#22](https://github.com/MuTsunTsai/fontfreeze/issues/22).
+
 ## [1.11.0] - 2025-05-14
 
 - Change line height and letter spacing ([#13](https://github.com/MuTsunTsai/fontfreeze/issues/13)).

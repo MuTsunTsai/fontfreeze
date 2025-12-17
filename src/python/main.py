@@ -152,7 +152,7 @@ class Instantiate:
             bits |= 0b100000
         else:
             bits &= ~0b100000
-        if style == "Italic":
+        if style == "Italic" or style == "Bold Italic":
             bits |= 0b1
         else:
             bits &= ~0b1
