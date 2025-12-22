@@ -2,7 +2,7 @@
 	<h5 class="text-h5 mt-4">Output options</h5>
 	<v-row align="baseline">
 		<v-col cols="12" sm="6" class="mt-2">
-			<v-text-field label="Font family suffix" v-model="store.options.suffix">
+			<v-text-field label="Font family suffix" v-model="store.options.suffix" :disabled="store.options.customNames">
 				<template v-slot:prepend-inner>
 					<Tip
 						title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze." />

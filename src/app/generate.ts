@@ -61,7 +61,7 @@ async function getOutputURL(): Promise<string> {
 		store.options.family = store.options.family.trim();
 		store.options.typo_subfamily = store.options.typo_subfamily.trim();
 		const options = clone(store.options);
-		if(options.suffix) {
+		if(options.customNames && options.suffix) {
 			if(
 				options.family &&
 				options.family.length + options.suffix.length < MS_CHAR_LIMIT
