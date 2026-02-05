@@ -2,3 +2,4 @@ test/
 build/
 node_modules/
 __pycache__/
+CLAUDE.md

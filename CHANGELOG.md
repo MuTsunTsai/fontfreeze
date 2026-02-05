@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - 1.12.1: Fix issue [#22](https://github.com/MuTsunTsai/fontfreeze/issues/22).
 - 1.12.2: Improve UI based on [#23](https://github.com/MuTsunTsai/fontfreeze/issues/23).
 - 1.12.3: Fix issue [#24](https://github.com/MuTsunTsai/fontfreeze/issues/24).
+- 1.12.4: Fix issue [#26](https://github.com/MuTsunTsai/fontfreeze/issues/26).
 
 ## [1.11.0] - 2025-05-14
 

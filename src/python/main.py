@@ -215,11 +215,21 @@ class Activator:
             if featureRecord.FeatureTag == self.target:
                 targetRecord = featureRecord
 
+        # Collect lookup indices from all selected features and apply single substitution in LookupList order
+        if self.singleSub:
+            allLookups = []
+            for index in langSys.FeatureIndex:
+                featureRecord = self.featureRecords[index]
+                if featureRecord.FeatureTag in self.features:
+                    for lookupIndex in featureRecord.Feature.LookupListIndex:
+                        if lookupIndex not in allLookups:
+                            allLookups.append(lookupIndex)
+            allLookups.sort()
+            self.applySingleSubstitutionByLookupOrder(allLookups)
+
         for index in langSys.FeatureIndex:
             featureRecord = self.featureRecords[index]
             if featureRecord.FeatureTag in self.features:
-                if self.singleSub:
-                    self.findSingleSubstitution(featureRecord)
 
                 if targetRecord is None:
                     # if there's no existing one, use the first matching feature as target
@@ -238,20 +248,47 @@ class Activator:
         if targetRecord is not None:
             targetRecord.Feature.LookupListIndex.sort()
 
-    def findSingleSubstitution(self, featureRecord, /):
-        for lookupIndex in featureRecord.Feature.LookupListIndex:
+    def applySingleSubstitutionByLookupOrder(self, lookupIndices, /):
+        # Collect all substitutions to be applied
+        substitutions = {}  # key -> value
+        for lookupIndex in lookupIndices:
             lookup = self.lookup[lookupIndex]
             if lookup.LookupType == 1:  # Single substitution
                 for sub in lookup.SubTable:
                     for key, value in sub.mapping.items():
                         if key in self.unicodeGlyphs:
-                            self.singleSubstitution(key, value)
+                            substitutions[key] = value
+                            # Update unicodeGlyphs so subsequent lookups can track substituted glyphs
+                            self.unicodeGlyphs.discard(key)
+                            self.unicodeGlyphs.add(value)
 
-    def singleSubstitution(self, key, value, /):
+        # Apply to cmap
         for table in self.cmapTables:
             for index in table.cmap:
-                if table.cmap[index] == key:
-                    table.cmap[index] = value
+                glyph = table.cmap[index]
+                if glyph in substitutions:
+                    table.cmap[index] = substitutions[glyph]
+
+        # Update glyph names in all lookups
+        self.updateLookupGlyphNames(substitutions)
+
+    def updateLookupGlyphNames(self, substitutions, /):
+        """Update substituted glyph names in all lookups"""
+        for lookup in self.lookup:
+            if lookup.LookupType == 4:  # Ligature substitution
+                for sub in lookup.SubTable:
+                    # Update ligatures dict keys (first glyph)
+                    newLigatures = {}
+                    for firstGlyph, ligatureSet in sub.ligatures.items():
+                        newFirstGlyph = substitutions.get(firstGlyph, firstGlyph)
+                        for lig in ligatureSet:
+                            # Update Component (subsequent glyphs)
+                            lig.Component = [substitutions.get(g, g) for g in lig.Component]
+                        if newFirstGlyph in newLigatures:
+                            newLigatures[newFirstGlyph].extend(ligatureSet)
+                        else:
+                            newLigatures[newFirstGlyph] = ligatureSet
+                    sub.ligatures = newLigatures
 
     def moveFeatureLookups(fromFeature, toFeature, /):
         toFeature.LookupListIndex.extend(fromFeature.LookupListIndex)
