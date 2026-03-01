@@ -337,8 +337,9 @@ def change_font_spacing(font: TTFont, delta: int):
     max_width = 0
     for codepoint, glyph_name in cmap.items():
         width, lsb = hmtx[glyph_name]
-        width += delta
-        hmtx[glyph_name] = (width, lsb + delta / 2)
+        width = max(0, width + delta)
+        lsb = max(-32768, min(32767, lsb + delta / 2))
+        hmtx[glyph_name] = (width, lsb)
         if width > max_width:
             max_width = width
 
@@ -352,8 +353,8 @@ def change_line_height(font: TTFont, delta: int):
     descent = OS2.usWinDescent
     total = ascent + descent
     new_total = total + delta
-    ascent = math.ceil(ascent * new_total / total)
-    descent = math.floor(descent * new_total / total)
+    ascent = max(0, math.ceil(ascent * new_total / total))
+    descent = max(0, math.floor(descent * new_total / total))
 
     hhea: table__h_h_e_a = font["hhea"]
     hhea.ascent = hhea.ascender = OS2.usWinAscent = ascent
