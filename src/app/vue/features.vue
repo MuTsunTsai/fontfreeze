@@ -1,6 +1,6 @@
 <template>
 	<div v-if="store.font?.gsub?.length">
-		<h5 class="text-h6">
+		<h5 class="text-title-large">
 			Features
 			<Tip
 				title="In most cases, the feature you are looking for will be among cv01-cv99, ss01-ss20, zero, onum, etc. (look up the user manual of your font). Hover over the a tag name to link to its general documentation." />

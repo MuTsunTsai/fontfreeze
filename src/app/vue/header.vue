@@ -19,11 +19,11 @@
 		</div>
 
 		<input type="file" class="d-none" id="upload" @change="openFile($event)" title="Open font file">
-		<v-row justify="center" class="mt-3">
+		<v-row class="justify-center mt-3">
 			<v-col>
 				<v-btn for="upload" color="success" height="auto" class="py-2" :disabled="Boolean(store.loading)">
 					<label for="upload">
-						<span class="text-h2 d-inline-block pb-2">📂</span><br>
+						<span class="text-display-large d-inline-block pb-2">📂</span><br>
 						<span>Open font file</span>
 					</label>
 				</v-btn>
@@ -31,7 +31,7 @@
 			<v-col v-if="localFontSupport">
 				<v-btn color="secondary" height="auto" class="py-2" :disabled="Boolean(store.loading)" @click="local">
 					<div>
-						<span class="text-h2 d-inline-block pb-2"><v-icon class="my-n4 text-yellow" icon="mdi-format-font" /></span><br>
+						<span class="text-display-large d-inline-block pb-2"><v-icon class="my-n4 text-yellow" icon="mdi-format-font" /></span><br>
 						<span>Select local font</span>
 					</div>
 				</v-btn>

@@ -1,18 +1,18 @@
 <template>
 	<v-dialog v-model="showLocal" max-width="500" @after-enter="shouldLoadList = true" @after-leave="shouldLoadList = false">
 		<v-card>
-			<v-card-title>
-				<h4 class="text-h5">Select local font</h4>
+			<v-card-title class="pt-3">
+				<span class="text-headline-small">Select local font</span>
 			</v-card-title>
-			<v-card-text>
+			<v-card-text class="py-2">
 				<template v-if="shouldLoadList">
-					<v-list class="control mb-3 pa-0" style="max-height: 20rem; overflow-y: scroll;" color="primary"
+					<v-list class="control mb-3" style="padding: 0; max-height: 20rem; overflow-y: scroll;" color="primary"
 						v-model:selected="selected" selectable :items="localFamilies.map(f => ({ title: f, value: f }))">
 						<template v-slot:title="{ item }">
 							<div :style="familyStyle(item.title)">{{ item.title }}</div>
 						</template>
 						<template v-slot:subtitle="{ item }">
-							<div class="text-caption">{{ item.title }}</div>
+							<div class="text-body-small">{{ item.title }}</div>
 						</template>
 					</v-list>
 
@@ -20,17 +20,17 @@
 						<template v-slot:item="{ item, props }">
 							<v-list-item v-bind="props">
 								<template v-slot:title>
-									<div :style="optionStyle(item.raw.font)">{{ item.title }}aa</div>
+									<div :style="optionStyle(item.font)">{{ item.title }}aa</div>
 								</template>
 								<template v-slot:subtitle>
-									<div class="text-caption">{{ item.title }}</div>
+									<div class="text-body-small">{{ item.title }}</div>
 								</template>
 							</v-list-item>
 						</template>
 						<template v-slot:selection="{ item }">
 							<div>
 								<div :style="optionStyle()">{{ item.title }}</div>
-								<div class="text-caption">{{ item.title }}</div>
+								<div class="text-body-small">{{ item.title }}</div>
 							</div>
 						</template>
 					</v-select>

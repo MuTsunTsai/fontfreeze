@@ -53,8 +53,7 @@ const vuetify = createVuetify({
 	},
 	defaults: {
 		VCol: { cols: "auto" },
-		VRow: { dense: true },
-		VBtn: { class: "text-none" },
+		VRow: { density: "compact" },
 		VCheckbox: formElements,
 		VSelect: formElements,
 		VTextField: formElements,

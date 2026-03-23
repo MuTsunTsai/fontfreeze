@@ -1,7 +1,7 @@
 <template>
-	<v-row align="baseline" class="mt-3">
+	<v-row class="align-baseline mt-3">
 		<v-col cols="4">
-			<h5 class="text-h5">Preview</h5>
+			<h5 class="text-headline-small">Preview</h5>
 		</v-col>
 		<v-col cols="8" class="text-end">
 			<span class="me-3">{{ store.previewSize }}pt</span>

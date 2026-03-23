@@ -3,7 +3,7 @@
 		<Dropzone />
 		<Alert />
 		<v-container style="max-width: 1200px;">
-			<v-row justify="end" class="mb-3">
+			<v-row class="justify-end mb-3">
 				<v-col>
 					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</v-btn>
 				</v-col>
@@ -17,7 +17,7 @@
 				<Main />
 				<Local />
 			</v-card>
-			<v-row justify="center" class="mt-3">
+			<v-row class="justify-center mt-3">
 				<v-col>
 					<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50"
 						src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00"></a>

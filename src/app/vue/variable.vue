@@ -1,8 +1,8 @@
 <template>
 	<div v-if="store.font!.fvar" class="mb-3">
-		<v-row align="center" justify="space-between">
+		<v-row class="align-center justify-space-between">
 			<v-col>
-				<h5 class="text-h5">
+				<h5 class="text-headline-small">
 					Variations
 					<Tip
 						title="Whenever possible, use a non-variable version of the font as starting point, as it will likely give better hinting than the variable one." />
@@ -18,7 +18,7 @@
 				<v-select label="Predefined instances" :items="instanceItems" v-model="selectedInstance" />
 			</div>
 			<div v-for="(a, i) in axes" class="mb-1" :key="i">
-				<v-row align="center">
+				<v-row class="align-center">
 					<v-col style="width: 5rem;">
 						{{ getAxisName(a) }}
 					</v-col>

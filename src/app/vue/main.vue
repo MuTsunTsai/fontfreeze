@@ -2,7 +2,7 @@
 	<main v-if="store.font" class="px-8 pb-6">
 		<div class="mt-4 text-center">
 			<span :style="`vertical-align:-0.25rem; font-family: preview${store.previewIndex};`"
-				class="text-primary text-h5 me-4">{{
+				class="text-primary text-headline-small me-4">{{
 					store.font.family }}</span>
 			<div class="d-inline-block">
 				<span class="me-3">{{ store.font.version }}</span>
