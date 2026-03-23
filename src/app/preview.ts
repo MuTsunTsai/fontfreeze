@@ -1,7 +1,9 @@
 import { callWorker } from "./bridge";
-import { note } from "./meta/constants";
+import i18n from "./i18n";
 import { store } from "./store";
 import { alert } from "./vue/modals/alert.vue";
+
+const { t } = i18n.global;
 import sample from "./meta/sample.txt?raw";
 
 /**
@@ -29,7 +31,7 @@ export async function tryPreview(url: string, info: FontInfo): Promise<void> {
 
 	// If it's already done or the fix fails, show message.
 	gtag("event", "preview_failed");
-	alert("Font preview won't work for this font. " + note);
+	alert(t("error.previewFailed") + t("error.note"));
 }
 
 function setPreviewFont(url: string): Promise<boolean> {

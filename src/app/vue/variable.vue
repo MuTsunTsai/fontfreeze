@@ -3,19 +3,19 @@
 		<v-row class="align-center justify-space-between">
 			<v-col>
 				<h5 class="text-headline-small">
-					Variations
+					{{ $t("variable.title") }}
 					<Tip
-						title="Whenever possible, use a non-variable version of the font as starting point, as it will likely give better hinting than the variable one." />
+						:title="$t('variable.tip')" />
 				</h5>
 			</v-col>
 			<v-col>
-				<v-checkbox v-model="store.options.keepVar" label="Keep the font variable" />
+				<v-checkbox v-model="store.options.keepVar" :label="$t('variable.keepVariable')" />
 			</v-col>
 		</v-row>
 
 		<div v-if="!store.options.keepVar">
 			<div class="d-flex mb-3 mt-2">
-				<v-select label="Predefined instances" :items="instanceItems" v-model="selectedInstance" />
+				<v-select :label="$t('variable.predefinedInstances')" :items="instanceItems" v-model="selectedInstance" />
 			</div>
 			<div v-for="(a, i) in axes" class="mb-1" :key="i">
 				<v-row class="align-center">
@@ -38,16 +38,19 @@
 
 <script setup lang="ts">
 	import { computed, shallowRef, watch } from "vue";
+	import { useI18n } from "vue-i18n";
 
 	import Tip from "./components/tip.vue";
 	import { store } from "../store";
 
-	const axisNames: Record<string, string> = {
-		ital: "Italic",
-		opsz: "Optical size",
-		slnt: "Slant",
-		wdth: "Width",
-		wght: "Weight",
+	const { t } = useI18n();
+
+	const axisKeys: Record<string, string> = {
+		ital: "variable.axisItalic",
+		opsz: "variable.axisOpticalSize",
+		slnt: "variable.axisSlant",
+		wdth: "variable.axisWidth",
+		wght: "variable.axisWeight",
 	};
 
 	const instances = computed(() => {
@@ -73,7 +76,7 @@
 
 	function getAxisName(axis: Axis): string {
 		if(axis.name) return axis.name;
-		return axis.tag in axisNames ? axisNames[axis.tag] : axis.tag;
+		return axis.tag in axisKeys ? t(axisKeys[axis.tag]) : axis.tag;
 	}
 
 	function clear(): void {

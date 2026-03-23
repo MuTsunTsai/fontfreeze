@@ -23,6 +23,8 @@ src="https://img.shields.io/badge/%C2%A92022--2025-Mu--Tsun%20Tsai-blue"></a>
 
 > Freeze variations and features in font.
 
+Other languages: [正體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md)
+
 ## Introduction
 
 Modern OpenType fonts support variations and features that allow customizable fonts.

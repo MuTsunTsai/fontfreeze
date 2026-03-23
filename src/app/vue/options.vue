@@ -1,92 +1,97 @@
 <template>
-	<h5 class="text-headline-small mt-4">Output options</h5>
+	<h5 class="text-headline-small mt-4 mb-0">{{ $t("options.title") }}</h5>
 	<v-row class="align-baseline">
 		<v-col cols="12" sm="6" class="mt-2">
-			<v-text-field label="Font family suffix" v-model="store.options.suffix" :disabled="store.options.customNames">
+			<v-text-field :label="$t('options.fontFamilySuffix')" v-model="store.options.suffix" :disabled="store.options.customNames">
 				<template v-slot:prepend-inner>
 					<Tip
-						title="Will be added after all family names. Default value is 'Freeze', suggesting that the font is generated with FontFreeze." />
+						:title="$t('options.suffixTip')" />
 				</template>
 			</v-text-field>
 		</v-col>
 		<v-col cols="12" sm="6" class="mt-md-2 pt-md-3">
-			<v-checkbox label="Custom font names" v-model="store.options.customNames" />
+			<v-checkbox :label="$t('options.customFontNames')" v-model="store.options.customNames" />
 		</v-col>
 		<template v-if="store.options.customNames">
 			<v-col cols="12" sm="6" class="mt-2">
-				<v-text-field label="Font family" placeholder="Better be different from the original family name"
+				<v-text-field :label="$t('options.fontFamily')" :placeholder="$t('options.fontFamilyPlaceholder')"
 					v-model="store.options.family" />
 			</v-col>
 			<v-col cols="12" sm="6" class="mt-2">
-				<v-select label="Font subfamily" v-model="store.options.subfamily" :items="subfamilies">
+				<v-select :label="$t('options.fontSubfamily')" v-model="store.options.subfamily" :items="subfamilies">
 					<template v-slot:prepend-inner>
-						<Tip title="This can only be one of the four values." />
+						<Tip :title="$t('options.subfamilyTip')" />
 					</template>
 				</v-select>
 			</v-col>
 			<v-col cols="12" sm="6" class="mt-2">
-				<v-text-field label="Typographic family" v-model="store.options.typo_family" />
+				<v-text-field :label="$t('options.typographicFamily')" v-model="store.options.typo_family" />
 			</v-col>
 			<v-col cols="12" sm="6" class="mt-2">
-				<v-text-field label="Typographic subfamily" v-model="store.options.typo_subfamily"
+				<v-text-field :label="$t('options.typographicSubfamily')" v-model="store.options.typo_subfamily"
 					:placeholder="store.options.subfamily">
 					<template v-slot:prepend-inner>
-						<Tip title="'Light', 'SemiBold' etc. Leave it blank to use the same setting as subfamily." />
+						<Tip :title="$t('options.typoSubfamilyTip')" />
 					</template>
 				</v-text-field>
 			</v-col>
 		</template>
 		<v-col cols="12" sm="6" class="mt-2">
-			<v-select label="Output format" :items="formats" v-model="store.options.format" />
+			<v-select :label="$t('options.outputFormat')" :items="formats" v-model="store.options.format" />
 		</v-col>
 		<v-col cols="12" sm="6" class="mt-2">
-			<v-text-field label="Target feature for activation" v-model="store.options.target" placeholder="Try 'calt' or 'rvrn'">
+			<v-text-field :label="$t('options.targetFeature')" v-model="store.options.target" :placeholder="$t('options.targetPlaceholder')">
 				<template v-slot:prepend-inner>
-					<Tip title="Set this to 'calt' will usually do. Try 'rvrn' if the former doesn't work." />
+					<Tip :title="$t('options.targetTip')" />
 				</template>
 			</v-text-field>
 		</v-col>
 		<v-col cols="12" md="6" class="mt-2">
-			<v-checkbox class="my-n3 my-md-0" label="Apply substitution by single-glyph features."
+			<v-checkbox class="my-n3 my-md-0" :label="$t('options.singleSub')"
 				v-model="store.options.singleSub" />
 		</v-col>
 		<v-col cols="12" md="6" class="mt-2">
-			<v-checkbox class="my-n3 my-md-0" label="Fix contour overlap issues on macOS." v-model="store.options.fixContour" />
+			<v-checkbox class="my-n3 my-md-0" :label="$t('options.fixContour')" v-model="store.options.fixContour" />
 		</v-col>
 	</v-row>
 </template>
 
 <script setup lang="ts">
+	import { computed } from "vue";
+	import { useI18n } from "vue-i18n";
+
 	import { store } from "../store";
 	import Tip from "./components/tip.vue";
 
-	const formats = [
+	const { t } = useI18n();
+
+	const formats = computed(() => [
 		{
-			title: "TTF (TrueType Font)",
+			title: t("options.formatTtf"),
 			value: "ttf",
 		},
 		{
-			title: "WOFF2 (Web Open Font Format v2)",
+			title: t("options.formatWoff2"),
 			value: "woff2",
 		},
-	];
+	]);
 
-	const subfamilies = [
+	const subfamilies = computed(() => [
 		{
-			title: "Regular",
+			title: t("options.subfamilyRegular"),
 			value: "Regular",
 		},
 		{
-			title: "Bold",
+			title: t("options.subfamilyBold"),
 			value: "Bold",
 		},
 		{
-			title: "Italic",
+			title: t("options.subfamilyItalic"),
 			value: "Italic",
 		},
 		{
-			title: "Bold Italic",
+			title: t("options.subfamilyBoldItalic"),
 			value: "Bold Italic",
 		},
-	];
+	]);
 </script>

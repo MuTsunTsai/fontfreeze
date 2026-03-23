@@ -5,7 +5,7 @@
 				<div v-html="message"/>
 			</v-card-text>
 			<v-card-actions>
-				<v-btn color="primary" @click="show = false">OK</v-btn>
+				<v-btn color="primary" @click="show = false">{{ $t("alert.ok") }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>

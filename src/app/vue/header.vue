@@ -5,7 +5,7 @@
 			<img src="logo.png" width="800" height="130" style="max-width:100%; height:auto;">
 		</picture>
 		<div class="mt-n8">
-			Freeze variations and features in font.
+			{{ $t("header.tagline") }}
 		</div>
 
 		<!-- shields.io -->
@@ -18,13 +18,13 @@
 				src="https://img.shields.io/badge/%C2%A92022--2025-Mu--Tsun%20Tsai-blue"></a>
 		</div>
 
-		<input type="file" class="d-none" id="upload" @change="openFile($event)" title="Open font file">
+		<input type="file" class="d-none" id="upload" @change="openFile($event)" :title="$t('header.openFontFile')">
 		<v-row class="justify-center mt-3">
 			<v-col>
 				<v-btn for="upload" color="success" height="auto" class="py-2" :disabled="Boolean(store.loading)">
 					<label for="upload">
 						<span class="text-display-large d-inline-block pb-2">📂</span><br>
-						<span>Open font file</span>
+						<span>{{ $t("header.openFontFile") }}</span>
 					</label>
 				</v-btn>
 			</v-col>
@@ -32,15 +32,15 @@
 				<v-btn color="secondary" height="auto" class="py-2" :disabled="Boolean(store.loading)" @click="local">
 					<div>
 						<span class="text-display-large d-inline-block pb-2"><v-icon class="my-n4 text-yellow" icon="mdi-format-font" /></span><br>
-						<span>Select local font</span>
+						<span>{{ $t("header.selectLocalFont") }}</span>
 					</div>
 				</v-btn>
 			</v-col>
 		</v-row>
 		<div class="mt-3">
-			<div v-if="store.loading">Loading {{ store.loading }}. Please wait...</div>
+			<div v-if="store.loading">{{ $t("header.loading", { target: store.loading }) }}</div>
 			<div v-else-if="store.font">{{ store.font.fileName }} ({{ store.font.fileSize }})</div>
-			<div v-else>Open a font or drop a font file anywhere!</div>
+			<div v-else>{{ $t("header.dropHint") }}</div>
 		</div>
 	</header>
 </template>

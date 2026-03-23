@@ -1,7 +1,7 @@
 <template>
 	<v-row class="align-baseline mt-3">
 		<v-col cols="4">
-			<h5 class="text-headline-small">Preview</h5>
+			<h5 class="text-headline-small my-2">{{ $t("preview.title") }}</h5>
 		</v-col>
 		<v-col cols="8" class="text-end">
 			<span class="me-3">{{ store.previewSize }}pt</span>

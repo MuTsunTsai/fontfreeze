@@ -2,7 +2,7 @@
 	<v-dialog v-model="showLocal" max-width="500" @after-enter="shouldLoadList = true" @after-leave="shouldLoadList = false">
 		<v-card>
 			<v-card-title class="pt-3">
-				<span class="text-headline-small">Select local font</span>
+				<span class="text-headline-small">{{ $t("local.title") }}</span>
 			</v-card-title>
 			<v-card-text class="py-2">
 				<template v-if="shouldLoadList">
@@ -36,16 +36,14 @@
 					</v-select>
 
 					<div class="mt-3" v-if="chromiumVersion < 109">
-						Note: This is an experimental feature and it may not work for manually installed fonts.
-						If it doesn't work for a particular font, you can still upload the font file manually.
-						This is a bug in Chromium and will be fixed in version 109.
+						{{ $t("local.experimentalNote") }}
 					</div>
 				</template>
 				<v-skeleton-loader v-else type="card" />
 			</v-card-text>
 			<v-card-actions>
-				<v-btn color="secondary" @click="cancel">Cancel</v-btn>
-				<v-btn color="primary" @click="loadLocal" :disabled="(typeof store.localFont) != 'number'">OK</v-btn>
+				<v-btn color="secondary" @click="cancel">{{ $t("local.cancel") }}</v-btn>
+				<v-btn color="primary" @click="loadLocal" :disabled="(typeof store.localFont) != 'number'">{{ $t("local.ok") }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>

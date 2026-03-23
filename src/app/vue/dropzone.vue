@@ -1,7 +1,7 @@
 <template>
 	<div class="dropzone">
 		<div class="text-h2">
-			<span>Drop font file</span>
+			<span>{{ $t("header.dropFontFile") }}</span>
 		</div>
 	</div>
 </template>

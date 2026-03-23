@@ -1,6 +1,6 @@
 {
 	"name": "fontfreeze",
-	"version": "1.12.5",
+	"version": "1.13.0",
 	"description": "Freeze variations and features in font.",
 	"keywords": [
 		"font"
@@ -20,7 +20,9 @@
 		"start": "rsbuild dev"
 	},
 	"dependencies": {
+		"probably-china": "^1.1.0",
 		"vue": "^3.5.30",
+		"vue-i18n": "^11.3.0",
 		"vuetify": "^4.0.3"
 	},
 	"devDependencies": {

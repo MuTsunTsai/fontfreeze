@@ -1,9 +1,8 @@
 <template>
 	<div v-if="store.font?.gsub?.length">
-		<h5 class="text-title-large">
-			Features
-			<Tip
-				title="In most cases, the feature you are looking for will be among cv01-cv99, ss01-ss20, zero, onum, etc. (look up the user manual of your font). Hover over the a tag name to link to its general documentation." />
+		<h5 class="text-title-large my-2">
+			{{ $t("features.title") }}
+			<Tip :title="$t('features.tip')" />
 		</h5>
 		<div class="d-flex flex-wrap">
 			<div v-for="f in store.font.gsub" style="flex-basis: 5rem;" :key="f">
@@ -15,12 +14,12 @@
 							<template v-slot:activator="{ props }">
 								<span v-bind="props">{{ f }}</span>
 							</template>
-							<span v-if="featureTitle[f]">
-								<a :href="`https://learn.microsoft.com/en-us/typography/opentype/spec/features_${featureTitle[f][1]}`">
-									{{ featureTitle[f][0] }}
+							<span v-if="featureURL[f]">
+								<a :href="`https://learn.microsoft.com/en-us/typography/opentype/spec/features_${featureURL[f]}`">
+									{{ getFeatureTitle(f) }}
 								</a> ↗️
 							</span>
-							<span v-else>Unknown feature</span>
+							<span v-else>{{ $t("features.unknown") }}</span>
 						</v-tooltip>
 					</template>
 				</v-checkbox>
@@ -31,7 +30,7 @@
 
 <script lang="ts">
 	import { store } from "../store";
-	import { featureTitle } from "../meta/constants";
+	import { featureURL } from "../meta/constants";
 	import Tip from "./components/tip.vue";
 
 	/** The last value before the current value for each features. */
@@ -62,6 +61,18 @@
 </script>
 
 <script setup lang="ts">
+	import { useI18n } from "vue-i18n";
+
+	const { t } = useI18n();
+
+	function getFeatureTitle(tag: string): string {
+		const ssMatch = tag.match(/^ss(\d+)$/);
+		if(ssMatch) return t("feature.ss", { n: parseInt(ssMatch[1]) });
+		const cvMatch = tag.match(/^cv(\d+)$/);
+		if(cvMatch) return t("feature.cv", { n: parseInt(cvMatch[1]) });
+		return t("feature." + tag);
+	}
+
 	function changeFeature(f: string): void {
 		if(lastValues[f] === true) store.features[f] = undefined;
 		if(lastValues[f] === undefined) store.features[f] = false;

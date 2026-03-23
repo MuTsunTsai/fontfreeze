@@ -1,9 +1,12 @@
 import { callWorker } from "./bridge";
-import { formats } from "./meta/constants";
+import i18n from "./i18n";
+import { getFormats } from "./meta/constants";
 import { store } from "./store";
 import { getUnicodes } from "./meta/unicode";
 import { clone } from "./utils";
 import { alert } from "./vue/modals/alert.vue";
+
+const { t } = i18n.global;
 
 const MESSAGE_TIMEOUT = 3000;
 
@@ -15,7 +18,7 @@ export async function generate(): Promise<void> {
 			store.message = null;
 			const handle = await showSaveFilePicker({
 				suggestedName: suggestedFileName(),
-				types: [formats[store.options.format]],
+				types: [getFormats(store.options.format)],
 			});
 			await startAnime();
 			const url = await getOutputURL();
@@ -25,7 +28,7 @@ export async function generate(): Promise<void> {
 			const writable = await handle.createWritable();
 			await writable.write(blob);
 			await writable.close();
-			store.message ||= "Generating complete!";
+			store.message ||= t("main.generatingComplete");
 			setTimeout(() => store.message = null, MESSAGE_TIMEOUT);
 		} else {
 			await startAnime();
@@ -72,7 +75,7 @@ async function getOutputURL(): Promise<string> {
 		}
 		const features = store.font.gsub.filter(g => store.features[g] === true);
 		if(features.length && store.options.target.length != FEATURE_LENGTH) {
-			throw new Error("Must specify a valid activation target.");
+			throw new Error(t("error.invalidTarget"));
 		}
 		const args = {
 			options,
@@ -84,7 +87,7 @@ async function getOutputURL(): Promise<string> {
 		};
 		return await callWorker("save", clone(args)) as string;
 	} catch(e) {
-		if(e instanceof Error) alert("An error occur: " + e.message);
+		if(e instanceof Error) alert(t("error.errorOccur", { message: e.message }));
 		throw e;
 	}
 }

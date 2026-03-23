@@ -1,10 +1,13 @@
 import { store } from "./store";
 import { initialized, callWorker } from "./bridge";
-import { hiddenFeatures, note } from "./meta/constants";
+import i18n from "./i18n";
+import { hiddenFeatures } from "./meta/constants";
 import { tryPreview } from "./preview";
 import { clone } from "./utils";
 import { setupFeatures } from "./vue/features.vue";
 import { alert } from "./vue/modals/alert.vue";
+
+const { t } = i18n.global;
 
 import type { OptionType } from "./store";
 
@@ -16,7 +19,7 @@ export async function tryOpenFile(file: File): Promise<void> {
 		await openBlob(file, file.name);
 	} catch(e) {
 		console.log(e);
-		alert(`"${file.name}" is not a valid font file, or is corrupted. ` + note);
+		alert(t("error.invalidFont", { name: file.name }) + t("error.note"));
 	}
 }
 

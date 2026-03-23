@@ -3,13 +3,27 @@
 		<Dropzone />
 		<Alert />
 		<v-container style="max-width: 1200px;">
-			<v-row class="justify-end mb-3">
+			<v-row class="justify-end mb-3 align-center">
 				<v-col>
-					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze">📜 User manual</v-btn>
+					<v-btn color="secondary" size="small" :href="$t('app.userManualUrl')">📜 {{ $t("app.userManual") }}</v-btn>
 				</v-col>
 				<v-col>
-					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 Report
-						issue</v-btn>
+					<v-btn color="secondary" size="small" href="https://github.com/MuTsunTsai/fontfreeze/issues">🐛 {{ $t("app.reportIssue") }}</v-btn>
+				</v-col>
+				<v-col>
+					<v-menu>
+						<template v-slot:activator="{ props }">
+							<v-btn color="secondary" size="small" v-bind="props" append-icon="mdi-menu-down" style="font-family: Flag;">
+								{{ $t("emoji") }}&ensp;{{ currentLocaleName }}
+							</v-btn>
+						</template>
+						<v-list density="compact">
+							<v-list-item v-for="item in localeOptions" :key="item.value"
+								:active="locale === item.value" @click="locale = item.value">
+								<v-list-item-title>{{ item.title }}</v-list-item-title>
+							</v-list-item>
+						</v-list>
+					</v-menu>
 				</v-col>
 			</v-row>
 			<v-card elevation="3">
@@ -33,9 +47,31 @@
 </template>
 
 <script setup lang="ts">
+	import { computed, watch } from "vue";
+	import { useI18n } from "vue-i18n";
+
 	import Header from "./header.vue";
 	import Dropzone from "./dropzone.vue";
 	import Main from "./main.vue";
 	import Alert from "./modals/alert.vue";
 	import Local from "./modals/local.vue";
+	import i18n from "../i18n";
+
+	const { locale } = useI18n();
+
+	const localeOptions = [
+		{ name: "English", value: "en" as const },
+		{ name: "한국어", value: "ko" as const },
+		{ name: "简体中文", value: "zh-CN" as const },
+		{ name: "正體中文", value: "zh-TW" as const },
+	].map(o => ({
+		...o,
+		title: i18n.global.messages.value[o.value].emoji + " " + o.name,
+	}));
+
+	const currentLocaleName = computed(() =>
+		localeOptions.find(o => o.value === locale.value)?.name ?? "English"
+	);
+
+	watch(locale, v => localStorage.setItem("fontfreeze-locale", v));
 </script>

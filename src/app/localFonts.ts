@@ -1,8 +1,11 @@
 import { shallowRef } from "vue";
 
+import i18n from "./i18n";
 import { openBlob } from "./loader";
 import { store } from "./store";
 import { alert } from "./vue/modals/alert.vue";
+
+const { t } = i18n.global;
 
 /**
  * We similarly use a stylesheet to handle local fonts.
@@ -32,7 +35,7 @@ export async function loadLocal(): Promise<void> {
 	try {
 		blob = await font.blob();
 	} catch(e) {
-		if(e instanceof Error) alert("An error occur: " + e.message);
+		if(e instanceof Error) alert(t("error.errorOccur", { message: e.message }));
 		store.unavailableFonts.push(font.postscriptName);
 		return;
 	} finally {
@@ -43,7 +46,7 @@ export async function loadLocal(): Promise<void> {
 	try {
 		await openBlob(blob, font.fullName);
 	} catch(e) {
-		if(e instanceof Error) alert("An error occur: " + e.message);
+		if(e instanceof Error) alert(t("error.errorOccur", { message: e.message }));
 	}
 }
 

@@ -2,6 +2,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - 2026-03-23
+
+- Add localization for 4 languages.
+
 ## [1.12.0] - 2025-06-17
 
 - Migrate to [Vuetify](https://vuetifyjs.com/) for UI.

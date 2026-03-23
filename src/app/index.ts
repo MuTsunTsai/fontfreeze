@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createVuetify } from "vuetify";
 
 import App from "./vue/app.vue";
+import i18n from "./i18n";
 
 import "./style/main.scss";
 
@@ -66,4 +67,4 @@ const vuetify = createVuetify({
 });
 
 // Initialize Vue
-createApp(App).use(vuetify).mount("#app");
+createApp(App).use(vuetify).use(i18n).mount("#app");
