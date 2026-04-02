@@ -29,6 +29,8 @@
 </template>
 
 <script lang="ts">
+	import { useI18n } from "vue-i18n";
+
 	import { store } from "../store";
 	import { featureURL } from "../meta/constants";
 	import Tip from "./components/tip.vue";
@@ -61,8 +63,6 @@
 </script>
 
 <script setup lang="ts">
-	import { useI18n } from "vue-i18n";
-
 	const { t } = useI18n();
 
 	function getFeatureTitle(tag: string): string {
