@@ -20,7 +20,7 @@
 						<template v-slot:item="{ item, props }">
 							<v-list-item v-bind="props">
 								<template v-slot:title>
-									<div :style="optionStyle(item.font)">{{ item.title }}aa</div>
+									<div :style="optionStyle(item.font)">{{ item.title }}</div>
 								</template>
 								<template v-slot:subtitle>
 									<div class="text-body-small">{{ item.title }}</div>
