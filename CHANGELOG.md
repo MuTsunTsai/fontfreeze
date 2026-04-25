@@ -2,6 +2,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 2026-04-25
+
+- Customizable feature values ([#19](https://github.com/MuTsunTsai/fontfreeze/issues/19)).
+
 ## [1.13.0] - 2026-03-23
 
 - Add localization for 4 languages.

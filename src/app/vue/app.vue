@@ -1,7 +1,7 @@
 <template>
 	<v-app>
-		<Dropzone />
-		<Alert />
+		<Dropzone/>
+		<Alert/>
 		<v-container style="max-width: 1200px;">
 			<v-row class="justify-end mb-3 align-center">
 				<v-col>
@@ -12,14 +12,24 @@
 				</v-col>
 				<v-col>
 					<v-menu>
-						<template v-slot:activator="{ props }">
-							<v-btn color="secondary" size="small" v-bind="props" append-icon="mdi-menu-down" style="font-family: Flag;">
+						<template #activator="{ props }">
+							<v-btn
+								color="secondary"
+								size="small"
+								v-bind="props"
+								append-icon="mdi-menu-down"
+								style="font-family: Flag;"
+							>
 								{{ $t("emoji") }}&ensp;{{ currentLocaleName }}
 							</v-btn>
 						</template>
 						<v-list density="compact">
-							<v-list-item v-for="item in localeOptions" :key="item.value"
-								:active="locale === item.value" @click="locale = item.value">
+							<v-list-item
+								v-for="item in localeOptions"
+								:key="item.value"
+								:active="locale === item.value"
+								@click="locale = item.value"
+							>
 								<v-list-item-title>{{ item.title }}</v-list-item-title>
 							</v-list-item>
 						</v-list>
@@ -27,19 +37,29 @@
 				</v-col>
 			</v-row>
 			<v-card elevation="3">
-				<Header />
-				<Main />
-				<Local />
+				<Header/>
+				<Main/>
+				<Local/>
 			</v-card>
 			<v-row class="justify-center mt-3">
 				<v-col>
-					<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img width="235" height="50"
-						src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00"></a>
+					<a href="https://www.buymeacoffee.com/mutsuntsai" target="_blank"><img
+						width="235"
+						height="50"
+						src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mutsuntsai&button_colour=6f431f&font_colour=ffffff&font_family=Lato&outline_colour=ffffff&coffee_colour=FFDD00"
+					></a>
 				</v-col>
 				<v-col>
 					<!-- Product Hunt -->
-					<a href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze"
-						target="_blank"><img class="product-hunt" style="width: 235px; height: 50px;" width="235" height="50"></a>
+					<a
+						href="https://www.producthunt.com/posts/fontfreeze?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-fontfreeze"
+						target="_blank"
+					><img
+						class="product-hunt"
+						style="width: 235px; height: 50px;"
+						width="235"
+						height="50"
+					></a>
 				</v-col>
 			</v-row>
 		</v-container>

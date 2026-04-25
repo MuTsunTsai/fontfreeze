@@ -2,9 +2,9 @@ import { callWorker } from "./bridge";
 import i18n from "./i18n";
 import { store } from "./store";
 import { alert } from "./vue/modals/alert.vue";
+import sample from "./meta/sample.txt?raw";
 
 const { t } = i18n.global;
-import sample from "./meta/sample.txt?raw";
 
 /**
  * We use a stylesheet to handle preview font.

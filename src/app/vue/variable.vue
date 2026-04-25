@@ -5,30 +5,42 @@
 				<h5 class="text-headline-small">
 					{{ $t("variable.title") }}
 					<Tip
-						:title="$t('variable.tip')" />
+						:title="$t('variable.tip')"
+					/>
 				</h5>
 			</v-col>
 			<v-col>
-				<v-checkbox v-model="store.options.keepVar" :label="$t('variable.keepVariable')" />
+				<v-checkbox v-model="store.options.keepVar" :label="$t('variable.keepVariable')"/>
 			</v-col>
 		</v-row>
 
 		<div v-if="!store.options.keepVar">
 			<div class="d-flex mb-3 mt-2">
-				<v-select :label="$t('variable.predefinedInstances')" :items="instanceItems" v-model="selectedInstance" />
+				<v-select v-model="selectedInstance" :label="$t('variable.predefinedInstances')" :items="instanceItems"/>
 			</div>
-			<div v-for="(a, i) in axes" class="mb-1" :key="i">
+			<div v-for="(a, i) in axes" :key="i" class="mb-1">
 				<v-row class="align-center">
 					<v-col style="width: 5rem;">
 						{{ getAxisName(a) }}
 					</v-col>
 					<v-col class="d-none d-sm-block">
-						<v-slider v-model.number="store.variations[a.tag]" :min="a.min" :max="a.max" :step="getStep(a)"
-							width="15rem" @update:model-value="clear"/>
+						<v-slider
+							v-model.number="store.variations[a.tag]"
+							:min="a.min"
+							:max="a.max"
+							:step="getStep(a)"
+							width="15rem"
+							@update:model-value="clear"
+						/>
 					</v-col>
 					<v-col>
-						<v-number-input density="compact" v-model="store.variations[a.tag]" :min="a.min" :max="a.max"
-							:step="getStep(a)" />
+						<v-number-input
+							v-model="store.variations[a.tag]"
+							density="compact"
+							:min="a.min"
+							:max="a.max"
+							:step="getStep(a)"
+						/>
 					</v-col>
 				</v-row>
 			</div>
@@ -92,8 +104,8 @@
 		if(selectedInstance.value === undefined) return;
 		const instance = instances.value[selectedInstance.value];
 		store.options.typo_subfamily = instance.name;
-		for(const t in instance.coordinates) {
-			store.variations[t] = instance.coordinates[t];
+		for(const c in instance.coordinates) {
+			store.variations[c] = instance.coordinates[c];
 		}
 	});
 </script>

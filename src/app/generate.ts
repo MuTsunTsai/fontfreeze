@@ -58,6 +58,45 @@ function suggestedFileName(): string {
 const MS_CHAR_LIMIT = 32; // There's a 32-char limit in MS Word
 const FEATURE_LENGTH = 4; // All valid feature names has this length
 
+interface FeatureBuckets {
+	features: string[];
+	featureValues: Record<string, number>;
+	disables: string[];
+}
+
+/**
+ * Map each tri-state-or-number value in `store.features` into the three
+ * buckets that the Python side expects:
+ *
+ * - `features`: tags to activate (Activator merges their lookups).
+ * - `featureValues`: subset of `features` that carry a custom alternate index.
+ * - `disables`: tags to force-disable (removeFeature clears them).
+ *
+ * `false` (unchecked) goes nowhere, leaving the font's default behavior intact.
+ * `0` is treated as off per the OpenType spec, equivalent to indeterminate.
+ */
+function bucketFeatures(gsub: readonly string[]): FeatureBuckets {
+	const features: string[] = [];
+	const featureValues: Record<string, number> = {};
+	const disables: string[] = [];
+	for(const g of gsub) {
+		const v = store.features[g];
+		if(v === true) {
+			features.push(g);
+		} else if(typeof v === "number") {
+			if(v >= 1) {
+				features.push(g);
+				featureValues[g] = v;
+			} else {
+				disables.push(g);
+			}
+		} else if(v === undefined) {
+			disables.push(g);
+		}
+	}
+	return { features, featureValues, disables };
+}
+
 async function getOutputURL(): Promise<string> {
 	try {
 		if(!store.font) throw new Error();
@@ -73,7 +112,7 @@ async function getOutputURL(): Promise<string> {
 			}
 			if(options.typo_family) options.typo_family += " " + options.suffix;
 		}
-		const features = store.font.gsub.filter(g => store.features[g] === true);
+		const { features, featureValues, disables } = bucketFeatures(store.font.gsub);
 		if(features.length && store.options.target.length != FEATURE_LENGTH) {
 			throw new Error(t("error.invalidTarget"));
 		}
@@ -83,7 +122,8 @@ async function getOutputURL(): Promise<string> {
 			unicodes: getUnicodes(),
 			variations: store.variations,
 			features,
-			disables: store.font.gsub.filter(g => store.features[g] === undefined),
+			featureValues,
+			disables,
 		};
 		return await callWorker("save", clone(args)) as string;
 	} catch(e) {

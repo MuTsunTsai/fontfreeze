@@ -182,6 +182,10 @@ class Activator:
     def __init__(self, font: TTFont, args: dict, /) -> None:
         self.font = font
         self.features = args.get("features")
+        # Mapping from feature tag to a 1-based alternate index. See OpenType spec
+        # for cv01-cv99 / ss01-ss20: the value selects which entry of the
+        # AlternateSet (GSUB Type 3) to keep when freezing.
+        self.featureValues = args.get("featureValues") or {}
         options: dict = args.get("options")
         self.target = options.get("target")
         self.singleSub = options.get("singleSub")
@@ -207,6 +211,17 @@ class Activator:
             self.activateInLangSys(langSysRecord.LangSys)
 
     def activateInLangSys(self, langSys, /):
+        # For features with a custom value (e.g. "cv01"=2), shrink each
+        # AlternateSet to keep only the chosen entry. After this, the lookup
+        # behaves like a Single Substitution regardless of the shaping value
+        # passed by the renderer, effectively freezing the variant.
+        if self.featureValues:
+            for index in langSys.FeatureIndex:
+                featureRecord = self.featureRecords[index]
+                tag = featureRecord.FeatureTag
+                if tag in self.featureValues:
+                    self.pickAlternate(featureRecord.Feature, self.featureValues[tag])
+
         targetRecord = None
 
         # try to find existing target feature
@@ -248,6 +263,24 @@ class Activator:
         if targetRecord is not None:
             targetRecord.Feature.LookupListIndex.sort()
 
+    def pickAlternate(self, feature, value: int, /):
+        """Reduce GSUB Type 3 AlternateSet entries to a single chosen alternate.
+
+        OpenType spec: for cv01-cv99 / ss01-ss20, the shaping value is a
+        1-based index into AlternateSet[]. After this reduction the lookup
+        always picks the same glyph, no matter what value the renderer sends.
+        """
+        for lookupIndex in feature.LookupListIndex:
+            lookup = self.lookup[lookupIndex]
+            if lookup.LookupType != 3:
+                continue
+            for sub in lookup.SubTable:
+                for glyph, alt_list in list(sub.alternates.items()):
+                    if 1 <= value <= len(alt_list):
+                        sub.alternates[glyph] = [alt_list[value - 1]]
+                    # If value is out of range, leave the AlternateSet untouched
+                    # (safe fallback — shaping will pick alternates[0] or skip).
+
     def applySingleSubstitutionByLookupOrder(self, lookupIndices, /):
         # Collect all substitutions to be applied
         substitutions = {}  # key -> value
@@ -259,6 +292,14 @@ class Activator:
                         if key in self.unicodeGlyphs:
                             substitutions[key] = value
                             # Update unicodeGlyphs so subsequent lookups can track substituted glyphs
+                            self.unicodeGlyphs.discard(key)
+                            self.unicodeGlyphs.add(value)
+            elif lookup.LookupType == 3:  # Alternate substitution reduced to a single choice
+                for sub in lookup.SubTable:
+                    for key, alt_list in sub.alternates.items():
+                        if len(alt_list) == 1 and key in self.unicodeGlyphs:
+                            value = alt_list[0]
+                            substitutions[key] = value
                             self.unicodeGlyphs.discard(key)
                             self.unicodeGlyphs.add(value)
 

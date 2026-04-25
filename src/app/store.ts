@@ -19,7 +19,11 @@ export const store = reactive({
 	download: null as string | null,
 	previewIndex: 0,
 	version: " v" + VERSION,
-	features: {} as Record<string, boolean | undefined>,
+	// `boolean | undefined` keeps the original tri-state (on/off/default).
+	// A `number` means "custom value N" set via the dialog (e.g. 'cv01' 2).
+	// 0 is treated as off (per OpenType spec), any positive N selects the
+	// N-th alternate from the GSUB Type 3 AlternateSet.
+	features: {} as Record<string, boolean | number | undefined>,
 	variations: {} as Record<string, number>,
 	options: {
 		suffix: "",

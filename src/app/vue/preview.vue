@@ -6,7 +6,13 @@
 		<v-col cols="8" class="text-end">
 			<span class="me-3">{{ store.previewSize }}pt</span>
 			<div class="d-inline-block" style="vertical-align: 0.25rem;">
-				<v-slider :min="8" :max="48" v-model="store.previewSize" :step="1" width="10rem" />
+				<v-slider
+					v-model="store.previewSize"
+					:min="8"
+					:max="48"
+					:step="1"
+					width="10rem"
+				/>
 			</div>
 		</v-col>
 	</v-row>
@@ -44,7 +50,11 @@
 		if(!store.font) return null;
 		const feat = store.font.gsub
 			.filter(g => store.features[g] !== false)
-			.map(g => `'${g}' ${store.features[g] ? "on" : "off"}`)
+			.map(g => {
+				const v = store.features[g];
+				if(typeof v === "number") return `'${g}' ${v}`;
+				return `'${g}' ${v ? "on" : "off"}`;
+			})
 			.join(",");
 		const variation = !store.font.fvar ? "normal" :
 			store.font.fvar.axes

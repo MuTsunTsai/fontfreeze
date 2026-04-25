@@ -30,7 +30,17 @@
 	"features": {
 		"title": "特性",
 		"tip": "在大多数情况下，您要找的特性会在 cv01-cv99、ss01-ss20、zero、onum 等之中（请查阅您的字体使用手册）。将鼠标悬停在标签名称上可链接至其文档。",
-		"unknown": "未知特性"
+		"unknown": "未知特性",
+		"custom": "自定义",
+		"customDialog": {
+			"title": "自定义特性值",
+			"hint": "输入逗号分隔的 tag=值。例如：cv01=2,ss02=3",
+			"errMalformed": "不是有效的 tag=值 格式：{items}。",
+			"errUnknownTag": "未知的特性标签：{items}。",
+			"errBadValue": "值必须是非负整数：{items}。",
+			"ok": "确定",
+			"cancel": "取消"
+		}
 	},
 	"variable": {
 		"title": "可变项",

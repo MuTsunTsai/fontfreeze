@@ -1,33 +1,49 @@
 <template>
-	<v-dialog v-model="showLocal" max-width="500" @after-enter="shouldLoadList = true" @after-leave="shouldLoadList = false">
+	<v-dialog
+		v-model="showLocal"
+		max-width="500"
+		@after-enter="shouldLoadList = true"
+		@after-leave="shouldLoadList = false"
+	>
 		<v-card>
 			<v-card-title class="pt-3">
 				<span class="text-headline-small">{{ $t("local.title") }}</span>
 			</v-card-title>
 			<v-card-text class="py-2">
 				<template v-if="shouldLoadList">
-					<v-list class="control mb-3" style="padding: 0; max-height: 20rem; overflow-y: scroll;" color="primary"
-						v-model:selected="selected" selectable :items="localFamilies.map(f => ({ title: f, value: f }))">
-						<template v-slot:title="{ item }">
+					<v-list
+						v-model:selected="selected"
+						class="control mb-3"
+						style="padding: 0; max-height: 20rem; overflow-y: scroll;"
+						color="primary"
+						selectable
+						:items="localFamilies.map(f => ({ title: f, value: f }))"
+					>
+						<template #title="{ item }">
 							<div :style="familyStyle(item.title)">{{ item.title }}</div>
 						</template>
-						<template v-slot:subtitle="{ item }">
+						<template #subtitle="{ item }">
 							<div class="text-body-small">{{ item.title }}</div>
 						</template>
 					</v-list>
 
-					<v-select v-model.number="store.localFont" :items="items" :disabled="!store.localFamily" style="height:64px;">
-						<template v-slot:item="{ item, props }">
+					<v-select
+						v-model.number="store.localFont"
+						:items="items"
+						:disabled="!store.localFamily"
+						style="height:64px;"
+					>
+						<template #item="{ item, props }">
 							<v-list-item v-bind="props">
-								<template v-slot:title>
+								<template #title>
 									<div :style="optionStyle(item.font)">{{ item.title }}</div>
 								</template>
-								<template v-slot:subtitle>
+								<template #subtitle>
 									<div class="text-body-small">{{ item.title }}</div>
 								</template>
 							</v-list-item>
 						</template>
-						<template v-slot:selection="{ item }">
+						<template #selection="{ item }">
 							<div>
 								<div :style="optionStyle()">{{ item.title }}</div>
 								<div class="text-body-small">{{ item.title }}</div>
@@ -35,15 +51,15 @@
 						</template>
 					</v-select>
 
-					<div class="mt-3" v-if="chromiumVersion < 109">
+					<div v-if="chromiumVersion < 109" class="mt-3">
 						{{ $t("local.experimentalNote") }}
 					</div>
 				</template>
-				<v-skeleton-loader v-else type="card" />
+				<v-skeleton-loader v-else type="card"/>
 			</v-card-text>
 			<v-card-actions>
 				<v-btn color="secondary" @click="cancel">{{ $t("local.cancel") }}</v-btn>
-				<v-btn color="primary" @click="loadLocal" :disabled="(typeof store.localFont) != 'number'">{{ $t("local.ok") }}</v-btn>
+				<v-btn color="primary" :disabled="(typeof store.localFont) != 'number'" @click="loadLocal">{{ $t("local.ok") }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>

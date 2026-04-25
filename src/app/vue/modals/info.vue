@@ -1,5 +1,12 @@
 <template>
-	<v-btn color="secondary" size="small" @click="show = true" v-if="more">{{ $t("info.moreInfo") }}</v-btn>
+	<v-btn
+		v-if="more"
+		color="secondary"
+		size="small"
+		@click="show = true"
+	>
+		{{ $t("info.moreInfo") }}
+	</v-btn>
 	<v-dialog v-model="show" width="auto" max-width="1024">
 		<v-card v-if="store.font">
 			<v-card-text>
@@ -16,7 +23,7 @@
 							<td class="d-none d-sm-table-cell">{{ $t("info.designer") }}</td>
 							<td>
 								<h6 class="d-block d-sm-none text-h6 text-info">{{ $t("info.designer") }}</h6>
-								<a :href="store.font.designerURL" v-if="store.font.designerURL">
+								<a v-if="store.font.designerURL" :href="store.font.designerURL">
 									{{ store.font.designer }}
 								</a>
 								<span v-else>{{ store.font.designer }}</span>
@@ -26,7 +33,7 @@
 							<td class="d-none d-sm-table-cell">{{ $t("info.manufacturer") }}</td>
 							<td>
 								<h6 class="d-block d-sm-none text-h6 text-info">{{ $t("info.manufacturer") }}</h6>
-								<a :href="store.font.vendorURL" v-if="store.font.vendorURL">
+								<a v-if="store.font.vendorURL" :href="store.font.vendorURL">
 									{{ store.font.manufacturer }}
 								</a>
 								<span v-else>{{ store.font.manufacturer }}</span>
@@ -50,8 +57,10 @@
 							<td class="d-none d-sm-table-cell">{{ $t("info.license") }}</td>
 							<td>
 								<h6 class="d-block d-sm-none text-h6 text-info">{{ $t("info.license") }}</h6>
-								<div :class="{ 'text-body-2': store.font.license && store.font.license.length > 200 }">{{
-									store.font.license }}</div>
+								<div :class="{ 'text-body-2': store.font.license && store.font.license.length > 200 }">
+									{{
+										store.font.license }}
+								</div>
 							</td>
 						</tr>
 					</tbody>
