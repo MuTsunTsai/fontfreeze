@@ -62,6 +62,10 @@ FontFreeze 是一个工具，可让您创建指定字体的自定义实例，
 最后，点击 `Generate font!` 来生成您的字体。
 就是这么简单！
 
+观看实际操作（记得开启声音；旁白为英文）：
+
+https://github.com/user-attachments/assets/8292d861-a083-45db-9deb-430e62881649
+
 提示：
 
 - 尽可能使用字体的非可变版本作为起点，

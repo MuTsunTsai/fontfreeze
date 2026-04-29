@@ -29,7 +29,7 @@ src="https://img.shields.io/badge/%C2%A92022--2025-Mu--Tsun%20Tsai-blue"></a>
 문제는 모든 환경이 이러한 메커니즘을 지원하지는 않는다는 것입니다.
 Visual Studio와 같은 IDE는 글꼴 패밀리와 글꼴 크기 선택만 지원하며,
 변형을 선택하거나 기능을 토글하는 옵션이 없습니다.
-FontFreeze는 주어진 글꼴의 사용자 정의 인스턴스를 만들 수 있는 도구로,
+FontFreeze 는 주어진 글꼴의 사용자 정의 인스턴스를 만들 수 있는 도구로,
 이러한 환경에서 원하는 글꼴을 정확히 사용할 수 있게 해줍니다.
 
 - 순수 프론트엔드, 대용량 글꼴 파일의 업로드 지연 없음.
@@ -62,6 +62,10 @@ https://mutsuntsai.github.io/fontfreeze 에 방문하면 앱이 시작됩니다.
 마지막으로 `Generate font!`을 클릭하여 글꼴을 생성합니다.
 정말 간단합니다!
 
+실제 동작 보기 (소리를 켜는 것을 잊지 마세요; 내레이션은 영어입니다):
+
+https://github.com/user-attachments/assets/8292d861-a083-45db-9deb-430e62881649
+
 팁:
 
 - 가능하면 글꼴의 비가변 버전을 시작점으로 사용하세요.
@@ -76,14 +80,14 @@ https://mutsuntsai.github.io/fontfreeze 에 방문하면 앱이 시작됩니다.
 
 ## 작동 원리
 
-FontFreeze는 글꼴 조작을 위한 Python 라이브러리인
+FontFreeze 는 글꼴 조작을 위한 Python 라이브러리인
 [fonttools](https://github.com/fonttools/fonttools)를 사용합니다.
 그런 다음 [Pyodide](https://pyodide.org/)를 활용하여
-WebAssembly를 통해 브라우저에서 직접 Python 코드를 실행하므로,
+WebAssembly 를 통해 브라우저에서 직접 Python 코드를 실행하므로,
 순수 프론트엔드이며 백엔드에 아무것도 저장되지 않습니다.
 UI 부분은 [Vue](https://github.com/vuejs/vue)와 [Vuetify](https://vuetifyjs.com/)로 구축되었습니다.
 
-FontFreeze가 기능을 비활성화하는 방식은 그 안의 모든 룩업(lookups)을 제거하는 것이고,
+FontFreeze 가 기능을 비활성화하는 방식은 그 안의 모든 룩업(lookups)을 제거하는 것이고,
 기능을 활성화하는 것은 그 안의 모든 룩업을 `calt`로 이동시키는 것입니다.
 `calt`는 대부분의 환경에서 기본적으로 활성화되어 있습니다.
 특정 환경에서 이것이 작동하지 않으면,
@@ -98,9 +102,9 @@ FontFreeze가 기능을 비활성화하는 방식은 그 안의 모든 룩업(lo
 
 ## 감사의 말
 
-FontFreeze는 특히 [vfit](https://github.com/jonpalmisc/vfit) 프로젝트에서 영감을 받았으며,
+FontFreeze 는 특히 [vfit](https://github.com/jonpalmisc/vfit) 프로젝트에서 영감을 받았으며,
 그 소스 코드의 많은 부분을 사용했습니다.
-FontFreeze에 영감을 준 다른 프로젝트들:
+FontFreeze 에 영감을 준 다른 프로젝트들:
 
 - [OpenType Feature Freezer](https://github.com/twardoch/fonttools-opentype-feature-freezer),
   이름에 영감을 주었습니다(다만 기능을 고정하기 위해 추가적인 접근 방식을 사용했습니다).

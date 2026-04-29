@@ -64,6 +64,10 @@ You can also select features you want to activate (or deactivate) from the featu
 Finally, click `Generate font!` to generate your font.
 It's that simple!
 
+Watch it in action (remember to unmute it):
+
+https://github.com/user-attachments/assets/8292d861-a083-45db-9deb-430e62881649
+
 Tips:
 
 - Whenever possible, use a non-variable version of the font as a starting point,
