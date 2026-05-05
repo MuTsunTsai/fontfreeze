@@ -47,7 +47,7 @@ export const css = () =>
 export const python = () =>
 	gulp.src("src/python/main.py")
 		.pipe(newer(build))
-		.pipe(exec(file => `pipenv run pyminify ${file.path} --rename-globals --preserve-globals loadFont,processFont,main,processLegacy`, { pipeStdout: true }))
+		.pipe(exec(file => `uv run pyminify ${file.path} --rename-globals --preserve-globals loadFont,processFont,main,processLegacy`, { pipeStdout: true }))
 		.pipe(gulp.dest(build));
 
 export default gulp.parallel(css, python);

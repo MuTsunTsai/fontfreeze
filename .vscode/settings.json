@@ -35,7 +35,7 @@
 		"*.css": "$(capture).css.map",
 		"*.js": "$(capture).prod.js, $(capture).min.js, $(capture).js.map",
 		".gitignore": ".gitattributes",
-		"Pipfile": "Pipfile.lock, pyproject.toml, .pylintrc",
+		"pyproject.toml": "uv.lock, .python-version, .pylintrc",
 		"README.md": "LICENSE.md, CONTRIBUTING.md, README.*.md",
 		"eslint.config.js": ".editorconfig",
 		"package.json": "pnpm-*.yaml, .npmrc, .browserslistrc"
@@ -46,7 +46,6 @@
 		"patches/": true,
 		".venv/": true
 	},
-	"python-envs.defaultEnvManager": "ms-python.python:pipenv",
 	"python-envs.pythonProjects": [],
 	"i18n-ally.localesPaths": [
 		"src/locale"

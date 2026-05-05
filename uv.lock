@@ -1,0 +1,44 @@
+version = 1
+revision = 3
+requires-python = "==3.9.*"
+
+[[package]]
+name = "fontfreeze"
+version = "0"
+source = { virtual = "." }
+dependencies = [
+    { name = "fonttools" },
+    { name = "python-minifier" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fonttools", specifier = "==4.42.1" },
+    { name = "python-minifier", specifier = ">=2.6.0" },
+]
+
+[[package]]
+name = "fonttools"
+version = "4.42.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/40/94a4c9b4248dd3d1aa7c17a46e4cfbe493350d0d09548141223fbed6c0fa/fonttools-4.42.1.tar.gz", hash = "sha256:c391cd5af88aacaf41dd7cfb96eeedfad297b5899a39e12f4c2c3706d0a3329d", size = 3370356, upload-time = "2023-08-20T13:56:59.697Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/28/05/a02865cdf7db56238f4e4df933ee765c92b407ac6cc3513763506d0967b7/fonttools-4.42.1-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:5fb289b7a815638a7613d46bcf324c9106804725b2bb8ad913c12b6958ffc4ec", size = 2708190, upload-time = "2023-08-20T13:56:36.844Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/0c/6282d8f58c49ebb1909fa13b27a4935a97d1025284044ebf06d4b84a9d21/fonttools-4.42.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:53eb5091ddc8b1199330bb7b4a8a2e7995ad5d43376cadce84523d8223ef3136", size = 2213514, upload-time = "2023-08-20T13:56:39.039Z" },
+    { url = "https://files.pythonhosted.org/packages/13/70/55f75c0d94274bf4a4daa50e94b4d5022ab562f927b8e5dbf995d7fa7cea/fonttools-4.42.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:46a0ec8adbc6ff13494eb0c9c2e643b6f009ce7320cf640de106fb614e4d4360", size = 4453546, upload-time = "2023-08-20T13:56:41.644Z" },
+    { url = "https://files.pythonhosted.org/packages/49/50/2e31753c088d364756daa5bed0dab6a5928ebfd6e6d26f975c8b6d6f754a/fonttools-4.42.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7cc7d685b8eeca7ae69dc6416833fbfea61660684b7089bca666067cb2937dcf", size = 4501539, upload-time = "2023-08-20T13:56:44.118Z" },
+    { url = "https://files.pythonhosted.org/packages/fb/e1/fdc2c148342bc0e1c5532917a802939c6c45356dbc61f3a3fc9c4a31ee80/fonttools-4.42.1-cp39-cp39-musllinux_1_1_aarch64.whl", hash = "sha256:be24fcb80493b2c94eae21df70017351851652a37de514de553435b256b2f249", size = 4431053, upload-time = "2023-08-20T13:56:46.594Z" },
+    { url = "https://files.pythonhosted.org/packages/af/97/10e312fbfef2f3650368a0a4495117c82de9b85617e71a462d9b60384fa5/fonttools-4.42.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:515607ec756d7865f23070682622c49d922901943697871fc292277cf1e71967", size = 4485989, upload-time = "2023-08-20T13:56:49.037Z" },
+    { url = "https://files.pythonhosted.org/packages/09/7e/d5f5c4f8f172d4c7f3bedf397e74ce15d7b27a001a9d3330bfab1cc80351/fonttools-4.42.1-cp39-cp39-win32.whl", hash = "sha256:0eb79a2da5eb6457a6f8ab904838454accc7d4cccdaff1fd2bd3a0679ea33d64", size = 2065745, upload-time = "2023-08-20T13:56:51.483Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/6d/93121de94919bd072a93131167d7c6244eb26fe9f2f897ddfee8eb550ffa/fonttools-4.42.1-cp39-cp39-win_amd64.whl", hash = "sha256:7286aed4ea271df9eab8d7a9b29e507094b51397812f7ce051ecd77915a6e26b", size = 2112578, upload-time = "2023-08-20T13:56:55.022Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/97/8fb94ba61f1a098671639f60cda3d7e3e2bf3a5ccc4fca00fcb909f0882e/fonttools-4.42.1-py3-none-any.whl", hash = "sha256:9398f244e28e0596e2ee6024f808b06060109e33ed38dcc9bded452fd9bbb853", size = 1033929, upload-time = "2023-08-20T13:56:57.456Z" },
+]
+
+[[package]]
+name = "python-minifier"
+version = "3.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ff/65/984ccfc140c6a9364331fe8cbeccc4138bd4083b165c7685998c07586f84/python_minifier-3.2.0.tar.gz", hash = "sha256:d39d4aa9655206870b89b41099a84725e1845319aa5a8bea6a1046b5644cd413", size = 85512, upload-time = "2025-12-31T19:50:01.173Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/69/05/c26bcd42c9134b4d3919ddbabf8de323004e89355c1b0ce87d1be65fdd1d/python_minifier-3.2.0-py3-none-any.whl", hash = "sha256:b8486b1dc15980d1d833f72a8a8696616a611f1a10fb72aaf96e2de891beb4c2", size = 62345, upload-time = "2025-12-31T19:49:59.639Z" },
+]

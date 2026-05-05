@@ -1,4 +1,14 @@
-# https://docs.astral.sh/ruff/settings/#format
+[project]
+name = "fontfreeze"
+version = "0"
+description = "Freeze variations and features in font."
+requires-python = "==3.9.*"
+dependencies = [
+	"fonttools==4.42.1",
+	"python-minifier>=2.6.0",
+]
+
+# https://docs.astral.sh/ruff/settings/
 [tool.ruff]
 line-length = 130
 

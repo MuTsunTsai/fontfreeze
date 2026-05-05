@@ -2,4 +2,5 @@ test/
 build/
 node_modules/
 __pycache__/
+.venv/
 CLAUDE.md
