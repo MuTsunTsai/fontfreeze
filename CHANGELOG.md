@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 - Customizable feature values ([#19](https://github.com/MuTsunTsai/fontfreeze/issues/19)).
 
+### Patches
+
+- 1.14.1: Fix issue [#33](https://github.com/MuTsunTsai/fontfreeze/issues/33).
+
 ## [1.13.0] - 2026-03-23
 
 - Add localization for 4 languages.

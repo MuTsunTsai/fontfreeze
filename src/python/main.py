@@ -25,6 +25,17 @@ hideRemovedFeature = True
 MAC_STYLE = {"Regular": 0, "Bold": 1, "Italic": 2, "Bold Italic": 3}
 
 
+def getFeatureRecords(font: TTFont, /) -> list:
+    # A font may contain a GSUB table whose FeatureList is None (an empty GSUB
+    # with no features), so checking "GSUB" in font alone is not enough.
+    if "GSUB" not in font:
+        return []
+    featureList = font["GSUB"].table.FeatureList
+    if featureList is None:
+        return []
+    return featureList.FeatureRecord
+
+
 def getAxisName(font: TTFont, tag: str, /) -> str:
     names: table__n_a_m_e = font["name"]
     axes: list[Axis] = font["fvar"].axes
@@ -162,9 +173,9 @@ class Instantiate:
 
 
 def removeFeature(font: TTFont, features: list, /):
-    if len(features) == 0 or "GSUB" not in font:
+    if len(features) == 0:
         return
-    records = font["GSUB"].table.FeatureList.FeatureRecord
+    records = getFeatureRecords(font)
     # We cannot just remove the record, as this will mess up the scripts
     for record in records:
         if record.FeatureTag in features:
@@ -193,10 +204,14 @@ class Activator:
         if len(self.features) == 0 or "GSUB" not in self.font:
             return
 
+        # Guard against an empty GSUB whose sub-tables are None.
+        gsub_table = self.font["GSUB"].table
+        if gsub_table.FeatureList is None or gsub_table.ScriptList is None or gsub_table.LookupList is None:
+            return
+
         self.cmapTables = self.font["cmap"].tables
         self.unicodeGlyphs = {name for table in self.cmapTables for name in table.cmap.values()}
 
-        gsub_table = self.font["GSUB"].table
         self.featureRecords = gsub_table.FeatureList.FeatureRecord
         self.lookup = gsub_table.LookupList.Lookup
 
@@ -441,7 +456,10 @@ def loadFont(filename: str, /):
 
     OS2 = font["OS/2"]
     names: table__n_a_m_e = font["name"]
-    features = font["GSUB"].table.FeatureList.FeatureRecord if "GSUB" in font else []
+    # Some fonts (e.g. modified Fira Mono italics) ship a GSUB table whose
+    # FeatureList is None, i.e. an empty GSUB with no features at all. Guard
+    # against that so we treat it the same as having no GSUB.
+    features = getFeatureRecords(font)
     features = [r.FeatureTag for r in features]
 
     # change temp to input, preventing input being overwritten by invalid file
