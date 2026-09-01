@@ -189,6 +189,24 @@ def clearFeatureRecord(featureRecord, /):
         featureRecord.FeatureTag = "DELT"  # Special value
 
 
+def iterEffectiveSubTables(lookup, /):
+    """Yield (effectiveType, subTable) pairs, transparently unwrapping
+    LookupType 7 (Extension Substitution).
+
+    Many fonts (e.g. Iosevka) wrap their real sub-tables inside Extension
+    lookups to work around GSUB's 16-bit offset limit. In that case
+    `lookup.LookupType` is 7 and the actual substitution lives in
+    `sub.ExtSubTable`, with its real type in `sub.ExtensionLookupType`.
+    Callers must inspect the *effective* type, not `lookup.LookupType`,
+    or the substitution is silently skipped.
+    """
+    for sub in lookup.SubTable:
+        if lookup.LookupType == 7:  # Extension Substitution
+            yield sub.ExtensionLookupType, sub.ExtSubTable
+        else:
+            yield lookup.LookupType, sub
+
+
 class Activator:
     def __init__(self, font: TTFont, args: dict, /) -> None:
         self.font = font
@@ -287,9 +305,9 @@ class Activator:
         """
         for lookupIndex in feature.LookupListIndex:
             lookup = self.lookup[lookupIndex]
-            if lookup.LookupType != 3:
-                continue
-            for sub in lookup.SubTable:
+            for subType, sub in iterEffectiveSubTables(lookup):
+                if subType != 3:
+                    continue
                 for glyph, alt_list in list(sub.alternates.items()):
                     if 1 <= value <= len(alt_list):
                         sub.alternates[glyph] = [alt_list[value - 1]]
@@ -301,16 +319,15 @@ class Activator:
         substitutions = {}  # key -> value
         for lookupIndex in lookupIndices:
             lookup = self.lookup[lookupIndex]
-            if lookup.LookupType == 1:  # Single substitution
-                for sub in lookup.SubTable:
+            for subType, sub in iterEffectiveSubTables(lookup):
+                if subType == 1:  # Single substitution
                     for key, value in sub.mapping.items():
                         if key in self.unicodeGlyphs:
                             substitutions[key] = value
                             # Update unicodeGlyphs so subsequent lookups can track substituted glyphs
                             self.unicodeGlyphs.discard(key)
                             self.unicodeGlyphs.add(value)
-            elif lookup.LookupType == 3:  # Alternate substitution reduced to a single choice
-                for sub in lookup.SubTable:
+                elif subType == 3:  # Alternate substitution reduced to a single choice
                     for key, alt_list in sub.alternates.items():
                         if len(alt_list) == 1 and key in self.unicodeGlyphs:
                             value = alt_list[0]
@@ -331,20 +348,21 @@ class Activator:
     def updateLookupGlyphNames(self, substitutions, /):
         """Update substituted glyph names in all lookups"""
         for lookup in self.lookup:
-            if lookup.LookupType == 4:  # Ligature substitution
-                for sub in lookup.SubTable:
-                    # Update ligatures dict keys (first glyph)
-                    newLigatures = {}
-                    for firstGlyph, ligatureSet in sub.ligatures.items():
-                        newFirstGlyph = substitutions.get(firstGlyph, firstGlyph)
-                        for lig in ligatureSet:
-                            # Update Component (subsequent glyphs)
-                            lig.Component = [substitutions.get(g, g) for g in lig.Component]
-                        if newFirstGlyph in newLigatures:
-                            newLigatures[newFirstGlyph].extend(ligatureSet)
-                        else:
-                            newLigatures[newFirstGlyph] = ligatureSet
-                    sub.ligatures = newLigatures
+            for subType, sub in iterEffectiveSubTables(lookup):
+                if subType != 4:  # Ligature substitution
+                    continue
+                # Update ligatures dict keys (first glyph)
+                newLigatures = {}
+                for firstGlyph, ligatureSet in sub.ligatures.items():
+                    newFirstGlyph = substitutions.get(firstGlyph, firstGlyph)
+                    for lig in ligatureSet:
+                        # Update Component (subsequent glyphs)
+                        lig.Component = [substitutions.get(g, g) for g in lig.Component]
+                    if newFirstGlyph in newLigatures:
+                        newLigatures[newFirstGlyph].extend(ligatureSet)
+                    else:
+                        newLigatures[newFirstGlyph] = ligatureSet
+                sub.ligatures = newLigatures
 
     def moveFeatureLookups(fromFeature, toFeature, /):
         toFeature.LookupListIndex.extend(fromFeature.LookupListIndex)

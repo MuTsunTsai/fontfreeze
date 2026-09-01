@@ -1,6 +1,6 @@
 {
 	"name": "fontfreeze",
-	"version": "1.14.1",
+	"version": "1.14.2",
 	"description": "Freeze variations and features in font.",
 	"keywords": [
 		"font"
@@ -16,9 +16,9 @@
 	"scripts": {
 		"prebuild": "gulp",
 		"build": "rsbuild build",
+		"dev": "rsbuild dev",
 		"postinstall": "uv sync",
-		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze/",
-		"start": "rsbuild dev"
+		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze/"
 	},
 	"dependencies": {
 		"probably-china": "^1.1.0",
