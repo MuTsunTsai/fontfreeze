@@ -78,6 +78,35 @@ https://github.com/user-attachments/assets/8292d861-a083-45db-9deb-430e62881649
   请确保先冻结字体，然后再进行补丁。
   反过来做可能会导致错误（参见 [#8](https://github.com/MuTsunTsai/fontfreeze/issues/8#event-9248246359)）。
 
+## 常见问题
+
+### 如何让字体的风格集（`ss01`）或字符变体（`cv01`）永久启用？
+
+在 FontFreeze 中打开字体，将 `ss01`、`cv01`（或其他任何特性）设为启用，
+然后点击 `Generate font!`。
+这些特性会被固定到生成的字体中，成为它的默认行为。
+
+### 如何在 Visual Studio、Microsoft Word、终端等不支持字体特性设置的程序中使用字体特性？
+
+这些程序只能选择字体家族，所以必须把特性冻结到字体文件本身。
+用 FontFreeze 生成自定义的字体、安装之后，
+再以新的字体家族名称（默认会加上“Freeze”后缀）选用即可。
+如果不想依赖 VS Code、JetBrains IDE 等程序的特性设置，也可以用同样的方法。
+
+### 如何永久关闭 Fira Code、JetBrains Mono、Cascadia Code 等编程字体的连字？
+
+停用 `calt`（如果字体有 `liga` 也一并停用），然后生成字体即可。
+无论编辑器怎么设置，连字都不会再出现。
+
+### 如何把可变字体转换成静态字体？
+
+打开可变字体，选择一个预定义实例或自行设置各个轴（字重、字宽、倾斜等），
+然后生成字体。输出的会是静态的 TTF 或 WOFF2 实例。
+
+### 我的字体会被上传到任何地方吗？
+
+不会。所有处理都在您的浏览器中于本地完成。
+
 ## 运作原理
 
 FontFreeze 使用 [fonttools](https://github.com/fonttools/fonttools)，

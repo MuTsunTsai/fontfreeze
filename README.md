@@ -80,6 +80,35 @@ Tips:
   make sure that you freeze the font first, and then patch it.
   Doing it the other way could lead to error (see [#8](https://github.com/MuTsunTsai/fontfreeze/issues/8#event-9248246359)).
 
+## FAQ
+
+### How do I permanently enable a stylistic set (`ss01`) or character variant (`cv01`) in a font?
+
+Open the font in FontFreeze, mark `ss01`, `cv01` (or any other feature) as activated,
+and click `Generate font!`.
+The features are baked into the generated font as its default behavior.
+
+### How can I use font features in Visual Studio, Microsoft Word, terminals, or other apps without font feature settings?
+
+These apps can only pick a font family, so the features need to be frozen into the font file itself.
+Generate a customized copy with FontFreeze, install it,
+and select it by its new family name (suffixed with "Freeze" by default).
+This also works for VS Code, JetBrains IDEs and the like if you prefer not to rely on their feature settings.
+
+### How do I permanently disable programming ligatures in Fira Code, JetBrains Mono, Cascadia Code, etc.?
+
+Deactivate `calt` (and `liga` if the font has it) and generate the font.
+The ligatures will be gone regardless of the editor's settings.
+
+### How do I convert a variable font into a static font?
+
+Open the variable font, choose a predefined instance or set each axis (weight, width, slant, etc.),
+and generate the font. The output is a static TTF or WOFF2 instance.
+
+### Are my fonts uploaded anywhere?
+
+No. All processing happens locally in your browser.
+
 ## How it works
 
 FontFreeze uses [fonttools](https://github.com/fonttools/fonttools),

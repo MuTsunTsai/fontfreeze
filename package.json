@@ -3,7 +3,14 @@
 	"version": "1.14.2",
 	"description": "Freeze variations and features in font.",
 	"keywords": [
-		"font"
+		"font",
+		"opentype",
+		"opentype-features",
+		"variable-fonts",
+		"ligatures",
+		"stylistic-sets",
+		"font-instancer",
+		"fonttools"
 	],
 	"private": true,
 	"repository": {
