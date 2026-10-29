@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 - 1.14.1: Fix issue [#33](https://github.com/MuTsunTsai/fontfreeze/issues/33).
 - 1.14.2: Fix issue [#34](https://github.com/MuTsunTsai/fontfreeze/issues/34).
+- 1.14.3: Upgrade to FontTools 4.68.0.
 
 ## [1.13.0] - 2026-03-23
 

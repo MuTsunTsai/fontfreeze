@@ -18,7 +18,7 @@ const PERCENTAGE = 100;
 
 if(typeof TransformStream != "undefined") {
 	// This number should be updated whenever Pyodide updates
-	const totalBytes = 16253175;
+	const totalBytes = 13399248;
 
 	let lastProgress = performance.now();
 
@@ -50,13 +50,18 @@ if(typeof TransformStream != "undefined") {
 // as Pyodide tends to focus only on the latest browsers as they develop.
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
 
+// The fonttools bundled with Pyodide 0.25.1 is outdated (4.42.1).
+// Since fonttools is pure Python, we load a newer wheel from PyPI instead.
+// Keep the version in sync with pyproject.toml.
+const FONTTOOLS_WHEEL = "https://files.pythonhosted.org/packages/35/74/4ea331ecc65ba05a58b1e4e8ccd604c8a15565f876dfbf93fc2a2ea2e22b/fonttools-4.68.0-py3-none-any.whl";
+
 let pyodide: PyodideInterface;
 
 async function init(): Promise<void> {
 	try {
 		pyodide = await loadPyodide({ fullStdLib: false });
 		await pyodide.loadPackage("brotli");
-		await pyodide.loadPackage("fonttools");
+		await pyodide.loadPackage(FONTTOOLS_WHEEL);
 
 		// Use this to update totalBytes
 		console.log("Total loaded bytes: " + bytesLoaded);

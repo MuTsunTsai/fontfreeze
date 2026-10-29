@@ -2,9 +2,9 @@
 name = "fontfreeze"
 version = "0"
 description = "Freeze variations and features in font."
-requires-python = "==3.9.*"
+requires-python = "==3.11.*"
 dependencies = [
-	"fonttools==4.42.1",
+	"fonttools==4.68.0",
 	"python-minifier>=2.6.0",
 ]
 
