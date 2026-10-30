@@ -236,28 +236,46 @@ class Activator:
         self.featureRecords = gsub_table.FeatureList.FeatureRecord
         self.lookup = gsub_table.LookupList.Lookup
 
-        scriptRecords = gsub_table.ScriptList.ScriptRecord
-        for scriptRecord in scriptRecords:
-            self.activateInScript(scriptRecord.Script)
+        langSystems = [
+            langSys
+            for scriptRecord in gsub_table.ScriptList.ScriptRecord
+            for langSys in Activator.iterLangSys(scriptRecord.Script)
+        ]
+        selected = sorted(
+            {
+                index
+                for langSys in langSystems
+                for index in langSys.FeatureIndex
+                if self.featureRecords[index].FeatureTag in self.features
+            }
+        )
 
-    def activateInScript(self, script, /):
-        if script.DefaultLangSys is not None:
-            self.activateInLangSys(script.DefaultLangSys)
-        for langSysRecord in script.LangSysRecord:
-            self.activateInLangSys(langSysRecord.LangSys)
-
-    def activateInLangSys(self, langSys, /):
         # For features with a custom value (e.g. "cv01"=2), shrink each
         # AlternateSet to keep only the chosen entry. After this, the lookup
         # behaves like a Single Substitution regardless of the shaping value
         # passed by the renderer, effectively freezing the variant.
-        if self.featureValues:
-            for index in langSys.FeatureIndex:
-                featureRecord = self.featureRecords[index]
-                tag = featureRecord.FeatureTag
-                if tag in self.featureValues:
-                    self.pickAlternate(featureRecord.Feature, self.featureValues[tag])
+        for index in selected:
+            featureRecord = self.featureRecords[index]
+            tag = featureRecord.FeatureTag
+            if tag in self.featureValues:
+                self.pickAlternate(featureRecord.Feature, self.featureValues[tag])
 
+        # cmap is shared by all scripts, so the substitution is applied only once
+        if self.singleSub:
+            lookupIndices = {i for index in selected for i in self.featureRecords[index].Feature.LookupListIndex}
+            self.applySingleSubstitutionByLookupOrder(sorted(lookupIndices))
+
+        for langSys in langSystems:
+            self.activateInLangSys(langSys)
+
+    @staticmethod
+    def iterLangSys(script, /):
+        if script.DefaultLangSys is not None:
+            yield script.DefaultLangSys
+        for langSysRecord in script.LangSysRecord:
+            yield langSysRecord.LangSys
+
+    def activateInLangSys(self, langSys, /):
         targetRecord = None
 
         # try to find existing target feature
@@ -265,18 +283,6 @@ class Activator:
             featureRecord = self.featureRecords[index]
             if featureRecord.FeatureTag == self.target:
                 targetRecord = featureRecord
-
-        # Collect lookup indices from all selected features and apply single substitution in LookupList order
-        if self.singleSub:
-            allLookups = []
-            for index in langSys.FeatureIndex:
-                featureRecord = self.featureRecords[index]
-                if featureRecord.FeatureTag in self.features:
-                    for lookupIndex in featureRecord.Feature.LookupListIndex:
-                        if lookupIndex not in allLookups:
-                            allLookups.append(lookupIndex)
-            allLookups.sort()
-            self.applySingleSubstitutionByLookupOrder(allLookups)
 
         for index in langSys.FeatureIndex:
             featureRecord = self.featureRecords[index]
@@ -318,32 +324,30 @@ class Activator:
                     # (safe fallback — shaping will pick alternates[0] or skip).
 
     def applySingleSubstitutionByLookupOrder(self, lookupIndices, /):
-        # Collect all substitutions to be applied
-        substitutions = {}  # key -> value
+        # Track the current glyph of each glyph in cmap and apply the lookups one by one as a shaper does,
+        # so that chained substitutions compose (e.g. "case" one -> one.cap, then "ss07" one.cap -> one.c).
+        current = {glyph: glyph for glyph in self.unicodeGlyphs}
         for lookupIndex in lookupIndices:
-            lookup = self.lookup[lookupIndex]
-            for subType, sub in iterEffectiveSubTables(lookup):
+            mapping = {}
+            for subType, sub in iterEffectiveSubTables(self.lookup[lookupIndex]):
                 if subType == 1:  # Single substitution
-                    for key, value in sub.mapping.items():
-                        if key in self.unicodeGlyphs:
-                            substitutions[key] = value
-                            # Update unicodeGlyphs so subsequent lookups can track substituted glyphs
-                            self.unicodeGlyphs.discard(key)
-                            self.unicodeGlyphs.add(value)
+                    items = sub.mapping.items()
                 elif subType == 3:  # Alternate substitution reduced to a single choice
-                    for key, alt_list in sub.alternates.items():
-                        if len(alt_list) == 1 and key in self.unicodeGlyphs:
-                            value = alt_list[0]
-                            substitutions[key] = value
-                            self.unicodeGlyphs.discard(key)
-                            self.unicodeGlyphs.add(value)
+                    items = ((key, alt_list[0]) for key, alt_list in sub.alternates.items() if len(alt_list) == 1)
+                else:
+                    continue
+                for key, value in items:
+                    mapping.setdefault(key, value)  # The first sub-table covering a glyph wins
+            for glyph, value in current.items():
+                if value in mapping:
+                    current[glyph] = mapping[value]
+        substitutions = {glyph: value for glyph, value in current.items() if glyph != value}
 
-        # Apply to cmap
-        for table in self.cmapTables:
-            for index in table.cmap:
-                glyph = table.cmap[index]
+        # Apply to cmap; sub-tables may share the same dict (e.g. (0, 3) and (3, 1)), so process each dict once
+        for cmap in {id(table.cmap): table.cmap for table in self.cmapTables}.values():
+            for index, glyph in cmap.items():
                 if glyph in substitutions:
-                    table.cmap[index] = substitutions[glyph]
+                    cmap[index] = substitutions[glyph]
 
         # Update glyph names in all lookups
         self.updateLookupGlyphNames(substitutions)
