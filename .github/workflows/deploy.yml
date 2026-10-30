@@ -32,7 +32,8 @@ jobs:
 
       # Needed by the postinstall script (uv sync) and the gulp task (pyminify).
       # uv also fetches the Python version required by pyproject.toml.
-      - uses: astral-sh/setup-uv@v10
+      # setup-uv does not publish major version tags.
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
 
