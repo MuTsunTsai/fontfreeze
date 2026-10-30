@@ -2,6 +2,8 @@
 ///<reference types="emscripten" />
 
 import script from "../../build/main.py?raw";
+// Built with src/lib/uharfbuzz/Dockerfile; keep the version in sync with pyproject.toml.
+import uharfbuzzWheel from "../lib/uharfbuzz/uharfbuzz-0.57.0-cp311-cp311-emscripten_3_1_46_wasm32.whl";
 
 import type { PyodideInterface, loadPyodide as loadPy } from "pyodide";
 import type { StoreType } from "./store";
@@ -81,7 +83,7 @@ addEventListener("message", async event => {
 		const [command, data] = event.data;
 		let result;
 		if(command == "open") result = await open(data);
-		if(command == "save") result = save(data);
+		if(command == "save") result = await save(data);
 		if(command == "legacy") result = legacy();
 		event.ports[0].postMessage({
 			success: true,
@@ -121,8 +123,20 @@ function createPreviewUrl(): string {
 
 let saveURL: string;
 
-function save(args: StoreType): string {
-	pyodide.globals.get("processFont")(args);
+async function save(args: StoreType): Promise<string> {
+	const py = pyodide.globals;
+	if(!py.get("processFont")(args)) {
+		// GSUB/GPOS is too large for the pure-Python serializer of fontTools to pack efficiently,
+		// so we load uharfbuzz for its repacker. It's only needed for such fonts, hence loaded on demand.
+		try {
+			await pyodide.loadPackage(uharfbuzzWheel);
+			py.get("enableRepacker")();
+		} catch(e) {
+			console.warn("Failed to load uharfbuzz", e);
+			py.get("useExtensionLookups")();
+		}
+		py.get("saveFont")();
+	}
 	const content = pyodide.FS.readFile("output") as Uint8Array<ArrayBuffer>;
 	const blob = new Blob([content], { type: "font/" + args.options.format });
 	if(saveURL) URL.revokeObjectURL(saveURL);

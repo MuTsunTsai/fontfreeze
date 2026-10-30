@@ -2,6 +2,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.15.0] - 2026-10-30
+
+- Use the HarfBuzz repacker (via uharfbuzz) to pack large GSUB/GPOS tables, greatly speeding up generating fonts like Google Sans, which fixes issue [#35](https://github.com/MuTsunTsai/fontfreeze/issues/35).
+
 ## [1.14.0] - 2026-04-25
 
 - Customizable feature values ([#19](https://github.com/MuTsunTsai/fontfreeze/issues/19)).

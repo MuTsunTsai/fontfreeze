@@ -14,10 +14,13 @@ from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent, table__g_l_y_
 from fontTools.ttLib.tables._h_h_e_a import table__h_h_e_a
 from fontTools.ttLib.tables._n_a_m_e import NameRecord, table__n_a_m_e
 from fontTools.ttLib.tables._m_o_r_t import table__m_o_r_t
+from fontTools.ttLib.tables import otBase
+from fontTools.ttLib.tables.otBase import BaseTTXConverter
 from fontTools.ttLib.tables.otTables import (
     featureParamTypes,
     FeatureParamsStylisticSet,
     FeatureParamsCharacterVariants,
+    lookupTypes,
 )
 
 hideRemovedFeature = True
@@ -593,27 +596,121 @@ def processLegacy():
     fixLegacy(font)
 
 
-def processFont(args, /):
-    main(args.to_py(), "input", "output")
+def processFont(args, /) -> bool:
+    return prepareFont(args.to_py(), "input", "output")
 
 
+# For running locally (see test/test.py).
 def main(args: dict, filename: str, output: str, /):
-    global hideRemovedFeature
-    hideRemovedFeature = True
-    font = generateFont(args, filename)
+    if not prepareFont(args, filename, output):
+        try:
+            enableRepacker()
+        except ImportError:
+            useExtensionLookups()
+        saveFont()
 
+
+#####################################################################################################
+# Saving
+#####################################################################################################
+
+
+# Packing a large GSUB/GPOS table (e.g. Google Sans v14) with the pure-Python serializer of fontTools
+# can take dozens of rounds of offset overflow resolution, each recompiling the whole table (issue #35).
+# So when uharfbuzz is not loaded, the first overflow aborts the save instead, and the caller should
+# either call enableRepacker() (the HarfBuzz repacker handles such tables at once)
+# or useExtensionLookups() as a fallback, and then call saveFont() again.
+class RepackerNeeded(Exception):
+    pass
+
+
+abortOnOverflow = False
+extensionLookups = False
+originalTryResolveOverflow = BaseTTXConverter.tryResolveOverflow
+
+
+def tryResolveOverflow(self, font, e, lastOverflowRecord):
+    if abortOnOverflow:
+        raise RepackerNeeded()
+    return originalTryResolveOverflow(self, font, e, lastOverflowRecord)
+
+
+BaseTTXConverter.tryResolveOverflow = tryResolveOverflow
+
+
+def enableRepacker():
+    # fontTools checks for uharfbuzz only on import, so we register it manually.
+    import uharfbuzz
+
+    otBase.hb = uharfbuzz
+    otBase.have_uharfbuzz = True
+
+
+def useExtensionLookups():
+    global extensionLookups
+    extensionLookups = True
+
+
+# Promoting all lookups to Extension lookups upfront costs some size (8 bytes per subtable),
+# but then the pure-Python serializer succeeds in a single round.
+def promoteLookups(font: TTFont, /):
+    for tag, extType in (("GSUB", 7), ("GPOS", 9)):
+        if tag not in font or not font.isLoaded(tag):
+            continue  # Unmodified tables are written as-is.
+        lookupList = font[tag].table.LookupList
+        if lookupList is None:
+            continue
+        for lookup in lookupList.Lookup:
+            if lookup.LookupType == extType:
+                continue
+            lookup.LookupType = extType
+            for i, subTable in enumerate(lookup.SubTable):
+                extSubTable = lookupTypes[tag][extType]()
+                extSubTable.Format = 1
+                extSubTable.ExtSubTable = subTable
+                lookup.SubTable[i] = extSubTable
+
+
+# The font being saved, kept between prepareFont() and saveFont().
+pending: dict = {}
+
+
+def prepareFont(args: dict, filename: str, output: str, /) -> bool:
+    global hideRemovedFeature, extensionLookups
+    hideRemovedFeature = True
+    extensionLookups = False
+    pending.update(args=args, filename=filename, output=output, font=generateFont(args, filename))
+    return saveFont()
+
+
+# Returns False if the save is aborted with RepackerNeeded.
+def saveFont() -> bool:
+    global hideRemovedFeature, abortOnOverflow
+    abortOnOverflow = not otBase.have_uharfbuzz and not extensionLookups
     try:
-        font.save(output)
-    except AssertionError as msg:
-        if "DELT" in str(msg):
-            # For unknown reason, some fonts have problem with the "DELT" idea,
-            # for example JetBrains Mono v2.303 (specifically).
-            # In that case fallback and do not change the feature name.
-            hideRemovedFeature = False
-            font = generateFont(args, filename)
-            font.save(output)
-        else:
-            raise
+        try:
+            save(pending["font"])
+        except AssertionError as msg:
+            if "DELT" in str(msg):
+                # For unknown reason, some fonts have problem with the "DELT" idea,
+                # for example JetBrains Mono v2.303 (specifically).
+                # In that case fallback and do not change the feature name.
+                hideRemovedFeature = False
+                pending["font"] = generateFont(pending["args"], pending["filename"])
+                save(pending["font"])
+            else:
+                raise
+    except RepackerNeeded:
+        return False
+    finally:
+        abortOnOverflow = False
+    return True
+
+
+def save(font: TTFont, /):
+    if extensionLookups:
+        promoteLookups(font)
+    font.save(pending["output"])
 
 
 def generateFont(args: dict, filename: str):

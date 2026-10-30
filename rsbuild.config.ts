@@ -53,8 +53,14 @@ export default defineConfig({
 		}),
 	],
 	tools: {
-		rspack: (_, { appendPlugins }) => {
+		rspack: (_, { appendPlugins, addRules }) => {
 			appendPlugins(new VuetifyPlugin({}));
+			addRules({
+				test: /\.whl$/,
+				type: "asset/resource",
+				// Keep the original file name, as Pyodide parses the package name and version from it.
+				generator: { filename: "static/wheel/[name][ext]" },
+			});
 		},
 	},
 });

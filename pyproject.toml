@@ -6,6 +6,7 @@ requires-python = "==3.11.*"
 dependencies = [
 	"fonttools==4.68.0",
 	"python-minifier>=2.6.0",
+	"uharfbuzz==0.57.0",
 ]
 
 # https://docs.astral.sh/ruff/settings/
