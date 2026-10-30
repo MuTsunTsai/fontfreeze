@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 - Use the HarfBuzz repacker (via uharfbuzz) to pack large GSUB/GPOS tables, greatly speeding up generating fonts like Google Sans, which fixes issue [#35](https://github.com/MuTsunTsai/fontfreeze/issues/35).
 
+### Patches
+
+- 1.15.1: Fix chained single-glyph substitutions ([#27](https://github.com/MuTsunTsai/fontfreeze/issues/27)) and an error with legacy Mac cmap subtables (e.g. Maple Mono).
+
 ## [1.14.0] - 2026-04-25
 
 - Customizable feature values ([#19](https://github.com/MuTsunTsai/fontfreeze/issues/19)).

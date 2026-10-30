@@ -343,11 +343,13 @@ class Activator:
                     current[glyph] = mapping[value]
         substitutions = {glyph: value for glyph, value in current.items() if glyph != value}
 
-        # Apply to cmap; sub-tables may share the same dict (e.g. (0, 3) and (3, 1)), so process each dict once
-        for cmap in {id(table.cmap): table.cmap for table in self.cmapTables}.values():
-            for index, glyph in cmap.items():
-                if glyph in substitutions:
-                    cmap[index] = substitutions[glyph]
+        # Apply to cmap; sub-tables may share the same dict (e.g. (0, 3) and (3, 1)), so process each dict once.
+        # Format 0 (legacy Mac) can only address glyph IDs below 256, so substitutions beyond that are skipped there.
+        for table in {id(table.cmap): table for table in self.cmapTables}.values():
+            for index, glyph in table.cmap.items():
+                value = substitutions.get(glyph)
+                if value is not None and (table.format != 0 or self.font.getGlyphID(value) < 256):
+                    table.cmap[index] = value
 
         # Update glyph names in all lookups
         self.updateLookupGlyphNames(substitutions)
