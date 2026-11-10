@@ -22,7 +22,12 @@ fn run(args: &[String]) -> Result<(), Box<dyn std::error::Error>> {
 		}
 		[cmd, args, input, output] if cmd == "process" => {
 			let args: fontfreeze::Args = serde_json::from_str(&std::fs::read_to_string(args)?)?;
-			std::fs::write(output, fontfreeze::process_font(&std::fs::read(input)?, &args)?)?;
+			let start = std::time::Instant::now();
+			let progress = fontfreeze::percent_progress(move |p| {
+				eprintln!("{:>7.2}s {p:>3}%", start.elapsed().as_secs_f64());
+			});
+			let data = fontfreeze::process_font(&std::fs::read(input)?, &args, Some(progress))?;
+			std::fs::write(output, data)?;
 		}
 		_ => return Err("usage: fontfreeze-cli (load <input> [<output>] | legacy <input> <output> | process <args.json> <input> <output>)".into()),
 	}

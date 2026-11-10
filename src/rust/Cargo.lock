@@ -126,17 +126,17 @@ dependencies = [
 [[package]]
 name = "fontoxide-agl"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 
 [[package]]
 name = "fontoxide-encodings"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 
 [[package]]
 name = "fontoxide-misc"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 dependencies = [
  "log",
  "roxmltree",
@@ -145,7 +145,7 @@ dependencies = [
 [[package]]
 name = "fontoxide-pens"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 dependencies = [
  "fontoxide-misc",
  "log",
@@ -155,7 +155,7 @@ dependencies = [
 [[package]]
 name = "fontoxide-repack"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 dependencies = [
  "log",
  "thiserror",
@@ -164,7 +164,7 @@ dependencies = [
 [[package]]
 name = "fontoxide-subset"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 dependencies = [
  "fontoxide-misc",
  "fontoxide-ttlib",
@@ -176,7 +176,7 @@ dependencies = [
 [[package]]
 name = "fontoxide-ttlib"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 dependencies = [
  "brotli",
  "flate2",
@@ -195,12 +195,12 @@ dependencies = [
 [[package]]
 name = "fontoxide-unicodedata"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 
 [[package]]
 name = "fontoxide-varlib"
 version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=912da1e10ac6fcc29e60aa76b3efa86791400893#912da1e10ac6fcc29e60aa76b3efa86791400893"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
 dependencies = [
  "fontoxide-misc",
  "fontoxide-subset",

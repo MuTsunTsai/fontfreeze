@@ -14,6 +14,8 @@ export const store = reactive({
 	subsetMode: "exclude",
 	previewSize: 12,
 	running: false,
+	/** The percentage of the generation done, if known (WOFF2 only). */
+	progress: null as number | null,
 	message: null as string | null,
 	url: null as string | null,
 	download: null as string | null,

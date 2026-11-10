@@ -16,7 +16,7 @@ use std::fmt;
 
 use fontoxide_ttlib::tables::cmap::DEFAULT_CMAP_PREFERENCES;
 use fontoxide_ttlib::tables::{Fvar, Name, Os2};
-use fontoxide_ttlib::{Flavor, Font, ReadOptions, TableType, Tag, WriteOptions};
+use fontoxide_ttlib::{Flavor, Font, Progress, ReadOptions, TableType, Tag, WriteOptions};
 use fontoxide_varlib::instancer::{AxisLimits, AxisTriple, InstancerOptions, OverlapMode};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
@@ -231,23 +231,6 @@ fn get_fvar(font: &mut Font) -> Result<Option<FvarInfo>> {
 	}))
 }
 
-/// Compiles a font.
-///
-/// There is no clock on `wasm32-unknown-unknown`, so the timestamp is set here from the
-/// JavaScript clock instead of by fontoxide.
-pub(crate) fn write_font(font: &mut Font, options: &WriteOptions) -> Result<Vec<u8>> {
-	#[cfg(target_arch = "wasm32")]
-	if font.recalc_timestamp {
-		/// Seconds from 1904-01-01 (the OpenType epoch) to 1970-01-01.
-		const EPOCH_DIFF: f64 = 2_082_844_800.0;
-		if let Some(head) = font.get::<fontoxide_ttlib::tables::Head>()? {
-			head.modified = (js_sys::Date::now() / 1000.0 + EPOCH_DIFF).floor() as u64;
-		}
-		font.recalc_timestamp = false;
-	}
-	Ok(font.write(options)?)
-}
-
 /// Reads a font as the rest of FontFreeze expects (`loadTtfFont`).
 pub(crate) fn read_font(data: &[u8]) -> Result<Font> {
 	let mut font = Font::read(
@@ -332,7 +315,10 @@ pub fn process_legacy(data: &[u8]) -> Result<Vec<u8>> {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 /// Generates the frozen font (`processFont`).
-pub fn process_font(data: &[u8], args: &Args) -> Result<Vec<u8>> {
+///
+/// `progress` is called with the fraction of the Brotli compression done, for WOFF 2.0
+/// output only, as that takes most of the time for large fonts.
+pub fn process_font(data: &[u8], args: &Args, progress: Option<Progress>) -> Result<Vec<u8>> {
 	let mut font = read_font(data)?;
 	instantiate(&mut font, args)?;
 	activator::remove_features(&mut font, &args.disables)?;
@@ -353,7 +339,26 @@ pub fn process_font(data: &[u8], args: &Args) -> Result<Vec<u8>> {
 		font.flavor = Some(Flavor::Woff2);
 	}
 
-	write_font(&mut font, &WriteOptions::default())
+	Ok(font.write(&WriteOptions {
+		woff2_progress: progress,
+		..Default::default()
+	})?)
+}
+
+/// Wraps `report` as a [`Progress`] that is called only when the integral percentage
+/// changes, as fontoxide reports the progress thousands of times for a large font.
+///
+/// The percentage stops at 99: fontoxide reports the fraction of the data read by Brotli,
+/// which reaches 1.0 while the encoder is still working on the last block (seconds on
+/// wasm for a large font), so the completion is signaled by the result instead.
+pub fn percent_progress(report: impl Fn(u32) + 'static) -> Progress {
+	let last = std::cell::Cell::new(None);
+	std::rc::Rc::new(move |fraction: f64| {
+		let percent = ((fraction.clamp(0.0, 1.0) * 100.0).floor() as u32).min(99);
+		if last.replace(Some(percent)) != Some(percent) {
+			report(percent);
+		}
+	})
 }
 
 /// Formats a number as Python does for an int or a float converted from JavaScript.

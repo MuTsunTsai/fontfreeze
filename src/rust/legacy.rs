@@ -90,10 +90,8 @@ pub(crate) fn fix_legacy(font: &mut Font) -> Result<Vec<u8>> {
 	}
 
 	// Simply re-saving the font should fix most table alignment issues.
-	crate::write_font(
-		font,
-		&WriteOptions {
-			reorder_tables: None,
-		},
-	)
+	Ok(font.write(&WriteOptions {
+		reorder_tables: None,
+		..Default::default()
+	})?)
 }

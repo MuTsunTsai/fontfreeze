@@ -46,6 +46,8 @@ function startAnime(): Promise<unknown> {
 	const anime = new Promise(resolve => {
 		addEventListener("animationstart", resolve, { once: true });
 	});
+	// The progress is only shown while running, so it suffices to reset it here.
+	store.progress = null;
 	store.running = true;
 	return anime;
 }
@@ -125,7 +127,7 @@ async function getOutputURL(): Promise<string> {
 			featureValues,
 			disables,
 		};
-		return await callWorker("save", clone(args)) as string;
+		return await callWorker("save", clone(args), p => store.progress = p) as string;
 	} catch(e) {
 		if(e instanceof Error) alert(t("error.errorOccur", { message: e.message }));
 		throw e;

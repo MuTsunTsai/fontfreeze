@@ -17,11 +17,19 @@ export const initialized = new Promise<void>((resolve, reject) => {
 	worker.addEventListener("message", handler);
 });
 
-export function callWorker(command: string, payload?: unknown): Promise<unknown> {
+export function callWorker(
+	command: string,
+	payload?: unknown,
+	onProgress?: (progress: number) => void
+): Promise<unknown> {
 	return new Promise((resolve, reject) => {
 		const channel = new MessageChannel();
 		worker.postMessage([command, payload], [channel.port2]);
 		channel.port1.onmessage = e => {
+			if("progress" in e.data) {
+				onProgress?.(e.data.progress);
+				return;
+			}
 			const { success, data } = e.data;
 			if(success) resolve(data);
 			else reject(new Error(data));

@@ -53,7 +53,7 @@ addEventListener("message", async event => {
 		const [command, data] = event.data;
 		let result;
 		if(command == "open") result = await open(data);
-		if(command == "save") result = save(data);
+		if(command == "save") result = save(data, event.ports[0]);
 		if(command == "legacy") result = legacy();
 		event.ports[0].postMessage({
 			success: true,
@@ -98,8 +98,10 @@ function createPreviewUrl(): string {
 
 let saveURL: string;
 
-function save(args: StoreType): string {
-	const content = processFont(input, args) as Uint8Array<ArrayBuffer>;
+function save(args: StoreType, port: MessagePort): string {
+	// Called with the percentage of the compression done, for WOFF2 only.
+	const onProgress = (progress: number): void => port.postMessage({ progress });
+	const content = processFont(input, args, onProgress) as Uint8Array<ArrayBuffer>;
 	const blob = new Blob([content], { type: "font/" + args.options.format });
 	if(saveURL) URL.revokeObjectURL(saveURL);
 	saveURL = URL.createObjectURL(blob);

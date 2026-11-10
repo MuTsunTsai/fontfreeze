@@ -2,7 +2,7 @@ import { createConfig } from "@mutsuntsai/eslint";
 
 export default [
 	...createConfig({
-		ignores: ["docs/**"],
+		ignores: ["docs/**", "build/**", "src/rust/target/**"],
 		import: {
 			files: ["src/**/*.vue", "**/*.ts", "eslint.config.js", "gulpfile.js"],
 			project: ["src/app"],

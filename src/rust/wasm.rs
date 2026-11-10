@@ -7,6 +7,13 @@ fn to_js_error(e: crate::Error) -> JsError {
 	JsError::new(&e.0)
 }
 
+/// Runs when the module is initialized.
+#[wasm_bindgen(start)]
+fn start() {
+	// There is no system clock on wasm32-unknown-unknown; it is needed for head.modified.
+	fontoxide_ttlib::set_clock(|| js_sys::Date::now() / 1000.0);
+}
+
 /// Reads a font and returns `{ info, data }`; see [`crate::LoadResult`].
 #[wasm_bindgen(js_name = loadFont)]
 pub fn load_font(data: &[u8]) -> Result<JsValue, JsError> {
@@ -22,8 +29,21 @@ pub fn process_legacy(data: &[u8]) -> Result<Vec<u8>, JsError> {
 }
 
 /// Generates the frozen font.
+///
+/// `on_progress` is called with the integral percentage of the compression done,
+/// for WOFF 2.0 output only.
 #[wasm_bindgen(js_name = processFont)]
-pub fn process_font(data: &[u8], args: JsValue) -> Result<Vec<u8>, JsError> {
+pub fn process_font(
+	data: &[u8],
+	args: JsValue,
+	on_progress: Option<js_sys::Function>,
+) -> Result<Vec<u8>, JsError> {
 	let args: crate::Args = serde_wasm_bindgen::from_value(args)?;
-	crate::process_font(data, &args).map_err(to_js_error)
+	let progress = on_progress.map(|f| {
+		crate::percent_progress(move |p| {
+			// The progress is only informative, so errors from the callback are ignored.
+			let _ = f.call1(&JsValue::NULL, &JsValue::from(p));
+		})
+	});
+	crate::process_font(data, &args, progress).map_err(to_js_error)
 }

@@ -106,8 +106,10 @@
 						v-if="store.running"
 						size="20"
 						class="ms-2"
-						indeterminate
+						:indeterminate="store.progress === null"
+						:model-value="store.progress ?? 0"
 					/>
+					<span v-if="store.running && store.progress !== null" class="ms-1">{{ store.progress }}%</span>
 				</v-btn>
 			</v-col>
 			<v-col v-if="store.url" cols="6" class="text-end">
