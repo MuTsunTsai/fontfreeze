@@ -30,12 +30,22 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      # Needed by the postinstall script (uv sync) and the gulp task (pyminify).
-      # uv also fetches the Python version required by pyproject.toml.
-      # setup-uv does not publish major version tags.
-      - uses: astral-sh/setup-uv@v10.3.3
+      # The Rust crate in src/rust is compiled to WebAssembly by the gulp task "wasm".
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          enable-cache: true
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src/rust
+
+      # wasm-bindgen-cli must match the version of the wasm-bindgen crate in Cargo.lock.
+      - id: wasm-bindgen
+        run: echo "version=$(grep -A1 '^name = "wasm-bindgen"$' src/rust/Cargo.lock | sed -n 's/^version = "\(.*\)"$/\1/p')" >> "$GITHUB_OUTPUT"
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen@${{ steps.wasm-bindgen.outputs.version }}
 
       - run: pnpm install --frozen-lockfile
 

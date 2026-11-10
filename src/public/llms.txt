@@ -1,6 +1,6 @@
 # FontFreeze
 
-> FontFreeze is a free, open-source web app that freezes OpenType features and variable font axes into a new font file. It lets you permanently enable or disable features such as stylistic sets (ss01-ss20), character variants (cv01-cv99), ligatures (calt, liga), slashed zero (zero) and old-style figures (onum), or turn a variable font into a static instance, so the customized font works in apps that don't support font feature settings. It runs entirely in the browser (fonttools on Pyodide/WebAssembly); font files are never uploaded.
+> FontFreeze is a free, open-source web app that freezes OpenType features and variable font axes into a new font file. It lets you permanently enable or disable features such as stylistic sets (ss01-ss20), character variants (cv01-cv99), ligatures (calt, liga), slashed zero (zero) and old-style figures (onum), or turn a variable font into a static instance, so the customized font works in apps that don't support font feature settings. It runs entirely in the browser (fontoxide, a Rust port of fonttools, on WebAssembly); font files are never uploaded.
 
 App URL: https://mutsuntsai.github.io/fontfreeze/
 

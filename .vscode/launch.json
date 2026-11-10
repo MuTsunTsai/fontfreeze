@@ -15,15 +15,6 @@
 			// for some (but not all) of the Vue files for now.
 			"webRoot": "${workspaceFolder}",
 			"sourceMaps": true
-		},
-		{
-			"name": "Python: Test",
-			"type": "debugpy",
-			"request": "launch",
-			"program": "${workspaceFolder}/test/test.py",
-			"console": "integratedTerminal",
-			"cwd": "${workspaceFolder}/test/",
-			"justMyCode": false
 		}
 	]
 }

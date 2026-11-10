@@ -111,10 +111,9 @@ No. All processing happens locally in your browser.
 
 ## How it works
 
-FontFreeze uses [fonttools](https://github.com/fonttools/fonttools),
-a Python library for manipulating fonts.
-In then utilizes [Pyodide](https://pyodide.org/)
-to run Python code directly in your browser through WebAssembly,
+FontFreeze uses [fontoxide](https://github.com/MuTsunTsai/fontoxide),
+a Rust port of the font manipulation library [fonttools](https://github.com/fonttools/fonttools).
+It is compiled to WebAssembly and runs directly in your browser,
 so it's purely front-end, and nothing is stored in the back-end.
 The UI part is built with [Vue](https://github.com/vuejs/vue) and [Vuetify](https://vuetifyjs.com/).
 

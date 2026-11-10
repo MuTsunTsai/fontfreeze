@@ -1,0 +1,42 @@
+[package]
+name = "fontfreeze"
+version = "2.0.0"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT"
+publish = false
+
+[lib]
+path = "lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+# Native CLI for comparing the output with other implementations; not part of the web build.
+[[bin]]
+name = "fontfreeze-cli"
+path = "cli.rs"
+required-features = ["cli"]
+
+[features]
+cli = ["dep:serde_json"]
+
+[dependencies]
+# All fontoxide crates must use the same rev, or their types (e.g. Font) won't match.
+fontoxide-ttlib = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "912da1e10ac6fcc29e60aa76b3efa86791400893" }
+fontoxide-subset = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "912da1e10ac6fcc29e60aa76b3efa86791400893" }
+fontoxide-varlib = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "912da1e10ac6fcc29e60aa76b3efa86791400893" }
+fontoxide-encodings = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "912da1e10ac6fcc29e60aa76b3efa86791400893" }
+indexmap = { version = "2", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+serde_bytes = "0.11"
+serde_json = { version = "1", optional = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+serde-wasm-bindgen = "0.6"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"

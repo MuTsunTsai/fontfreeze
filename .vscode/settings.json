@@ -1,16 +1,13 @@
 {
-	"black-formatter.args": [
-		"--line-length",
-		"120"
-	],
 	"cSpell.ignoreRegExpList": [
 		"/([\"'`])[a-z]{4}\\1/gi"
 	],
 	"cSpell.words": [
+		"binaryen",
 		"cmap",
-		"emscripten",
 		"fontfaces",
 		"fontfreeze",
+		"fontoxide",
 		"fonttools",
 		"fvar",
 		"glyf",
@@ -19,7 +16,6 @@
 		"hhea",
 		"hmtx",
 		"onloadingdone",
-		"Pyodide",
 		"rsbuild",
 		"unicodes",
 		"vfit",
@@ -35,19 +31,20 @@
 		"*.css": "$(capture).css.map",
 		"*.js": "$(capture).prod.js, $(capture).min.js, $(capture).js.map",
 		".gitignore": ".gitattributes",
-		"pyproject.toml": "uv.lock, .python-version, .pylintrc",
+		"Cargo.toml": "Cargo.lock",
 		"README.md": "LICENSE.md, CONTRIBUTING.md, README.*.md",
 		"eslint.config.js": ".editorconfig",
 		"package.json": "pnpm-*.yaml, .npmrc, .browserslistrc"
 	},
 	"files.exclude": {
-		"**/__pycache__/": true,
+		".ruff_cache/": true,
 		"node_modules/": true,
-		"patches/": true,
-		".venv/": true
+		"patches/": true
 	},
-	"python-envs.pythonProjects": [],
 	"i18n-ally.localesPaths": [
 		"src/locale"
+	],
+	"rust-analyzer.linkedProjects": [
+		"src\\rust\\Cargo.toml"
 	]
 }

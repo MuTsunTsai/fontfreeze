@@ -109,10 +109,9 @@ https://github.com/user-attachments/assets/8292d861-a083-45db-9deb-430e62881649
 
 ## 運作原理
 
-FontFreeze 使用 [fonttools](https://github.com/fonttools/fonttools)，
-一個用於操作字型的 Python 函式庫。
-然後利用 [Pyodide](https://pyodide.org/)
-透過 WebAssembly 直接在瀏覽器中執行 Python 程式碼，
+FontFreeze 使用 [fontoxide](https://github.com/MuTsunTsai/fontoxide)，
+它是字型操作函式庫 [fonttools](https://github.com/fonttools/fonttools) 的 Rust 移植版。
+程式編譯成 WebAssembly 後直接在瀏覽器中執行，
 因此它是純前端的，後端不會儲存任何資料。
 UI 部分使用 [Vue](https://github.com/vuejs/vue) 和 [Vuetify](https://vuetifyjs.com/) 建構。
 

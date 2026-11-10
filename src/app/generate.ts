@@ -66,7 +66,7 @@ interface FeatureBuckets {
 
 /**
  * Map each tri-state-or-number value in `store.features` into the three
- * buckets that the Python side expects:
+ * buckets that the Rust side expects:
  *
  * - `features`: tags to activate (Activator merges their lookups).
  * - `featureValues`: subset of `features` that carry a custom alternate index.

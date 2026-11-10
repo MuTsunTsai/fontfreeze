@@ -100,7 +100,7 @@
 						"name": "Are my font files uploaded to a server?",
 						"acceptedAnswer": {
 							"@type": "Answer",
-							"text": "No. FontFreeze runs fonttools in your browser through Pyodide (WebAssembly). All processing happens locally and nothing is uploaded."
+							"text": "No. FontFreeze runs fontoxide, a Rust port of fonttools, in your browser through WebAssembly. All processing happens locally and nothing is uploaded."
 						}
 					}
 				]
@@ -132,7 +132,7 @@
 				<li>Turn a variable font into a static font at any weight, width or other axis value.</li>
 				<li>Subset fonts by removing glyphs or keeping only the glyphs you need.</li>
 				<li>Rename the font family, adjust line height and letter spacing, and export to TTF or WOFF2.</li>
-				<li>Everything runs in your browser using fonttools and Pyodide; your font files are never uploaded.</li>
+				<li>Everything runs in your browser using fontoxide (a Rust port of fonttools) on WebAssembly; your font files are never uploaded.</li>
 			</ul>
 
 			<h2>How to use it</h2>

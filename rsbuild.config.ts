@@ -3,10 +3,15 @@ import { pluginSass } from "@rsbuild/plugin-sass";
 import { pluginVue } from "@rsbuild/plugin-vue";
 import { VuetifyPlugin } from "webpack-plugin-vuetify";
 import { pluginHtmlMinifierTerser } from "rsbuild-plugin-html-minifier-terser";
+import { existsSync, statSync } from "fs";
 
 import pkg from "./package.json";
 
 const isProduction = process.env.NODE_ENV === "production";
+
+// Used for the loading progress; built by the gulp task "wasm".
+const wasmFile = "./build/wasm/fontfreeze_bg.wasm";
+const wasmSize = existsSync(wasmFile) ? statSync(wasmFile).size : 0;
 
 export default defineConfig({
 	dev: {
@@ -18,8 +23,9 @@ export default defineConfig({
 		},
 		define: {
 			VERSION: `"${pkg.version}"`,
+			WASM_SIZE: String(wasmSize),
 		},
-		assetsInclude: [/\.txt$/, /\.py$/],
+		assetsInclude: [/\.txt$/],
 		tsconfigPath: "./src/app/tsconfig.json",
 	},
 	html: {
@@ -53,14 +59,8 @@ export default defineConfig({
 		}),
 	],
 	tools: {
-		rspack: (_, { appendPlugins, addRules }) => {
+		rspack: (_, { appendPlugins }) => {
 			appendPlugins(new VuetifyPlugin({}));
-			addRules({
-				test: /\.whl$/,
-				type: "asset/resource",
-				// Keep the original file name, as Pyodide parses the package name and version from it.
-				generator: { filename: "static/wheel/[name][ext]" },
-			});
 		},
 	},
 });

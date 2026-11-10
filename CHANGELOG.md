@@ -2,6 +2,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - Unreleased
+
+- Replace Pyodide and FontTools with [fontoxide](https://github.com/MuTsunTsai/fontoxide), a Rust port of FontTools compiled to WebAssembly. The download is much smaller, and fonts load and generate many times faster.
+- Removed features are always renamed to `DELT`, and FeatureParams that don't fit a renamed feature (e.g. the names of a stylistic set merged into `calt`) are dropped; the "fallback mode" of keeping the original tags is gone.
+
 ## [1.15.0] - 2026-10-30
 
 - Use the HarfBuzz repacker (via uharfbuzz) to pack large GSUB/GPOS tables, greatly speeding up generating fonts like Google Sans, which fixes issue [#35](https://github.com/MuTsunTsai/fontfreeze/issues/35).

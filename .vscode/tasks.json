@@ -35,7 +35,8 @@
 		{
 			"label": "Gulp build",
 			"type": "shell",
-			"command": "pnpm prebuild",
+			// Skips wasm-opt, which takes minutes; "pnpm build" runs it.
+			"command": "pnpm exec gulp",
 			"presentation": {
 				"echo": true,
 				"reveal": "never",

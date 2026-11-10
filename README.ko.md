@@ -109,10 +109,9 @@ VS Code, JetBrains IDE 등의 기능 설정에 의존하고 싶지 않을 때도
 
 ## 작동 원리
 
-FontFreeze 는 글꼴 조작을 위한 Python 라이브러리인
-[fonttools](https://github.com/fonttools/fonttools)를 사용합니다.
-그런 다음 [Pyodide](https://pyodide.org/)를 활용하여
-WebAssembly 를 통해 브라우저에서 직접 Python 코드를 실행하므로,
+FontFreeze 는 글꼴 조작 라이브러리 [fonttools](https://github.com/fonttools/fonttools)의
+Rust 포팅인 [fontoxide](https://github.com/MuTsunTsai/fontoxide)를 사용합니다.
+WebAssembly 로 컴파일되어 브라우저에서 직접 실행되므로,
 순수 프론트엔드이며 백엔드에 아무것도 저장되지 않습니다.
 UI 부분은 [Vue](https://github.com/vuejs/vue)와 [Vuetify](https://vuetifyjs.com/)로 구축되었습니다.
 

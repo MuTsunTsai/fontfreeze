@@ -1,7 +1,8 @@
 test/
 build/
 node_modules/
-__pycache__/
-.venv/
+src/rust/target/
+# For patching fontoxide to a local copy; see CLAUDE.md.
+.cargo/
 CLAUDE.md
 docs/
