@@ -14,15 +14,22 @@ export function applySuffix<T extends Names>(options: T): T {
 	const result = { ...options };
 	if(result.customNames || !result.suffix) return result;
 	// The family name is left alone if it would be too long.
-	if(result.family && result.family.length + result.suffix.length < MS_CHAR_LIMIT) {
+	const length = result.family.length + result.suffix.length;
+	if(result.family && length < MS_CHAR_LIMIT) {
 		result.family += " " + result.suffix;
 	}
 	if(result.typo_family) result.typo_family += " " + result.suffix;
 	return result;
 }
 
-/** The suggested name of the generated file, e.g. "Font-Regular_freeze.woff2". */
-export function suggestedFileName(fileName: string, format: SupportedFormats): string {
+/**
+ * The suggested name of the generated file,
+ * e.g. "Font-Regular_freeze.woff2".
+ */
+export function suggestedFileName(
+	fileName: string,
+	format: SupportedFormats
+): string {
 	const name = fileName.replace(/\.[a-z0-9]+$/i, "");
 	return name + "_freeze." + format;
 }

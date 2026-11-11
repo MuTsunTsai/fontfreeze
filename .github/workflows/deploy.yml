@@ -10,77 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 12
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: src/rust
-
-      # wasm-bindgen-cli must match the version of the wasm-bindgen crate in Cargo.lock.
-      - id: wasm-bindgen
-        run: echo "version=$(grep -A1 '^name = "wasm-bindgen"$' src/rust/Cargo.lock | sed -n 's/^version = "\(.*\)"$/\1/p')" >> "$GITHUB_OUTPUT"
-
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: wasm-bindgen@${{ steps.wasm-bindgen.outputs.version }}
-
-      # setup-uv has no major version tags.
-      - uses: astral-sh/setup-uv@v10.3.3
-
-      - run: pnpm install --frozen-lockfile
-
-      # The test fonts must be what the generator makes.
-      - name: Check the test fonts
-        working-directory: test/generator
-        run: |
-          uv run generate.py
-          git status --porcelain -- ../fonts
-          test -z "$(git status --porcelain -- ../fonts)"
-
-      # Builds the wasm module (without wasm-opt), which the front end imports.
-      - run: pnpm exec gulp
-
-      - run: pnpm eslint
-
-      - run: pnpm typecheck
-
-      - name: Rust tests
-        working-directory: src/rust
-        run: cargo test
-
-      - run: pnpm test
-
-      - run: pnpm exec playwright install --with-deps chromium
-
-      # Starts "pnpm dev"; the wasm module is already built.
-      - run: pnpm e2e
-
-      - if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-results
-          path: test-results
-          retention-days: 7
-
+  # Builds the release, and tests it; the same build is deployed.
   build:
-    needs: test
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -111,17 +42,55 @@ jobs:
         with:
           tool: wasm-bindgen@${{ steps.wasm-bindgen.outputs.version }}
 
+      # setup-uv has no major version tags.
+      - uses: astral-sh/setup-uv@v10.3.3
+
       - run: pnpm install --frozen-lockfile
 
-      # Runs gulp first (prebuild), then rsbuild.
+      # The test fonts must be what the generator makes.
+      - name: Check the test fonts
+        working-directory: test/generator
+        run: |
+          uv run generate.py
+          git status --porcelain -- ../fonts
+          test -z "$(git status --porcelain -- ../fonts)"
+
+      # Runs "gulp release" first (prebuild), which builds the wasm module
+      # that the front end imports, then rsbuild into docs/.
       - run: pnpm build
 
-      - uses: actions/upload-pages-artifact@v5
+      - run: pnpm eslint
+
+      - run: pnpm typecheck
+
+      - name: Rust tests
+        working-directory: src/rust
+        run: cargo test
+
+      - run: pnpm test
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      # Tests the release build, served by "rsbuild preview".
+      - run: pnpm e2e
+        env:
+          E2E_PREVIEW: 1
+
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results
+          retention-days: 7
+
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: docs
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       pages: write

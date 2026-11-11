@@ -21,7 +21,8 @@ describe("applySuffix", () => {
 	});
 
 	test("does nothing for custom names or without a suffix", () => {
-		expect(applySuffix({ ...options, customNames: true })).toEqual({ ...options, customNames: true });
+		const custom = { ...options, customNames: true };
+		expect(applySuffix(custom)).toEqual(custom);
 		expect(applySuffix({ ...options, suffix: "" })).toEqual({ ...options, suffix: "" });
 		expect(applySuffix({ ...options, family: "", typo_family: "" }).family).toBe("");
 	});

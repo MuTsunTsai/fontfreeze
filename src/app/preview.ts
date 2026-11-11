@@ -8,8 +8,9 @@ const { t } = i18n.global;
 
 /**
  * We use a stylesheet to handle preview font.
- * We could also use Font Loading API to add the font directly without using a stylesheet,
- * but it appears that the Unicode range cannot be modified afterwards with that approach.
+ * We could also use Font Loading API to add the font directly
+ * without using a stylesheet, but it appears that the Unicode range
+ * cannot be modified afterwards with that approach.
  */
 const style = document.createElement("style");
 document.head.appendChild(style);
@@ -43,8 +44,8 @@ async function setPreviewFont(url: string): Promise<boolean> {
 	const family = `preview${++store.previewIndex}`;
 	sheet.insertRule(`@font-face { font-family: ${family}; src: url('${fontURL}'); }`);
 	try {
-		// Waits for this font only; the loadingdone event of document.fonts may come
-		// from other fonts being loaded at the same time.
+		// Waits for this font only; the loadingdone event of document.fonts
+		// may come from other fonts being loaded at the same time.
 		const faces = await document.fonts.load(`1em ${family}`);
 		return faces.length > 0 && faces.every(f => f.status == "loaded");
 	} catch {

@@ -1,7 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const CI = Boolean(process.env.CI);
-const URL = "http://localhost:3090/fontfreeze/";
+// Tests the release build in docs/ (built by "pnpm build") instead.
+const PREVIEW = Boolean(process.env.E2E_PREVIEW);
+const DEV_PORT = 3090;
+const PREVIEW_PORT = 3091;
+const PORT = PREVIEW ? PREVIEW_PORT : DEV_PORT;
+const URL = `http://localhost:${PORT}/fontfreeze/`;
 
 // End-to-end tests of the app in Chromium, with the fonts in test/fonts.
 export default defineConfig({
@@ -20,14 +25,15 @@ export default defineConfig({
 			name: "chromium",
 			use: {
 				...devices["Desktop Chrome"],
-				// Locally, use the installed Chrome instead of downloading Chromium.
+				// Locally, use the installed Chrome
+				// instead of downloading Chromium.
 				channel: CI ? undefined : "chrome",
 			},
 		},
 	],
 	webServer: {
-		// Builds the wasm module first if needed (see the "predev" script).
-		command: "pnpm dev",
+		// "pnpm dev" builds the wasm module first if needed (see "predev").
+		command: PREVIEW ? `pnpm exec rsbuild preview --port ${PORT}` : "pnpm dev",
 		url: URL,
 		reuseExistingServer: !CI,
 		timeout: 600_000,

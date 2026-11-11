@@ -23,31 +23,39 @@ const BLACK = 40;
 test.beforeEach(async ({ page }) => {
 	// Keep the tests offline (and out of the analytics).
 	await page.route(url => url.hostname != "localhost", route => route.abort());
-	// Use the download link instead of the file picker, which cannot be automated.
+	// Use the download link instead of the file picker,
+	// which cannot be automated.
 	await page.addInitScript("delete Window.prototype.showSaveFilePicker; delete window.showSaveFilePicker;");
 	await page.goto("");
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Helpers
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 async function open(page: Page, name: string): Promise<void> {
 	await page.setInputFiles("#upload", join(FONTS, name));
 	await expect(page.getByText(`${name} (`)).toBeVisible();
 }
 
-/** Generates the font, and returns the file name and the content of the download. */
+/**
+ * Generates the font,
+ * and returns the file name and the content of the download.
+ */
 async function generate(page: Page): Promise<[string, Buffer]> {
 	const link = page.getByRole("link", { name: "Download font" });
 	const before = await link.isVisible() ? await link.getAttribute("href") : null;
 	await page.getByRole("button", { name: "Generate font!" }).click();
 	await expect.poll(async () => await link.isVisible() && await link.getAttribute("href")).not.toBe(before);
 	const [download] = await Promise.all([page.waitForEvent("download"), link.click()]);
-	return [download.suggestedFilename(), await readFile(await download.path())];
+	const content = await readFile(await download.path());
+	return [download.suggestedFilename(), content];
 }
 
-/** Measures the texts with a font at 1000px, i.e. in the units of the test fonts. */
+/**
+ * Measures the texts with a font at 1000px,
+ * i.e. in the units of the test fonts.
+ */
 function measure(page: Page, font: Buffer, texts: string[]): Promise<number[]> {
 	return page.evaluate(async ({ bytes, strings }) => {
 		const face = new FontFace("measure" + Math.random().toString().slice(2), new Uint8Array(bytes));
@@ -64,18 +72,26 @@ function feature(page: Page, tag: string): Locator {
 }
 
 /**
- * The state of a feature checkbox as shown: unchanged (false), on (true) or off (undefined).
+ * The state of a feature checkbox as shown:
+ * unchanged (false), on (true) or off (undefined).
  *
- * The icon is checked rather than the input, as the latter can be out of sync: Vuetify
- * keeps its own state while the model value is undefined (off).
+ * The icon is checked rather than the input, as the latter can be out of sync:
+ * Vuetify keeps its own state while the model value is undefined (off).
  */
-async function featureState(page: Page, tag: string): Promise<boolean | undefined> {
+async function featureState(
+	page: Page,
+	tag: string
+): Promise<boolean | undefined> {
 	const icon = await feature(page, tag).locator(".v-icon").getAttribute("class");
 	if(icon?.includes("mdi-close-box")) return undefined;
 	return Boolean(icon?.includes("mdi-checkbox-marked"));
 }
 
-async function choose(page: Page, label: string, option: string): Promise<void> {
+async function choose(
+	page: Page,
+	label: string,
+	option: string
+): Promise<void> {
 	await page.getByLabel(label).click({ force: true });
 	await page.getByRole("option", { name: option }).click();
 }
@@ -84,9 +100,9 @@ function alertDialog(page: Page): Locator {
 	return page.locator(".v-dialog .v-card").filter({ has: page.getByRole("button", { name: "OK" }) });
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Tests
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 test("shows the information of a font", async ({ page }) => {
 	await open(page, "FFTest-Var.ttf");
@@ -155,7 +171,8 @@ test("generates a frozen font", async ({ page }) => {
 		WIDTH.one + BLACK,
 	]);
 
-	// The input is kept in wasm, so it can be generated again with other options.
+	// The input is kept in wasm,
+	// so it can be generated again with other options.
 	await feature(page, "ss01").locator("input").click(); // Now deactivated.
 	const [, again] = await generate(page);
 	expect(await measure(page, again, ["a"])).toEqual([WIDTH.a + BLACK]);
@@ -192,7 +209,8 @@ test("converts a legacy Big5 font", async ({ page }) => {
 });
 
 test("fixes a font that the browser rejects", async ({ page }) => {
-	// The browser rejects misaligned tables, so the font is saved again (`processLegacy`).
+	// The browser rejects misaligned tables,
+	// so the font is saved again (`processLegacy`).
 	await open(page, "FFTest-Misaligned.otf");
 	await expect(alertDialog(page)).toBeHidden();
 	const loaded = await page.evaluate(() => [...document.fonts].some(f => f.family.startsWith("preview") && f.status == "loaded"));
@@ -236,7 +254,9 @@ test("opens a local font", async ({ page }) => {
 			style: "Bold Italic",
 			blob: () => Promise.resolve(new Blob([bytes])),
 		};
-		Object.assign(window, { queryLocalFonts: () => Promise.resolve([font]) });
+		const fonts = [font];
+		const queryLocalFonts = (): Promise<object[]> => Promise.resolve(fonts);
+		Object.assign(window, { queryLocalFonts });
 	}, data);
 	await page.reload();
 

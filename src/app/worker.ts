@@ -22,11 +22,13 @@ async function fetchWasm(): Promise<Response> {
 	let lastProgress = performance.now();
 	const ts = new TransformStream<Uint8Array, Uint8Array>({
 		transform(chunk, ctrl) {
-			// The body is already decompressed, so WASM_SIZE (the uncompressed size) is the total.
+			// The body is already decompressed,
+			// so WASM_SIZE (the uncompressed size) is the total.
 			bytesLoaded += chunk.byteLength;
 			const now = performance.now();
 			if(now - lastProgress > ONE_SECOND) {
-				postMessage({ progress: Math.min(PERCENTAGE, PERCENTAGE * bytesLoaded / WASM_SIZE).toFixed(1) });
+				const ratio = Math.min(1, bytesLoaded / WASM_SIZE);
+				postMessage({ progress: (PERCENTAGE * ratio).toFixed(1) });
 				lastProgress = now;
 			}
 			ctrl.enqueue(chunk);
@@ -97,7 +99,9 @@ let saveURL: string;
 
 function save(args: StoreType, port: MessagePort): string {
 	// Called with the percentage of the compression done, for WOFF2 only.
-	const onProgress = (progress: number): void => port.postMessage({ progress });
+	const onProgress = (progress: number): void => {
+		port.postMessage({ progress });
+	};
 	const content = processFont(args, onProgress) as Uint8Array<ArrayBuffer>;
 	const blob = new Blob([content], { type: "font/" + args.options.format });
 	if(saveURL) URL.revokeObjectURL(saveURL);

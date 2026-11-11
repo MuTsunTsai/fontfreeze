@@ -53,7 +53,8 @@ function run(command, args, cwd) {
 
 /**
  * Builds the Rust crate into build/wasm.
- * Cargo builds incrementally, and the rest is skipped if the module is unchanged.
+ * Cargo builds incrementally,
+ * and the rest is skipped if the module is unchanged.
  * @param {boolean} optimize Whether to run wasm-opt, which takes minutes.
  */
 function buildWasm(optimize) {
@@ -67,10 +68,12 @@ function buildWasm(optimize) {
 	const source = statSync(wasmFile).mtimeMs + (optimize ? " optimized" : "");
 	if(existsSync(stamp) && readFileSync(stamp, "utf8") == source) return;
 
-	// The default module path is omitted, as the worker fetches the module itself to report the progress.
+	// The default module path is omitted,
+	// as the worker fetches the module itself to report the progress.
 	run("wasm-bindgen", [wasmFile, "--out-dir", out, "--target", "web", "--omit-default-module-path"]);
 	if(optimize) {
-		// The features enabled by default on the target, which wasm-opt must be told about.
+		// The features enabled by default on the target,
+		// which wasm-opt must be told about.
 		const features = ["bulk-memory", "nontrapping-float-to-int", "sign-ext", "multivalue", "reference-types", "mutable-globals"];
 		const bg = out + "/fontfreeze_bg.wasm";
 		run(process.execPath, ["node_modules/binaryen/bin/wasm-opt", bg, "-Oz", "-o", bg, ...features.map(f => "--enable-" + f)]);

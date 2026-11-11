@@ -1,6 +1,6 @@
 <template>
 	<h5 class="text-headline-small mt-4 mb-0">{{ $t("options.title") }}</h5>
-	<v-row class="align-baseline">
+	<v-row class="align-center">
 		<v-col cols="12" sm="6" class="mt-2">
 			<v-text-field v-model="store.options.suffix" :label="$t('options.fontFamilySuffix')" :disabled="store.options.customNames">
 				<template #prepend-inner>
@@ -10,7 +10,8 @@
 				</template>
 			</v-text-field>
 		</v-col>
-		<v-col cols="12" sm="6" class="mt-md-2 pt-md-3">
+		<!-- The margin aligns the checkbox with the field next to it. -->
+		<v-col cols="12" sm="6" class="mt-sm-2">
 			<v-checkbox v-model="store.options.customNames" :label="$t('options.customFontNames')"/>
 		</v-col>
 		<template v-if="store.options.customNames">

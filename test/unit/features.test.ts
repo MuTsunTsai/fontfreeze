@@ -1,7 +1,12 @@
 import { describe, expect, test } from "@rstest/core";
 
 import {
-	applyCustomValues, bucketFeatures, formatCustomValues, getFeatureSettings, nextFeatureState, parseCustomValues
+	applyCustomValues,
+	bucketFeatures,
+	formatCustomValues,
+	getFeatureSettings,
+	nextFeatureState,
+	parseCustomValues
 } from "../../src/app/features";
 
 import type { FeatureState } from "../../src/app/features";
@@ -39,7 +44,8 @@ describe("bucketFeatures", () => {
 describe("getFeatureSettings", () => {
 	test("previews the states", () => {
 		const states: Record<string, FeatureState> = {
-			calt: false, cv01: 2, liga: undefined, ss01: true, ss02: 0, zero: false,
+			calt: false, cv01: 2, liga: undefined,
+			ss01: true, ss02: 0, zero: false,
 		};
 		expect(getFeatureSettings(GSUB, states)).toBe("'cv01' 2,'liga' off,'ss01' on,'ss02' 0");
 	});
@@ -50,7 +56,8 @@ describe("custom values", () => {
 
 	test("parses values", () => {
 		expect(parseCustomValues(" cv01 = 2 , ss02=3,, ", valid)).toEqual({
-			parsed: { cv01: 2, ss02: 3 }, malformed: [], unknownTags: [], badValues: [],
+			parsed: { cv01: 2, ss02: 3 },
+			malformed: [], unknownTags: [], badValues: [],
 		});
 		expect(parseCustomValues("", valid).parsed).toEqual({});
 	});
@@ -68,7 +75,9 @@ describe("custom values", () => {
 	});
 
 	test("applies values", () => {
-		const states: Record<string, FeatureState> = { cv01: 2, ss01: 3, ss02: false };
+		const states: Record<string, FeatureState> = {
+			cv01: 2, ss01: 3, ss02: false,
+		};
 		applyCustomValues(states, { ss01: 1, ss02: 4 });
 		// cv01 is removed from the dialog, so it falls back to on.
 		expect(states).toEqual({ cv01: true, ss01: 1, ss02: 4 });

@@ -4,13 +4,17 @@
  * - `false`: unchanged, keeping the default behavior of the font.
  * - `true`: activated.
  * - `undefined`: deactivated.
- * - A number N: activated with a custom value set via the dialog (e.g. 'cv01' 2);
+ * - A number N: activated with a custom value set via the dialog
+ *   (e.g. 'cv01' 2);
  *   any positive N selects the N-th alternate of a GSUB Type 3 AlternateSet,
  *   and 0 means off (per the OpenType spec).
  */
 export type FeatureState = boolean | number | undefined;
 
-/** The state after clicking the checkbox of a feature: unchanged -> on -> off -> unchanged. */
+/**
+ * The state after clicking the checkbox of a feature:
+ * unchanged -> on -> off -> unchanged.
+ */
 export function nextFeatureState(state: FeatureState): FeatureState {
 	if(state === false) return true;
 	if(state === undefined) return false;
@@ -18,7 +22,10 @@ export function nextFeatureState(state: FeatureState): FeatureState {
 }
 
 /** The CSS `font-feature-settings` previewing the states. */
-export function getFeatureSettings(gsub: readonly string[], features: Record<string, FeatureState>): string {
+export function getFeatureSettings(
+	gsub: readonly string[],
+	features: Record<string, FeatureState>
+): string {
 	return gsub
 		.filter(g => features[g] !== false)
 		.map(g => {
@@ -39,7 +46,10 @@ export interface FeatureBuckets {
 }
 
 /** Sorts the states into the arguments that the Rust side expects. */
-export function bucketFeatures(gsub: readonly string[], states: Record<string, FeatureState>): FeatureBuckets {
+export function bucketFeatures(
+	gsub: readonly string[],
+	states: Record<string, FeatureState>
+): FeatureBuckets {
 	const features: string[] = [];
 	const featureValues: Record<string, number> = {};
 	const disables: string[] = [];
@@ -61,9 +71,9 @@ export function bucketFeatures(gsub: readonly string[], states: Record<string, F
 	return { features, featureValues, disables };
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Custom values
-//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 // Matches "tag = digits" with arbitrary surrounding whitespace.
 // Tag must be exactly 4 chars (the OpenType layout-tag length).
@@ -81,8 +91,13 @@ export interface ParseResult {
 }
 
 /** Parses the custom values entered in the dialog, e.g. "cv01=2,ss02=3". */
-export function parseCustomValues(text: string, validTags: ReadonlySet<string>): ParseResult {
-	const result: ParseResult = { parsed: {}, malformed: [], unknownTags: [], badValues: [] };
+export function parseCustomValues(
+	text: string,
+	validTags: ReadonlySet<string>
+): ParseResult {
+	const result: ParseResult = {
+		parsed: {}, malformed: [], unknownTags: [], badValues: [],
+	};
 	for(const piece of text.split(",")) {
 		const raw = piece.trim();
 		if(!raw) continue;
@@ -92,7 +107,8 @@ export function parseCustomValues(text: string, validTags: ReadonlySet<string>):
 		}
 		const m = raw.match(ITEM_RE);
 		if(!m) {
-			// Shape is "x=y" but the tag isn't 4 chars or value isn't pure digits.
+			// Shape is "x=y", but the tag isn't 4 chars
+			// or the value isn't pure digits.
 			const eq = raw.indexOf("=");
 			const tagPart = raw.slice(0, eq).trim();
 			const valPart = raw.slice(eq + 1).trim();
@@ -110,7 +126,9 @@ export function parseCustomValues(text: string, validTags: ReadonlySet<string>):
 }
 
 /** The custom values in the format of the dialog. */
-export function formatCustomValues(states: Record<string, FeatureState>): string {
+export function formatCustomValues(
+	states: Record<string, FeatureState>
+): string {
 	const parts: string[] = [];
 	for(const tag in states) {
 		const v = states[tag];
@@ -120,7 +138,10 @@ export function formatCustomValues(states: Record<string, FeatureState>): string
 }
 
 /** Applies the custom values from the dialog to the states. */
-export function applyCustomValues(states: Record<string, FeatureState>, values: Record<string, number>): void {
+export function applyCustomValues(
+	states: Record<string, FeatureState>,
+	values: Record<string, number>
+): void {
 	// Tags removed from the dialog fall back to plain "enabled",
 	// so that the regular checkbox tri-state resumes for them.
 	for(const tag in states) {

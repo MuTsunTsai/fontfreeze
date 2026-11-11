@@ -48,7 +48,8 @@ function startAnime(): Promise<unknown> {
 	const anime = new Promise(resolve => {
 		addEventListener("animationstart", resolve, { once: true });
 	});
-	// The progress is only shown while running, so it suffices to reset it here.
+	// The progress is only shown while running,
+	// so it suffices to reset it here.
 	store.progress = null;
 	store.running = true;
 	return anime;
@@ -66,7 +67,8 @@ async function getOutputURL(): Promise<string> {
 		store.options.family = store.options.family.trim();
 		store.options.typo_subfamily = store.options.typo_subfamily.trim();
 		const options = applySuffix(clone(store.options));
-		const { features, featureValues, disables } = bucketFeatures(store.font.gsub, store.features);
+		const { features, featureValues, disables } =
+			bucketFeatures(store.font.gsub, store.features);
 		if(features.length && store.options.target.length != FEATURE_LENGTH) {
 			throw new Error(t("error.invalidTarget"));
 		}

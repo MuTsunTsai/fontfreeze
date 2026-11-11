@@ -24,8 +24,11 @@ export default defineConfig({
 			index: "./src/app/index.ts",
 		},
 		define: {
-			VERSION: `"${pkg.version}"`,
-			WASM_SIZE: String(wasmSize),
+			"VERSION": `"${pkg.version}"`,
+			"WASM_SIZE": String(wasmSize),
+			// Read by @vuetify/v0 (a dependency of Vuetify),
+			// which assumes Vite; "process" doesn't exist in the browser.
+			"process.env.VITE_LOGGER_ENABLED": "undefined",
 		},
 		assetsInclude: [/\.txt$/],
 		tsconfigPath: "./src/app/tsconfig.json",
@@ -63,7 +66,8 @@ export default defineConfig({
 	tools: {
 		rspack: (_, { appendPlugins }) => {
 			// The plugin is typed for webpack, but works with Rspack.
-			appendPlugins(new VuetifyPlugin({}) as unknown as Rspack.RspackPluginInstance);
+			const vuetify = new VuetifyPlugin({});
+			appendPlugins(vuetify as unknown as Rspack.RspackPluginInstance);
 		},
 	},
 });
