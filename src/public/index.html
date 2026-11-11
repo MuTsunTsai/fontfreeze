@@ -8,6 +8,23 @@
 	<!-- Critical -->
 	<link rel="preload" as="image" href="logo.webp">
 
+	<!--
+		Before the app mounts: use the background of the Vuetify theme that will be applied
+		(see src/app/index.ts), and hide the static content, which is for clients without
+		JavaScript (crawlers, agents) only.
+	-->
+	<meta name="color-scheme" content="light dark">
+	<script>
+		document.documentElement.classList.add("js");
+	</script>
+	<style>
+		html { background: #FFFFFF; }
+		@media (prefers-color-scheme: dark) {
+			html { background: #121212; }
+		}
+		.js #static-content { display: none; }
+	</style>
+
 	<link rel="icon" href="./favicon.ico" type="image/x-icon">
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no">
 	<meta name="description" content="Free online tool to freeze OpenType features and variations into a font: permanently enable stylistic sets (ss01) and character variants (cv01), disable ligatures, or turn a variable font into a static TTF/WOFF2 for apps like VS Code, Visual Studio, Word and terminals that lack font feature settings. Runs entirely in your browser.">
@@ -115,7 +132,7 @@
 <body class="text-body-1">
 	<!-- Static content for crawlers and no-JS clients; replaced when the Vue app mounts -->
 	<div id="app">
-		<main style="max-width: 48rem; margin: 2rem auto; padding: 0 1rem; font-family: sans-serif; line-height: 1.5;">
+		<main id="static-content" style="max-width: 48rem; margin: 2rem auto; padding: 0 1rem; font-family: sans-serif; line-height: 1.5;">
 			<h1>FontFreeze</h1>
 			<p>
 				FontFreeze is a free, open-source online tool that freezes OpenType features and variations into a font.
