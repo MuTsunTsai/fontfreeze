@@ -3,6 +3,8 @@ build/
 node_modules/
 src/rust/target/
 .venv/
+test/parity/.cache/
+test/parity/out/
 # For patching fontoxide to a local copy; see CLAUDE.md.
 .cargo/
 CLAUDE.md

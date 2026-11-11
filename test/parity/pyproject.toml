@@ -1,0 +1,15 @@
+[project]
+name = "fontfreeze-parity"
+version = "0.0.0"
+description = "Compares FontFreeze with its original Python version (before 2.0)."
+requires-python = ">=3.13"
+dependencies = [
+	# The versions used for the comparisons when migrating to Rust.
+	"fonttools==4.68.0",
+	"uharfbuzz==0.57.0",
+	"brotli",
+	"opentype-sanitizer",
+]
+
+[tool.uv]
+package = false
