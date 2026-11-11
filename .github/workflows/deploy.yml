@@ -1,22 +1,80 @@
-name: Deploy to GitHub Pages
+name: Test and deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-# Do not cancel an in-progress deployment, but skip queued ones in favor of the latest.
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src/rust
+
+      # wasm-bindgen-cli must match the version of the wasm-bindgen crate in Cargo.lock.
+      - id: wasm-bindgen
+        run: echo "version=$(grep -A1 '^name = "wasm-bindgen"$' src/rust/Cargo.lock | sed -n 's/^version = "\(.*\)"$/\1/p')" >> "$GITHUB_OUTPUT"
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen@${{ steps.wasm-bindgen.outputs.version }}
+
+      - uses: astral-sh/setup-uv@v10
+
+      - run: pnpm install --frozen-lockfile
+
+      # The test fonts must be what the generator makes.
+      - name: Check the test fonts
+        working-directory: test/generator
+        run: |
+          uv run generate.py
+          git status --porcelain -- ../fonts
+          test -z "$(git status --porcelain -- ../fonts)"
+
+      - run: pnpm eslint
+
+      - name: Rust tests
+        working-directory: src/rust
+        run: cargo test
+
+      - run: pnpm test
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      # Starts "pnpm dev", which builds the wasm module first.
+      - run: pnpm e2e
+
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results
+          retention-days: 7
+
   build:
+    needs: test
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -59,6 +117,13 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # Do not cancel an in-progress deployment, but skip queued ones in favor of the latest.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
