@@ -5,7 +5,7 @@ export default [
 		ignores: ["docs/**", "build/**", "src/rust/target/**"],
 		import: {
 			files: ["src/**/*.vue", "**/*.ts", "eslint.config.js", "gulpfile.js"],
-			project: ["src/app", "test/unit"],
+			project: ["src/app", "test/unit", "test/e2e"],
 		},
 		globals: {
 			esm: ["gulpfile.js", "eslint.config.js"],
@@ -26,9 +26,11 @@ export default [
 		},
 	},
 	{
-		files: ["test/unit/**/*.ts"],
+		files: ["test/**/*.ts"],
 		rules: {
 			"@typescript-eslint/no-magic-numbers": "off",
+			// The steps of a test are sequential by nature.
+			"no-await-in-loop": "off",
 		},
 	},
 

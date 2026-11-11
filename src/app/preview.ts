@@ -34,24 +34,22 @@ export async function tryPreview(url: string, info: FontInfo): Promise<void> {
 	alert(t("error.previewFailed") + t("error.note"));
 }
 
-function setPreviewFont(url: string): Promise<boolean> {
+/** Sets the preview font, and returns whether the browser accepts it. */
+async function setPreviewFont(url: string): Promise<boolean> {
 	if(fontURL) URL.revokeObjectURL(fontURL);
 	fontURL = url;
 	const sheet = style.sheet!;
 	if(sheet.cssRules.length > 0) sheet.deleteRule(0);
-	return new Promise(resolve => {
-		// LoadingDone event always fires, regardless of font validity.
-		document.fonts.onloadingdone = event => {
-			// if the font is valid, fontfaces array will contain one element.
-			resolve((event as FontFaceSetLoadEvent).fontfaces.length > 0);
-		};
-		sheet.insertRule(
-			`@font-face {` +
-			`font-family: preview${++store.previewIndex};` +
-			`src: url('${fontURL}');` +
-			`}`
-		);
-	});
+	const family = `preview${++store.previewIndex}`;
+	sheet.insertRule(`@font-face { font-family: ${family}; src: url('${fontURL}'); }`);
+	try {
+		// Waits for this font only; the loadingdone event of document.fonts may come
+		// from other fonts being loaded at the same time.
+		const faces = await document.fonts.load(`1em ${family}`);
+		return faces.length > 0 && faces.every(f => f.status == "loaded");
+	} catch {
+		return false;
+	}
 }
 
 export function setPreviewUnicodeRange(range: string): void {
@@ -60,13 +58,6 @@ export function setPreviewUnicodeRange(range: string): void {
 }
 
 export { sample };
-
-/**
- * @see https://github.com/microsoft/TypeScript/issues/51885
- */
-interface FontFaceSetLoadEvent extends Event {
-	readonly fontfaces: readonly FontFace[];
-}
 
 // TypeScript definition is wrong as of v5.5
 interface CSSFontFaceRule extends CSSRule {

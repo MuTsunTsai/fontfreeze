@@ -178,6 +178,13 @@ fn process_legacy_removes_broken_tables() {
 			.any(|t| (t.platform, t.encoding) == (3, 4))
 	);
 
+	// Misaligned tables, which browsers reject, are aligned.
+	let input = font("FFTest-Misaligned.otf");
+	assert!(table_offsets(&input).iter().any(|o| o % 4 != 0));
+	let fixed = fontfreeze::process_legacy(input).unwrap();
+	assert!(table_offsets(&fixed).iter().all(|o| o % 4 == 0));
+	assert_eq!(width(&fixed, "abc"), width(&font("FFTest-Static.otf"), "abc"));
+
 	// A font without problems is just saved again.
 	let fixed = fontfreeze::process_legacy(font("FFTest-Var.ttf")).unwrap();
 	assert_eq!(width(&fixed, "a"), width(&font("FFTest-Var.ttf"), "a"));

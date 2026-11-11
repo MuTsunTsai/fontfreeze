@@ -25,6 +25,7 @@
 		"build": "rsbuild build",
 		"predev": "gulp",
 		"dev": "rsbuild dev",
+		"e2e": "playwright test",
 		"preview": "rsbuild preview --port 3091 --open http://localhost:3091/fontfreeze/",
 		"test": "rstest"
 	},
@@ -36,6 +37,7 @@
 	},
 	"devDependencies": {
 		"@mutsuntsai/eslint": "^1.4.6",
+		"@playwright/test": "^1.65.0",
 		"@rsbuild/core": "2.0.1",
 		"@rsbuild/plugin-sass": "^1.5.1",
 		"@rsbuild/plugin-vue": "^1.2.7",

@@ -173,6 +173,16 @@ pub fn has_table(data: &[u8], tag: &[u8; 4]) -> bool {
 		.is_some()
 }
 
+/// The offsets of the tables in the table directory.
+pub fn table_offsets(data: &[u8]) -> Vec<u32> {
+	font_ref(data)
+		.table_directory()
+		.table_records()
+		.iter()
+		.map(|r| r.offset())
+		.collect()
+}
+
 /// A name record: (name ID, platform ID, encoding ID, language ID) -> string.
 pub fn names(data: &[u8]) -> BTreeMap<(u16, u16, u16, u16), String> {
 	let font = font_ref(data);

@@ -5,6 +5,8 @@ src/rust/target/
 .venv/
 test/parity/.cache/
 test/parity/out/
+test-results/
+playwright-report/
 # For patching fontoxide to a local copy; see CLAUDE.md.
 .cargo/
 CLAUDE.md

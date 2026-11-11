@@ -30,9 +30,14 @@
 						<span v-else>{{ $t("features.unknown") }}</span>
 					</v-tooltip>
 				</div>
-				<!-- Regular tri-state checkbox. -->
+				<!--
+					Regular tri-state checkbox. It is recreated on each change, as the native input
+					gets out of sync when the model value is undefined (off), and Vuetify would then
+					ignore the next click.
+				-->
 				<v-checkbox
 					v-else
+					:key="String(store.features[f])"
 					:model-value="store.features[f]"
 					:indeterminate="store.features[f] === undefined"
 					color="primary"

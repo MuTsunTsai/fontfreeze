@@ -10,6 +10,7 @@ Run `uv run generate.py` in this folder. The output is reproducible: rerunning i
 leave test/fonts unchanged.
 """
 
+import struct
 import sys
 from array import array
 from pathlib import Path
@@ -22,6 +23,7 @@ from fontTools.misc.timeTools import timestampFromString
 from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTCollection, TTFont, newTable
+from fontTools.ttLib.sfnt import calcChecksum
 from fontTools.ttLib.tables import otTables
 from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
 from fontTools.ttLib.tables._n_a_m_e import NameRecord
@@ -452,6 +454,34 @@ def zero_win_metrics(font: TTFont) -> TTFont:
 	return font
 
 
+def save_misaligned(source: Path, name: str) -> None:
+	"""Saves a font with its tables not 4-byte aligned. Browsers (OTS) reject such a font,
+	but it is fixed by just saving it again, which is what `processLegacy` does."""
+	reader = TTFont(source, lazy=True).reader
+	tags = sorted(reader.keys())
+	count = len(tags)
+	search_range = 1 << (count.bit_length() - 1)
+	header = struct.pack(
+		">4sHHHH",
+		reader.sfntVersion.encode("latin-1"),
+		count,
+		search_range * 16,
+		search_range.bit_length() - 1,
+		(count - search_range) * 16,
+	)
+	offset = len(header) + 16 * count + 2
+	records, body = b"", b"\0\0"
+	for tag in tags:
+		data = reader[tag]
+		records += struct.pack(">4sLLL", tag.encode("latin-1"), calcChecksum(data), offset, len(data))
+		# One byte of padding keeps the next table misaligned too.
+		body += data + b"\0"
+		offset += len(data) + 1
+	path = OUTPUT / name
+	path.write_bytes(header + records + body)
+	print(f"{name}: {path.stat().st_size:,} bytes")
+
+
 #########################################################################################
 
 
@@ -477,11 +507,14 @@ def main() -> None:
 
 	save(without_os2(finish(TTFont(static_path))), "FFTest-NoOS2.otf")
 	save(zero_win_metrics(finish(TTFont(static_path))), "FFTest-ZeroWin.otf")
+	save_misaligned(static_path, "FFTest-Misaligned.otf")
 
 	# The legacy font is expected to fail, as browsers reject a cmap without Unicode.
 	# The collection is left out, as OTS mixes up the glyph counts of its fonts.
 	for name in ["FFTest-Var.ttf", "FFTest-Static.otf"]:
 		sanitize(OUTPUT / name)
+	if ots.sanitize(str(OUTPUT / "FFTest-Misaligned.otf"), capture_output=True).returncode == 0:
+		sys.exit("FFTest-Misaligned.otf should fail OTS")
 
 
 if __name__ == "__main__":
