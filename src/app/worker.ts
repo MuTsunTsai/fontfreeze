@@ -67,8 +67,8 @@ addEventListener("message", async event => {
 	}
 });
 
-/** The font being worked on. */
-let input: Uint8Array<ArrayBuffer>;
+// The font being worked on is kept on the Rust side (see wasm.rs),
+// so that it is not copied into the wasm memory on each generation.
 
 interface LoadResult {
 	info: FontInfo;
@@ -80,19 +80,16 @@ async function open(url: string): Promise<FontInfo> {
 	const response = await fetch(url);
 	const data = new Uint8Array(await response.arrayBuffer());
 	const { info, data: converted } = loadFont(data) as LoadResult;
-	// Only replace the input once the font is known to be valid.
-	input = converted ?? data;
-	if(info.preview) info.previewUrl = createPreviewUrl();
+	if(info.preview && converted) info.previewUrl = createPreviewUrl(converted);
 	return info;
 }
 
 function legacy(): string {
-	input = processLegacy(input) as Uint8Array<ArrayBuffer>;
-	return createPreviewUrl();
+	return createPreviewUrl(processLegacy() as Uint8Array<ArrayBuffer>);
 }
 
-function createPreviewUrl(): string {
-	const blob = new Blob([input], { type: "font/ttf" });
+function createPreviewUrl(data: Uint8Array<ArrayBuffer>): string {
+	const blob = new Blob([data], { type: "font/ttf" });
 	return URL.createObjectURL(blob);
 }
 
@@ -101,7 +98,7 @@ let saveURL: string;
 function save(args: StoreType, port: MessagePort): string {
 	// Called with the percentage of the compression done, for WOFF2 only.
 	const onProgress = (progress: number): void => port.postMessage({ progress });
-	const content = processFont(input, args, onProgress) as Uint8Array<ArrayBuffer>;
+	const content = processFont(args, onProgress) as Uint8Array<ArrayBuffer>;
 	const blob = new Blob([content], { type: "font/" + args.options.format });
 	if(saveURL) URL.revokeObjectURL(saveURL);
 	saveURL = URL.createObjectURL(blob);

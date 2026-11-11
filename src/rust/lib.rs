@@ -13,6 +13,7 @@ mod wasm;
 
 use std::collections::HashMap;
 use std::fmt;
+use std::sync::Arc;
 
 use fontoxide_ttlib::tables::cmap::DEFAULT_CMAP_PREFERENCES;
 use fontoxide_ttlib::tables::{Fvar, Name, Os2};
@@ -232,9 +233,9 @@ fn get_fvar(font: &mut Font) -> Result<Option<FvarInfo>> {
 }
 
 /// Reads a font as the rest of FontFreeze expects (`loadTtfFont`).
-pub(crate) fn read_font(data: &[u8]) -> Result<Font> {
+pub(crate) fn read_font(data: Arc<[u8]>) -> Result<Font> {
 	let mut font = Font::read(
-		data.to_vec(),
+		data,
 		ReadOptions {
 			recalc_bboxes: false,
 			font_number: Some(0), // in case it's a font collection
@@ -246,7 +247,7 @@ pub(crate) fn read_font(data: &[u8]) -> Result<Font> {
 }
 
 /// Reads a font and returns its information (`loadFont`).
-pub fn load_font(data: &[u8]) -> Result<LoadResult> {
+pub fn load_font(data: Arc<[u8]>) -> Result<LoadResult> {
 	let mut font = read_font(data)?;
 
 	let os2 = font.require::<Os2>()?;
@@ -305,7 +306,7 @@ pub fn load_font(data: &[u8]) -> Result<LoadResult> {
 }
 
 /// Tries to fix a font that the browser refuses to load (`processLegacy`).
-pub fn process_legacy(data: &[u8]) -> Result<Vec<u8>> {
+pub fn process_legacy(data: Arc<[u8]>) -> Result<Vec<u8>> {
 	let mut font = read_font(data)?;
 	legacy::fix_legacy(&mut font)
 }
@@ -318,7 +319,7 @@ pub fn process_legacy(data: &[u8]) -> Result<Vec<u8>> {
 ///
 /// `progress` is called with the fraction of the Brotli compression done, for WOFF 2.0
 /// output only, as that takes most of the time for large fonts.
-pub fn process_font(data: &[u8], args: &Args, progress: Option<Progress>) -> Result<Vec<u8>> {
+pub fn process_font(data: Arc<[u8]>, args: &Args, progress: Option<Progress>) -> Result<Vec<u8>> {
 	let mut font = read_font(data)?;
 	instantiate(&mut font, args)?;
 	activator::remove_features(&mut font, &args.disables)?;
