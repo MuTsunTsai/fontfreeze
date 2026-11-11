@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Removed features are always renamed to `DELT`, and FeatureParams that don't fit a renamed feature (e.g. the names of a stylistic set merged into `calt`) are dropped; the "fallback mode" of keeping the original tags is gone. This also fixes activated features being ignored in fallback mode when the target feature is deactivated.
 - Fix the error when "Fix contour overlap issues on macOS" is checked for CFF (OpenType/PostScript) fonts.
 - Fix activated features being ignored in some scripts when the target feature (e.g. `calt`) exists only in some of the scripts of the font. This matters for features that cannot be applied to the character map, such as character variants with several alternates or contextual substitutions.
+- Fix the checkbox of a feature skipping the "deactivated" state after its custom value is removed in the dialog.
 - Letter spacing now sets the maximum advance width (`hhea.advanceWidthMax`) over all glyphs, not just those in the character map.
 
 ## [1.15.0] - 2026-10-30

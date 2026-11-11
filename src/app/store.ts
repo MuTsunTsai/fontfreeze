@@ -1,6 +1,8 @@
 import { reactive } from "vue";
 
 import type { SupportedFormats } from "./meta/constants";
+import type { FeatureState } from "./features";
+import type { SubsetMode } from "./meta/unicode";
 
 export const store = reactive({
 	localFonts: [] as FontData[],
@@ -11,7 +13,7 @@ export const store = reactive({
 	loading: null as string | null,
 	font: null as FontInfo | null,
 	glyphs: "",
-	subsetMode: "exclude",
+	subsetMode: "exclude" as SubsetMode,
 	previewSize: 12,
 	running: false,
 	/** The percentage of the generation done, if known (WOFF2 only). */
@@ -21,11 +23,7 @@ export const store = reactive({
 	download: null as string | null,
 	previewIndex: 0,
 	version: " v" + VERSION,
-	// `boolean | undefined` keeps the original tri-state (on/off/default).
-	// A `number` means "custom value N" set via the dialog (e.g. 'cv01' 2).
-	// 0 is treated as off (per OpenType spec), any positive N selects the
-	// N-th alternate from the GSUB Type 3 AlternateSet.
-	features: {} as Record<string, boolean | number | undefined>,
+	features: {} as Record<string, FeatureState>,
 	variations: {} as Record<string, number>,
 	options: {
 		suffix: "",

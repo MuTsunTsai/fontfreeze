@@ -3,15 +3,13 @@ import { initialized, callWorker } from "./bridge";
 import i18n from "./i18n";
 import { hiddenFeatures } from "./meta/constants";
 import { tryPreview } from "./preview";
-import { clone } from "./utils";
+import { clone, getFileSize } from "./utils";
 import { setupFeatures } from "./vue/features.vue";
 import { alert } from "./vue/modals/alert.vue";
 
 const { t } = i18n.global;
 
 import type { OptionType } from "./store";
-
-const KB = 1024;
 
 export async function tryOpenFile(file: File): Promise<void> {
 	gtag("event", "open_ttf");
@@ -81,8 +79,3 @@ function createDefaultOption(info: FontInfo): OptionType {
 	};
 }
 
-function getFileSize(size: number): string {
-	if(size < KB) return size + "B"; else size /= KB;
-	if(size < KB) return size.toFixed(1) + "KiB"; else size /= KB;
-	return size.toFixed(1) + "MiB";
-}

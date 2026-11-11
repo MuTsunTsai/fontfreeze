@@ -26,12 +26,14 @@
 	import { sample, setPreviewUnicodeRange } from "../preview";
 	import { store } from "../store";
 	import { getUnicodes } from "../meta/unicode";
+	import { getFeatureSettings } from "../features";
 
 	const BASE_LINE_HEIGHT = 1.5;
 
 	onMounted(() => {
 		setupDiv();
-		watchEffect(() => setPreviewUnicodeRange(store.unicodeRange = getUnicodes()));
+		// The glyphs could be cleared by Vuetify.
+		watchEffect(() => setPreviewUnicodeRange(store.unicodeRange = getUnicodes(store.glyphs ||= "", store.subsetMode)));
 	});
 
 	function setupDiv(): void {
@@ -48,14 +50,7 @@
 
 	function getPreviewStyle(): string | null {
 		if(!store.font) return null;
-		const feat = store.font.gsub
-			.filter(g => store.features[g] !== false)
-			.map(g => {
-				const v = store.features[g];
-				if(typeof v === "number") return `'${g}' ${v}`;
-				return `'${g}' ${v ? "on" : "off"}`;
-			})
-			.join(",");
+		const feat = getFeatureSettings(store.font.gsub, store.features);
 		const variation = !store.font.fvar ? "normal" :
 			store.font.fvar.axes
 				.map(a => `'${a.tag}' ${store.variations[a.tag]}`)

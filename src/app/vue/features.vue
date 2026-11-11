@@ -33,12 +33,12 @@
 				<!-- Regular tri-state checkbox. -->
 				<v-checkbox
 					v-else
-					v-model="store.features[f]"
+					:model-value="store.features[f]"
 					:indeterminate="store.features[f] === undefined"
 					color="primary"
 					class="my-n1"
 					indeterminate-icon="mdi-close-box text-error"
-					@change="changeFeature(f)"
+					@update:model-value="store.features[f] = nextFeatureState(store.features[f])"
 				>
 					<template #label>
 						<v-tooltip interactive open-on-hover>
@@ -65,11 +65,9 @@
 
 	import { store } from "../store";
 	import { featureURL } from "../meta/constants";
+	import { nextFeatureState } from "../features";
 	import Tip from "./components/tip.vue";
 	import CustomFeatures, { showCustomFeatures } from "./modals/customFeatures.vue";
-
-	/** The last value before the current value for each features. */
-	let lastValues: Record<string, boolean | undefined>;
 
 	const lastFeatures = new Set<string>();
 
@@ -78,10 +76,9 @@
 
 		lastFeatures.clear();
 		store.features = {};
-		lastValues = {};
 		for(const g of gsub) {
 			lastFeatures.add(g);
-			store.features[g] = lastValues[g] = false;
+			store.features[g] = false;
 		}
 	}
 
@@ -104,15 +101,6 @@
 		const cvMatch = tag.match(/^cv(\d+)$/);
 		if(cvMatch) return t("feature.cv", { n: parseInt(cvMatch[1]) });
 		return t("feature." + tag);
-	}
-
-	function changeFeature(f: string): void {
-		if(lastValues[f] === true) store.features[f] = undefined;
-		if(lastValues[f] === undefined) store.features[f] = false;
-		// Only the boolean/undefined v-checkbox path triggers changeFeature
-		// (number-valued features render a non-clickable box, see template).
-		const current = store.features[f];
-		lastValues[f] = typeof current === "number" ? undefined : current;
 	}
 </script>
 

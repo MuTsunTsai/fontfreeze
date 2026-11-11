@@ -1,16 +1,20 @@
-import { store } from "../store";
-
 type Range = [number, number];
+
+export type SubsetMode = "exclude" | "include";
 
 const UNICODE_RANGE = 0x10FFFF; // Full unicode range
 const HEX = 16;
 
-export function getUnicodes(): string {
-	const glyphs = getGlyphCharCodes();
-	if(store.subsetMode == "exclude") {
+/**
+ * The characters to keep in the format of `fontTools.subset.parse_unicodes`,
+ * given the characters to exclude or include; empty to keep all.
+ */
+export function getUnicodes(glyphs: string, mode: SubsetMode): string {
+	const codes = getCharCodes(glyphs);
+	if(mode == "exclude") {
 		const ranges: Range[] = [[0, UNICODE_RANGE]];
-		if(glyphs.length == 0) return "";
-		for(const code of glyphs) {
+		if(codes.length == 0) return "";
+		for(const code of codes) {
 			const range = ranges.find(r => r[0] <= code && code <= r[1]);
 			if(!range) continue;
 			const end = range[1];
@@ -19,11 +23,11 @@ export function getUnicodes(): string {
 		}
 		return ranges.filter(r => r[0] <= r[1]).map(formatRange).join(", ").toUpperCase();
 	} else {
-		if(glyphs.length == 0) return "U+0";
+		if(codes.length == 0) return "U+0";
 		const ranges: Range[] = [];
-		let start = glyphs[0], end = start;
-		for(let i = 1; i <= glyphs.length; i++) {
-			const code = glyphs[i];
+		let start = codes[0], end = start;
+		for(let i = 1; i <= codes.length; i++) {
+			const code = codes[i];
 			if(end == code - 1) { end = code; } else {
 				ranges.push([start, end]);
 				start = code;
@@ -34,19 +38,11 @@ export function getUnicodes(): string {
 	}
 }
 
-function getGlyphCharCodes(): number[] {
+/** The sorted distinct code points of the characters. */
+function getCharCodes(glyphs: string): number[] {
 	const set = new Set<number>();
-	store.glyphs ||= ""; // In case it is cleared by Vuetify
-	for(let i = 0; i < store.glyphs.length; i++) {
-		// Handle UTF-32 code
-		const codePoint = store.glyphs.codePointAt(i)!;
-		const charCode = store.glyphs.charCodeAt(i);
-		if(charCode != codePoint) i++;
-		set.add(codePoint);
-	}
-	const result = [...set];
-	result.sort((a, b) => a - b);
-	return result;
+	for(const char of glyphs) set.add(char.codePointAt(0)!);
+	return [...set].sort((a, b) => a - b);
 }
 
 function formatRange(r: Range): string {
