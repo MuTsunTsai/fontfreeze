@@ -24,6 +24,14 @@ fn raw_unicode_escape(s: &str) -> Vec<u8> {
 	result
 }
 
+#[cfg(test)]
+#[test]
+fn raw_unicode_escape_as_python() {
+	assert_eq!(raw_unicode_escape("a\u{e9}"), b"a\xe9");
+	assert_eq!(raw_unicode_escape("\u{6c38}"), b"\\u6c38");
+	assert_eq!(raw_unicode_escape("\u{1f600}"), b"\\U0001f600");
+}
+
 /// Legacy CJK fonts in Big5 encoding in particular might use mixed encoding. See
 /// https://learn.microsoft.com/en-us/typography/opentype/spec/name#windows-encoding-ids
 pub(crate) fn fix_name_encoding(font: &mut Font) -> Result<()> {

@@ -15,6 +15,22 @@ fn postscript_name(family: &str, subfamily: &str) -> String {
 	result.chars().take(POSTSCRIPT_NAME_LIMIT).collect()
 }
 
+#[cfg(test)]
+#[test]
+fn postscript_name_without_spaces() {
+	assert_eq!(
+		postscript_name("My Font", "Bold Italic"),
+		"MyFont-BoldItalic"
+	);
+	let long = postscript_name(&"x".repeat(100), "Regular");
+	assert_eq!(long.len(), POSTSCRIPT_NAME_LIMIT);
+	// Counted in characters, not bytes.
+	assert_eq!(
+		postscript_name(&"字".repeat(100), "").chars().count(),
+		POSTSCRIPT_NAME_LIMIT
+	);
+}
+
 /// Replaces the name table with the names of the frozen font.
 pub(crate) fn set_names(font: &mut Font, args: &Args, description: &str) -> Result<()> {
 	let options = &args.options;

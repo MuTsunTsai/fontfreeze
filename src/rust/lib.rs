@@ -432,7 +432,8 @@ fn instantiate(font: &mut Font, args: &Args) -> Result<()> {
 			font.remove(Tag::new(tag));
 		}
 	}
-	if options.fix_contour {
+	// The overlap flags only exist in glyf, so there is nothing to fix for CFF fonts.
+	if options.fix_contour && font.contains(Tag::new(b"glyf")) {
 		fontoxide_varlib::instancer::set_mac_overlap_flags(font)?;
 	}
 	Ok(())
@@ -456,4 +457,42 @@ fn subset(font: &mut Font, unicodes: &str) -> Result<()> {
 	subsetter.populate(&[], &[], &fontoxide_subset::parse_unicodes(unicodes)?, "");
 	subsetter.subset(font)?;
 	Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn format_number_as_python() {
+		assert_eq!(format_number(400.0), "400");
+		assert_eq!(format_number(-0.0), "0");
+		assert_eq!(format_number(650.5), "650.5");
+		assert_eq!(format_number(0.1), "0.1");
+	}
+
+	#[test]
+	fn percent_progress_is_throttled_and_capped() {
+		let reports = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+		let progress = {
+			let reports = reports.clone();
+			percent_progress(move |p| reports.borrow_mut().push(p))
+		};
+		for fraction in [0.0, 0.001, 0.009, 0.5, 0.501, 0.999, 1.0, 1.5, -1.0] {
+			progress(fraction);
+		}
+		assert_eq!(*reports.borrow(), [0, 50, 99, 0]);
+	}
+
+	#[test]
+	fn args_defaults() {
+		// Only the names are required; the rest has defaults.
+		let args: Args = serde_json::from_str(
+			r#"{ "options": { "family": "F", "subfamily": "Regular" }, "version": "" }"#,
+		)
+		.unwrap();
+		assert!(args.unicodes.is_empty() && args.features.is_empty() && args.disables.is_empty());
+		assert!(!args.options.keep_var && !args.options.single_sub);
+		assert_eq!(args.options.spacing, None);
+	}
 }

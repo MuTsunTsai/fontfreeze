@@ -13,6 +13,19 @@ fn ot_round(v: f64) -> f64 {
 	(v + 0.5).floor()
 }
 
+#[cfg(test)]
+#[test]
+fn ot_round_rounds_half_up() {
+	assert_eq!(ot_round(0.5), 1.0);
+	assert_eq!(ot_round(-0.5), 0.0);
+	assert_eq!(ot_round(-1.5), -1.0);
+	assert_eq!(ot_round(2.4), 2.0);
+	assert_eq!(
+		to_int::<u16>(-1.0, "x").unwrap_err().0,
+		"x out of range: -1"
+	);
+}
+
 fn to_int<T: TryFrom<i64>>(v: f64, name: &str) -> Result<T> {
 	T::try_from(ot_round(v) as i64).map_err(|_| Error(format!("{name} out of range: {v}")))
 }
@@ -26,7 +39,6 @@ pub(crate) fn change_font_spacing(font: &mut Font, delta: f64) -> Result<()> {
 
 	// Metrics are kept unrounded until the end, as fontTools rounds them only when compiling.
 	let mut metrics: BTreeMap<u32, (f64, f64)> = BTreeMap::new();
-	let mut max_width = 0.0;
 	// Note that a glyph mapped from several code points is adjusted once for each of them,
 	// as the original Python version does.
 	for &gid in cmap.values() {
@@ -42,9 +54,6 @@ pub(crate) fn change_font_spacing(font: &mut Font, delta: f64) -> Result<()> {
 		let width = (width + delta).max(0.0);
 		let lsb = (lsb + delta / 2.0).clamp(-32768.0, 32767.0);
 		metrics.insert(gid, (width, lsb));
-		if width > max_width {
-			max_width = width;
-		}
 	}
 	for (gid, (width, lsb)) in metrics {
 		hmtx.set(
@@ -56,7 +65,14 @@ pub(crate) fn change_font_spacing(font: &mut Font, delta: f64) -> Result<()> {
 		);
 	}
 
-	font.require::<Hhea>()?.advance_width_max = to_int(max_width, "advanceWidthMax")?;
+	// Over all glyphs, including those not in cmap (the original Python version missed them).
+	let max_width = hmtx
+		.metrics
+		.values()
+		.map(|&(width, _)| width)
+		.max()
+		.unwrap_or(0);
+	font.require::<Hhea>()?.advance_width_max = max_width;
 	Ok(())
 }
 

@@ -1,0 +1,13 @@
+[project]
+name = "fontfreeze-test-fonts"
+version = "0.0.0"
+description = "Generates the fonts in test/fonts for the tests of FontFreeze."
+requires-python = ">=3.13"
+dependencies = [
+	# Pinned, so that the generated fonts are reproducible.
+	"fonttools==4.68.0",
+	"opentype-sanitizer",
+]
+
+[tool.uv]
+package = false

@@ -1,7 +1,8 @@
-test/
+samples/
 build/
 node_modules/
 src/rust/target/
+.venv/
 # For patching fontoxide to a local copy; see CLAUDE.md.
 .cargo/
 CLAUDE.md
