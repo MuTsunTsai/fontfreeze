@@ -1,8 +1,8 @@
 name: Test and deploy to GitHub Pages
 
+# The tests run on every branch; only main is deployed.
 on:
   push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -40,7 +40,8 @@ jobs:
         with:
           tool: wasm-bindgen@${{ steps.wasm-bindgen.outputs.version }}
 
-      - uses: astral-sh/setup-uv@v10
+      # setup-uv has no major version tags.
+      - uses: astral-sh/setup-uv@v10.3.3
 
       - run: pnpm install --frozen-lockfile
 
@@ -52,6 +53,9 @@ jobs:
           git status --porcelain -- ../fonts
           test -z "$(git status --porcelain -- ../fonts)"
 
+      # Builds the wasm module (without wasm-opt), which the front end imports.
+      - run: pnpm exec gulp
+
       - run: pnpm eslint
 
       - name: Rust tests
@@ -62,7 +66,7 @@ jobs:
 
       - run: pnpm exec playwright install --with-deps chromium
 
-      # Starts "pnpm dev", which builds the wasm module first.
+      # Starts "pnpm dev"; the wasm module is already built.
       - run: pnpm e2e
 
       - if: failure()
@@ -74,7 +78,7 @@ jobs:
 
   build:
     needs: test
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
