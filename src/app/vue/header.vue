@@ -69,7 +69,7 @@
 			</v-col>
 		</v-row>
 		<div class="mt-3">
-			<div v-if="store.loading">{{ $t("header.loading", { target: store.loading }) }}</div>
+			<div v-if="store.loading">{{ $t(`header.loading.${store.loading}`, { progress: store.engineProgress }) }}</div>
 			<div v-else-if="store.font">{{ store.font.fileName }} ({{ store.font.fileSize }})</div>
 			<div v-else>{{ $t("header.dropHint") }}</div>
 		</div>

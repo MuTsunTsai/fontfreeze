@@ -14,8 +14,3 @@ declare module "*.css" {
 	const styles: object;
 	export default styles;
 }
-
-declare module "*.whl" {
-	const url: string;
-	export default url;
-}

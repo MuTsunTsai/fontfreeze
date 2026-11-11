@@ -39,7 +39,8 @@
 	"files.exclude": {
 		".ruff_cache/": true,
 		"node_modules/": true,
-		"patches/": true
+		"patches/": true,
+		"test-results/": true
 	},
 	"i18n-ally.localesPaths": [
 		"src/locale"

@@ -10,7 +10,10 @@ export const store = reactive({
 	localFamily: "",
 	unavailableFonts: [] as string[], // postscriptName of the font
 	unicodeRange: "",
-	loading: null as string | null,
+	/** What is being loaded, shown in the header. */
+	loading: null as "engine" | "font" | null,
+	/** The progress of loading the wasm module, in percent. */
+	engineProgress: 0,
 	font: null as FontInfo | null,
 	glyphs: "",
 	subsetMode: "exclude" as SubsetMode,

@@ -10,8 +10,8 @@ export const initialized = new Promise<void>((resolve, reject) => {
 			resolve();
 		} else if("error" in e.data) {
 			reject(new Error(e.data.error));
-		} else if("progress" in e.data && store.loading) {
-			store.loading = `packages (${e.data.progress}%)`;
+		} else if("progress" in e.data) {
+			store.engineProgress = e.data.progress;
 		}
 	};
 	worker.addEventListener("message", handler);

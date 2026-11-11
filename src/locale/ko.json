@@ -9,7 +9,10 @@
 		"tagline": "글꼴의 가변 항목과 기능을 고정합니다.",
 		"openFontFile": "글꼴 파일 열기",
 		"selectLocalFont": "로컬 글꼴 선택",
-		"loading": "{target} 로딩 중입니다. 잠시 기다려 주세요...",
+		"loading": {
+			"engine": "글꼴 엔진을 로딩 중입니다({progress}%). 잠시 기다려 주세요...",
+			"font": "글꼴을 로딩 중입니다. 잠시 기다려 주세요..."
+		},
 		"dropHint": "글꼴 파일을 열거나 여기에 드롭하세요!",
 		"dropFontFile": "글꼴 파일 드롭"
 	},

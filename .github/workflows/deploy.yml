@@ -58,6 +58,8 @@ jobs:
 
       - run: pnpm eslint
 
+      - run: pnpm typecheck
+
       - name: Rust tests
         working-directory: src/rust
         run: cargo test

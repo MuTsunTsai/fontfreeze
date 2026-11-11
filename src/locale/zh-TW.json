@@ -9,7 +9,10 @@
 		"tagline": "凍結字型中的可變項與特性。",
 		"openFontFile": "開啟字型檔案",
 		"selectLocalFont": "選擇本機字型",
-		"loading": "正在載入{target}，請稍候...",
+		"loading": {
+			"engine": "正在載入字型引擎（{progress}%），請稍候...",
+			"font": "正在載入字型，請稍候..."
+		},
 		"dropHint": "開啟字型檔案或將字型檔案拖放至此！",
 		"dropFontFile": "拖放字型檔案"
 	},

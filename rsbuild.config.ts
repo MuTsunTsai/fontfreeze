@@ -5,7 +5,9 @@ import { VuetifyPlugin } from "webpack-plugin-vuetify";
 import { pluginHtmlMinifierTerser } from "rsbuild-plugin-html-minifier-terser";
 import { existsSync, statSync } from "fs";
 
-import pkg from "./package.json";
+import pkg from "./package.json" with { type: "json" };
+
+import type { Rspack } from "@rsbuild/core";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -60,7 +62,8 @@ export default defineConfig({
 	],
 	tools: {
 		rspack: (_, { appendPlugins }) => {
-			appendPlugins(new VuetifyPlugin({}));
+			// The plugin is typed for webpack, but works with Rspack.
+			appendPlugins(new VuetifyPlugin({}) as unknown as Rspack.RspackPluginInstance);
 		},
 	},
 });

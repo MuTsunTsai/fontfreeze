@@ -8,7 +8,7 @@ export default [
 			project: ["src/app", "test/unit", "test/e2e"],
 		},
 		globals: {
-			esm: ["gulpfile.js", "eslint.config.js"],
+			esm: ["gulpfile.js", "eslint.config.js", "playwright.config.ts"],
 			browser: ["src/**"],
 		},
 	}),

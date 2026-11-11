@@ -2,7 +2,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-11-11
 
 - Replace Pyodide and FontTools with [fontoxide](https://github.com/MuTsunTsai/fontoxide), a Rust port of FontTools compiled to WebAssembly. The download is much smaller, and fonts load and generate many times faster.
 - Show the progress when generating WOFF2 fonts, which can take a while for large fonts.

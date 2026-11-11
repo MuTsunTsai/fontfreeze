@@ -5,7 +5,8 @@
 		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"noEmit": true
 	},
 	"include": ["./*.ts"]
 }

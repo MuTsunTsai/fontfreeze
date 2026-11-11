@@ -22,7 +22,7 @@ export async function tryOpenFile(file: File): Promise<void> {
 }
 
 export async function openBlob(blob: Blob, name: string): Promise<void> {
-	store.loading = "packages";
+	store.loading = "engine";
 	await initialized;
 	store.loading = "font";
 

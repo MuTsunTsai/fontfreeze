@@ -9,7 +9,10 @@
 		"tagline": "Freeze variations and features in font.",
 		"openFontFile": "Open font file",
 		"selectLocalFont": "Select local font",
-		"loading": "Loading {target}. Please wait...",
+		"loading": {
+			"engine": "Loading the font engine ({progress}%). Please wait...",
+			"font": "Loading the font. Please wait..."
+		},
 		"dropHint": "Open a font or drop a font file anywhere!",
 		"dropFontFile": "Drop font file"
 	},
