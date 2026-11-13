@@ -149,7 +149,7 @@ dependencies = [
 
 [[package]]
 name = "fontfreeze"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "fontoxide-encodings",
  "fontoxide-subset",
@@ -167,28 +167,61 @@ dependencies = [
 ]
 
 [[package]]
-name = "fontoxide-agl"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+name = "fontoxide-colorlib"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
+dependencies = [
+ "fontoxide-misc",
+ "fontoxide-ttlib",
+ "indexmap",
+ "log",
+ "thiserror",
+]
+
+[[package]]
+name = "fontoxide-designspacelib"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
+dependencies = [
+ "fontoxide-misc",
+ "indexmap",
+ "log",
+ "thiserror",
+]
 
 [[package]]
 name = "fontoxide-encodings"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 
 [[package]]
 name = "fontoxide-misc"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 dependencies = [
+ "fontoxide-encodings",
+ "indexmap",
  "log",
  "roxmltree",
+ "thiserror",
+]
+
+[[package]]
+name = "fontoxide-otllib"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
+dependencies = [
+ "fontoxide-misc",
+ "fontoxide-ttlib",
+ "indexmap",
+ "log",
+ "thiserror",
 ]
 
 [[package]]
 name = "fontoxide-pens"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 dependencies = [
  "fontoxide-misc",
  "log",
@@ -197,8 +230,8 @@ dependencies = [
 
 [[package]]
 name = "fontoxide-repack"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 dependencies = [
  "log",
  "thiserror",
@@ -206,10 +239,12 @@ dependencies = [
 
 [[package]]
 name = "fontoxide-subset"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 dependencies = [
+ "fontoxide-colorlib",
  "fontoxide-misc",
+ "fontoxide-otllib",
  "fontoxide-ttlib",
  "fontoxide-unicodedata",
  "log",
@@ -218,12 +253,11 @@ dependencies = [
 
 [[package]]
 name = "fontoxide-ttlib"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 dependencies = [
  "brotli",
  "flate2",
- "fontoxide-agl",
  "fontoxide-encodings",
  "fontoxide-misc",
  "fontoxide-pens",
@@ -232,23 +266,46 @@ dependencies = [
  "kurbo",
  "linesweeper",
  "log",
+ "lz4_flex",
+ "thiserror",
+ "zopfli",
+]
+
+[[package]]
+name = "fontoxide-ufolib"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
+dependencies = [
+ "flate2",
+ "fontoxide-misc",
+ "fontoxide-pens",
+ "indexmap",
+ "log",
+ "rawzip",
  "thiserror",
 ]
 
 [[package]]
 name = "fontoxide-unicodedata"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 
 [[package]]
 name = "fontoxide-varlib"
-version = "0.0.0"
-source = "git+https://github.com/MuTsunTsai/fontoxide?rev=1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767#1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767"
+version = "0.1.0"
+source = "git+https://github.com/MuTsunTsai/fontoxide?rev=4f987ac8f610b57292763d2d7f97ee41eab9315a#4f987ac8f610b57292763d2d7f97ee41eab9315a"
 dependencies = [
+ "fontoxide-colorlib",
+ "fontoxide-designspacelib",
  "fontoxide-misc",
+ "fontoxide-otllib",
+ "fontoxide-pens",
  "fontoxide-subset",
  "fontoxide-ttlib",
+ "fontoxide-ufolib",
+ "indexmap",
  "log",
+ "thiserror",
 ]
 
 [[package]]
@@ -356,6 +413,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
 
 [[package]]
+name = "lz4_flex"
+version = "0.11.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "373f5eceeeab7925e0c1098212f2fbc4d416adec9d35051a6ab251e824c1854a"
+
+[[package]]
 name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -418,6 +481,12 @@ checksum = "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
 dependencies = [
  "proc-macro2",
 ]
+
+[[package]]
+name = "rawzip"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac9999039f74cd73c03158cddfe4362991703c74efe5ce5c8073026f80a5e48c"
 
 [[package]]
 name = "read-fonts"
@@ -694,3 +763,15 @@ name = "zmij"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
+
+[[package]]
+name = "zopfli"
+version = "0.8.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aaf7fc5d30c28483d93805c4a5e12b05bbb52407fa67c5f8bd552374cd01fb11"
+dependencies = [
+ "bumpalo",
+ "crc32fast",
+ "log",
+ "simd-adler32",
+]

@@ -1,6 +1,6 @@
 [package]
 name = "fontfreeze"
-version = "2.0.0"
+version = "2.0.1"
 edition = "2024"
 rust-version = "1.99"
 license = "MIT"
@@ -21,10 +21,10 @@ cli = ["dep:serde_json"]
 
 [dependencies]
 # All fontoxide crates must use the same rev, or their types (e.g. Font) won't match.
-fontoxide-ttlib = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767" }
-fontoxide-subset = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767" }
-fontoxide-varlib = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767" }
-fontoxide-encodings = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "1ea1f9b17dd322bbe802b5ed30e5a41dd1f9c767" }
+fontoxide-ttlib = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "4f987ac8f610b57292763d2d7f97ee41eab9315a" }
+fontoxide-subset = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "4f987ac8f610b57292763d2d7f97ee41eab9315a" }
+fontoxide-varlib = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "4f987ac8f610b57292763d2d7f97ee41eab9315a" }
+fontoxide-encodings = { git = "https://github.com/MuTsunTsai/fontoxide", rev = "4f987ac8f610b57292763d2d7f97ee41eab9315a" }
 indexmap = { version = "2", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 serde_bytes = "0.11"
